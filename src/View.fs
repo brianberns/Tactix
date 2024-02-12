@@ -13,6 +13,11 @@ module View =
 
     let private format = "application/json"
 
+    module Type =
+
+        let className (typ : Type) =
+            (string typ).ToLower()
+
     let private renderGoal (goal : Type) =
         Html.div [
             prop.className "goal-area"
@@ -20,7 +25,7 @@ module View =
                 Html.div [
                     prop.classes [
                         "type"
-                        $"{(string goal).ToLower()}"
+                        Type.className goal
                     ]
                 ]
             ]
@@ -34,7 +39,7 @@ module View =
                     Html.div [
                         prop.classes [
                             "term"
-                            $"{(string term.Type).ToLower()}"
+                            Type.className term.Type
                         ]
                     ]
             ]
