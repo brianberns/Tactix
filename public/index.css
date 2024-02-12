@@ -1,4 +1,4 @@
-.goal {
+.goal-area {
     position: absolute;
     left: 0%;
     top: 0%;
@@ -7,7 +7,25 @@
     background-color: lightgray;
 }
 
-.hypotheses {
+.proposition {
+    width: 32px;
+    height: 32px;
+    margin: 10px;
+}
+
+.p {
+    background-color: red;
+}
+
+.q {
+    background-color: blue;
+}
+
+.r {
+    background-color: green;
+}
+
+.hypotheses-area {
     position: absolute;
     left: 0%;
     top: 10%;
@@ -16,7 +34,12 @@
     background-color: lightcyan;
 }
 
-.tactics {
+.hypothesis {
+    width: 32px;
+    height: 32px;
+}
+
+.tactics-area {
     position: absolute;
     left: 0%;
     top: 90%;
@@ -25,6 +48,9 @@
     background-color: lightgreen;
 }
 
-.exact {
-    background-color: red;
+.tactic {
+    margin: 10px;
+    width: 64px;
+    height: 64px;
+    background-color: gray;
 }

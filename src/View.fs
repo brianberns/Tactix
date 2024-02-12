@@ -13,15 +13,40 @@ module View =
 
     let private format = "application/json"
 
-    let private renderTactics tactics =
+    let private renderGoal (goal : Proposition) =
         Html.div [
-            prop.className "tactics"
+            prop.className "goal-area"
+            prop.children [
+                Html.div [
+                    prop.classes [
+                        "proposition"
+                        $"{(string goal).ToLower()}"
+                    ]
+                ]
+            ]
+        ]
+
+    let private renderHypotheses (hypotheses : List<Hypothesis>) =
+        Html.div [
+            prop.className "hypotheses-area"
+            prop.children [
+                for hyp in hypotheses do
+                    Html.div [
+                        prop.classes [
+                            "hypothesis"
+                            $"{(string hyp).ToLower()}"
+                        ]
+                    ]
+            ]
+        ]
+
+    let private renderTactics (tactics : seq<Tactic>) =
+        Html.div [
+            prop.className "tactics-area"
             prop.children [
                 for tactic in tactics do
-                    Html.span [
-                        let className =
-                            (string tactic).ToLower()
-                        prop.className className
+                    Html.button [
+                        prop.className "tactic"
                         prop.text (string tactic)
                     ]
             ]
@@ -29,11 +54,7 @@ module View =
 
     let render (model : Model) (dispatch : Msg -> unit) =
         Html.div [
-            Html.div [
-                prop.className "goal"
-            ]
-            Html.div [
-                prop.className "hypotheses"
-            ]
+            renderGoal model.Goal
+            renderHypotheses model.Hypotheses
             renderTactics model.Tactics
         ]
