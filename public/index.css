@@ -1,0 +1,28 @@
+#left {
+    position: absolute;
+    left: 100px;
+    top: 100px;
+    width: 200px;
+    height: 200px;
+    background-color: lightgray;
+}
+
+#right {
+    position: absolute;
+    left: 500px;
+    top: 100px;
+    width: 200px;
+    height: 200px;
+    background-color: lightgray;
+}
+
+#drag-me {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background-color: lightyellow;
+    margin: 0px;
+    text-align: center;
+    display: grid;
+    align-items: center;
+}

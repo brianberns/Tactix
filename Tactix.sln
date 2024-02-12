@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tactix", "src\Tactix.fsproj", "{78953CAD-B701-4044-B8E7-ED3CC752C68E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78953CAD-B701-4044-B8E7-ED3CC752C68E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78953CAD-B701-4044-B8E7-ED3CC752C68E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78953CAD-B701-4044-B8E7-ED3CC752C68E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78953CAD-B701-4044-B8E7-ED3CC752C68E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {14DCECE4-D684-4D21-8598-63185746ACAD}
+	EndGlobalSection
+EndGlobal
