@@ -1,4 +1,4 @@
-namespace Tactix
+﻿namespace Tactix
 
 open Fable.Core.JsInterop
 open Fable.SimpleJson
@@ -47,7 +47,11 @@ module View =
                 for tactic in tactics do
                     Html.div [
                         prop.className "tactic"
-                        prop.text (string tactic)
+                        match tactic with
+                            | Exact -> "🎆"
+                            | Intro -> "🚀"
+                            | Apply -> "👉"
+                            |> prop.text
                         prop.draggable true
                     ]
             ]
