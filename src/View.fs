@@ -34,7 +34,7 @@ module View =
                     Html.div [
                         prop.classes [
                             "term"
-                            $"{(string term).ToLower()}"
+                            $"{(string term.Type).ToLower()}"
                         ]
                     ]
             ]
