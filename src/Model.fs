@@ -35,7 +35,11 @@ module Model =
         let model =
             {
                 Goal = P
-                Terms = [ { Type = P } ]
+                Terms = [
+                    { Type = P }
+                    { Type = Q }
+                    { Type = R }
+                ]
                 Tactics = [ Exact; Intro; Apply ]
             }
         model, Cmd.none

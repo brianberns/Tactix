@@ -55,7 +55,7 @@ module View =
                         match tactic with
                             | Exact -> "🎆"
                             | Intro -> "🚀"
-                            | Apply -> "👉"
+                            | Apply -> "👣"
                             |> prop.text
                         prop.draggable true
                     ]

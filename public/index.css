@@ -1,10 +1,18 @@
+:root {
+    --eggshell: #f4f1deff;
+    --burnt-sienna: #e07a5fff;
+    --delft-blue: #3d405bff;
+    --cambridge-blue: #81b29aff;
+    --sunset: #f2cc8fff;
+}
+
 .goal-area {
     position: absolute;
     left: 0%;
     top: 0%;
     width: 100%;
     height: 10%;
-    background-color: lightgray;
+    background-color: var(--sunset);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,20 +22,19 @@
     width: 48px;
     height: 48px;
     margin: 10px;
-    border: 3px solid #FFD700;
-    background-color: #FFD700;
+    border: 3px solid var(--eggshell);
 }
 
 .p {
-    background-color: red;
+    background-color: var(--burnt-sienna);
 }
 
 .q {
-    background-color: blue;
+    background-color: var(--delft-blue);
 }
 
 .r {
-    background-color: green;
+    background-color: var(--cambridge-blue);
 }
 
 .terms-area {
@@ -36,7 +43,7 @@
     top: 10%;
     width: 100%;
     height: 80%;
-    background-color: lightcyan;
+    background-color: var(--eggshell);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -54,7 +61,7 @@
     top: 90%;
     width: 100%;
     height: 10%;
-    background-color: lightgreen;
+    background-color: var(--sunset);
     display: flex;
     justify-content: center;
     align-items: center;
