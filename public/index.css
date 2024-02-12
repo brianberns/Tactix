@@ -1,28 +1,30 @@
-#left {
+.goal {
     position: absolute;
-    left: 100px;
-    top: 100px;
-    width: 200px;
-    height: 200px;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 10%;
     background-color: lightgray;
 }
 
-#right {
+.hypotheses {
     position: absolute;
-    left: 500px;
-    top: 100px;
-    width: 200px;
-    height: 200px;
-    background-color: lightgray;
+    left: 0%;
+    top: 10%;
+    width: 100%;
+    height: 80%;
+    background-color: lightcyan;
 }
 
-#drag-me {
+.tactics {
     position: absolute;
-    width: 80px;
-    height: 80px;
-    background-color: lightyellow;
-    margin: 0px;
-    text-align: center;
-    display: grid;
-    align-items: center;
+    left: 0%;
+    top: 90%;
+    width: 100%;
+    height: 10%;
+    background-color: lightgreen;
+}
+
+.exact {
+    background-color: red;
 }
