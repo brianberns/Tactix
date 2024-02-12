@@ -4,11 +4,15 @@ open Elmish
 
 // https://www.ma.imperial.ac.uk/~buzzard/lean_together/source/contents.html
 
-type Proposition = P | Q | R
+/// A type corresponds to a proposition that might be provable.
+/// E.g. 1 + 1 = 2.
+type Type = P | Q | R
 
-type Hypothesis =
+/// A term is an instance of a type and proves the corresponding
+/// proposition.
+type Term =
     {
-        Proposition : Proposition
+        Type : Type
     }
 
 type Tactic =
@@ -18,8 +22,8 @@ type Tactic =
 
 type Model =
     {
-        Goal : Proposition
-        Hypotheses : List<Hypothesis>
+        Goal : Type
+        Terms : List<Term>
         Tactics : List<Tactic>
     }
 
@@ -31,7 +35,7 @@ module Model =
         let model =
             {
                 Goal = P
-                Hypotheses = [ { Proposition = P } ]
+                Terms = [ { Type = P } ]
                 Tactics = [ Exact; Intro; Apply ]
             }
         model, Cmd.none
