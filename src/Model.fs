@@ -1,4 +1,4 @@
-namespace Tactix
+﻿namespace Tactix
 
 open Elmish
 
@@ -8,10 +8,57 @@ type TacticType =
     | Intro
     | Apply
 
+module TacticType =
+
+    let emoji = function
+        | TacticType.Exact -> "🎆"
+        | TacticType.Intro -> "🚀"
+        | TacticType.Apply -> "👣"
+
+type Level =
+    {
+        Goal : Type
+        Terms : Set<Term>
+        TacticTypes : Set<TacticType>
+        Instructions : string
+    }
+
+module Level =
+
+    module private Term =
+
+        let create typ =
+            Term.create $"H{typ}" typ
+
+    let levels =
+        [|
+            {
+                Goal = P
+                Terms =
+                    set [
+                        Term.create P
+                        Term.create Q
+                    ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                    ]
+                Instructions =
+                    let exact = TacticType.emoji TacticType.Exact
+                    $"Drag {exact} onto the symbol that matches the goal."
+            }
+        |]
+
+    let initializeProof level =
+        {
+            Goal = Some level.Goal
+            Terms = level.Terms
+        }
+
 type Model =
     {
+        LevelIndex : int
         Proof : Proof
-        TacticTypes : List<TacticType>
         HighlightedTermNames : Set<string>
         AudioEnabled : bool
     }
@@ -23,30 +70,13 @@ type Msg =
 
 module Model =
 
-    module private Term =
-
-        let create typ =
-            Term.create $"H{typ}" typ
-
     let init () =
+        let levelIdx = 0
+        let level = Level.levels[levelIdx]
         let model =
             {
-                Proof =
-                    {
-                        Goal = Some P
-                        Terms =
-                            set [
-                                Term.create P
-                                Term.create Q
-                                Term.create R
-                            ]
-                    }
-                TacticTypes =
-                    [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                    ]
+                LevelIndex = levelIdx
+                Proof = Level.initializeProof level
                 HighlightedTermNames = Set.empty
                 AudioEnabled = true
             }

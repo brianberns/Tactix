@@ -109,18 +109,16 @@ module View =
             ]
         ]
 
-    let private renderTacticTypes (tacticTypes : seq<TacticType>) =
+    let private renderTacticTypes levelIdx =
+        let tacticTypes =
+            Level.levels[levelIdx].TacticTypes
         Html.div [
             prop.className "tactics-area"
             prop.children [
                 for tacticType in tacticTypes do
                     Html.div [
                         prop.className "tactic"
-                        match tacticType with
-                            | TacticType.Exact -> "🎆"
-                            | TacticType.Intro -> "🚀"
-                            | TacticType.Apply -> "👣"
-                            |> prop.text
+                        prop.text (TacticType.emoji tacticType)
                         prop.draggable true
                         prop.onDragStart (
                             DragData.setData
@@ -148,6 +146,6 @@ module View =
         Html.div [
             renderGoal model.Proof.Goal
             renderTerms model dispatch
-            renderTacticTypes model.TacticTypes
+            renderTacticTypes model.LevelIndex
             renderSettings model.AudioEnabled dispatch
         ]
