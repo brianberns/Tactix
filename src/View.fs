@@ -1,8 +1,22 @@
 ﻿namespace Tactix
 
 open Browser.Types
+
+open Fable.Core
 open Fable.SimpleJson
+
 open Feliz
+
+// https://thesharperdev.com/snippets/fsharp-fable-play-audio/
+module Audio =
+
+    let [<Global("Audio")>] private factory : HTMLAudioElementType = jsNative
+
+    let play src volume =
+        let audio = factory.Create()
+        audio.src <- src
+        audio.volume <- volume
+        audio.play()
 
 type private DragData =
     {
@@ -84,8 +98,14 @@ module View =
             prop.onDrop (fun evt ->
                 evt.preventDefault()
                 if allowTacticExact evt then
+                    Audio.play
+                        "https://neal.fun/infinite-craft/reward.mp3"
+                        0.5
                     dispatch (AddTactic (Exact term))
                 else
+                    Audio.play
+                        "https://neal.fun/infinite-craft/error.mp3"
+                        0.5
                     dispatch (HighlightTerm (term.Name, false)))
         ]
 
@@ -118,9 +138,8 @@ module View =
                             |> prop.text
                         prop.draggable true
                         prop.onDragStart (
-                            DragData.setData {
-                                TacticType = tacticType
-                            })
+                            DragData.setData
+                                { TacticType = tacticType })
                     ]
             ]
         ]
