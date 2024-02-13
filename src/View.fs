@@ -27,12 +27,12 @@ module View =
         let id (term : Term) =
             $"term-{term.Id}"
 
-    let private renderTerm term goal dispatch =
+    let private renderTerm term goal highlight dispatch =
         Html.div [
             prop.id (Term.id term)
             prop.classes [
                 "term"
-                if term.Highlight then "term-highlight"
+                if highlight then "term-highlight"
                 else "term-unhighlight"
                 Type.className term.Type
             ]
@@ -53,8 +53,14 @@ module View =
         Html.div [
             prop.className "terms-area"
             prop.children [
-                for term in model.Terms do
-                    renderTerm term model.Goal dispatch
+                for term in model.Proof.Terms do
+                    let highlight =
+                        model.HighlightedTermIds.Contains(term.Id)
+                    renderTerm
+                        term
+                        model.Proof.Goal
+                        highlight
+                        dispatch
             ]
         ]
 
@@ -77,7 +83,7 @@ module View =
 
     let render (model : Model) (dispatch : Msg -> unit) =
         Html.div [
-            renderGoal model.Goal
+            renderGoal model.Proof.Goal
             renderTerms model dispatch
-            renderTactics model.Tactics
+            renderTactics model.Proof.Tactics
         ]
