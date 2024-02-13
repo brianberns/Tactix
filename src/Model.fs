@@ -71,4 +71,13 @@ module Model =
                     updateEnableAudio enable model
                 | StartLevel levelIdx ->
                     updateStartLevel levelIdx model
-        model', Cmd.none
+        let cmd =
+            if model'.Proof.Goal.IsNone then
+                Cmd.OfAsync.perform
+                    (fun () -> Async.Sleep 2000)
+                    ()
+                    (fun () ->
+                        StartLevel (model'.LevelIndex + 1))
+            else
+                Cmd.none
+        model', cmd

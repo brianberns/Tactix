@@ -14,13 +14,11 @@ module private DragData =
     let private format = "application/json"
 
     let setData dragData (evt : DragEvent) =
-        Browser.Dom.console.log($"setData: {Json.serialize<DragData> dragData}")
         evt.dataTransfer.setData(
             format, Json.serialize<DragData> dragData)
             |> ignore
 
     let getData (evt : DragEvent) =
-        Browser.Dom.console.log($"getData: {evt.dataTransfer.getData(format)}")
         evt.dataTransfer.getData(format)
             |> Json.parseAs<DragData>
 
@@ -161,13 +159,9 @@ module View =
 
     let render (model : Model) (dispatch : Msg -> unit) =
         Html.div [
-
             renderHeader model.LevelIndex
             renderGoal model.Proof.Goal
             renderTerms model dispatch
             renderTacticTypes model.LevelIndex
             renderFooter model.AudioEnabled dispatch
-
-            if model.Proof.Goal.IsNone then
-                dispatch (StartLevel (model.LevelIndex + 1))
         ]
