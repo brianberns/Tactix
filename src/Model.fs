@@ -14,6 +14,7 @@ type Msg =
     | HighlightTerm of (*name*) string * bool
     | AddTactic of Tactic
     | EnableAudio of bool
+    | StartLevel of int
 
 module Model =
 
@@ -41,23 +42,23 @@ module Model =
         { model with HighlightedTermNames = termNames }
 
     let private updateAddTactic tactic model =
-        let model' =
-            { model with
-                Proof = Proof.add tactic model.Proof }
-        if model'.Proof.Goal.IsNone then
-            let levelIdx =
-                (model.LevelIndex + 1) % Level.levels.Length
-            let level = Level.levels[levelIdx]
-            { model' with
-                LevelIndex = levelIdx
-                Proof = Level.initializeProof level
-                HighlightedTermNames = Set.empty
-            }
-        else model'
+        { model with
+            Proof = Proof.add tactic model.Proof }
 
     let private updateEnableAudio enable model =
         assert(model.AudioEnabled <> enable)
         { model with AudioEnabled = enable }
+
+    let private updateStartLevel levelIdx model =
+        let levelIdx' =
+            levelIdx % Level.levels.Length
+        let level =
+            Level.levels[levelIdx']
+        { model with
+            LevelIndex = levelIdx'
+            Proof = Level.initializeProof level
+            HighlightedTermNames = Set.empty
+        }
 
     let update (msg : Msg) (model : Model) =
         let model' =
@@ -68,4 +69,6 @@ module Model =
                     updateAddTactic tactic model
                 | EnableAudio enable ->
                     updateEnableAudio enable model
+                | StartLevel levelIdx ->
+                    updateStartLevel levelIdx model
         model', Cmd.none

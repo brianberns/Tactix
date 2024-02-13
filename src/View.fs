@@ -161,9 +161,13 @@ module View =
 
     let render (model : Model) (dispatch : Msg -> unit) =
         Html.div [
+
             renderHeader model.LevelIndex
             renderGoal model.Proof.Goal
             renderTerms model dispatch
             renderTacticTypes model.LevelIndex
             renderFooter model.AudioEnabled dispatch
+
+            if model.Proof.Goal.IsNone then
+                dispatch (StartLevel (model.LevelIndex + 1))
         ]
