@@ -50,15 +50,10 @@ module Model =
         { model with AudioEnabled = enable }
 
     let private updateStartLevel levelIdx model =
-        let levelIdx' =
-            levelIdx % Level.levels.Length
-        let level =
-            Level.levels[levelIdx']
         { model with
-            LevelIndex = levelIdx'
-            Proof = Level.initializeProof level
-            HighlightedTermNames = Set.empty
-        }
+            LevelIndex = levelIdx
+            Proof = Level.initializeProof Level.levels[levelIdx]
+            HighlightedTermNames = Set.empty }
 
     let update (msg : Msg) (model : Model) =
         let model' =
