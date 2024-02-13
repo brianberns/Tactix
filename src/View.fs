@@ -25,7 +25,7 @@ module View =
     module private Term =
 
         let id (term : Term) =
-            $"term-{term.Id}"
+            $"term-{term.Name}"
 
     let private renderTerm term goal highlight dispatch =
         Html.div [
@@ -33,18 +33,17 @@ module View =
             prop.classes [
                 "term"
                 if highlight then "term-highlight"
-                else "term-unhighlight"
                 Type.className term.Type
             ]
             if term.Type = goal then
                 prop.onDragEnter (fun evt ->
                     evt.preventDefault()
-                    dispatch (HighlightTerm (term.Id, true)))
+                    dispatch (HighlightTerm (term.Name, true)))
                 prop.onDragOver (fun evt ->
                     evt.preventDefault())
                 prop.onDragLeave (fun evt ->
                     evt.preventDefault()
-                    dispatch (HighlightTerm (term.Id, false)))
+                    dispatch (HighlightTerm (term.Name, false)))
                 prop.onDrop (fun evt ->
                     evt.preventDefault())
         ]
@@ -55,7 +54,7 @@ module View =
             prop.children [
                 for term in model.Proof.Terms do
                     let highlight =
-                        model.HighlightedTermIds.Contains(term.Id)
+                        model.HighlightedTermNames.Contains(term.Name)
                     renderTerm
                         term
                         model.Proof.Goal

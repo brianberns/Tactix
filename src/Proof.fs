@@ -10,18 +10,15 @@ type Type = P | Q | R
 /// proposition.
 type Term =
     {
-        Id : int
+        Name : string
         Type : Type
     }
 
 module Term =
 
-    let mutable private curId = 0
-
-    let create typ =
-        curId <- curId + 1
+    let create name typ =
         {
-            Id = curId
+            Name = name
             Type = typ
         }
 

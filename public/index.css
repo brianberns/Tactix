@@ -51,6 +51,8 @@
 
 .term {
     margin: 20px;
+    width: 48px;
+    height: 48px;
 }
 
 .term-highlight {
@@ -59,8 +61,6 @@
 }
 
 .term-unhighlight {
-    width: 48px;
-    height: 48px;
 }
 
 .tactics-area {
