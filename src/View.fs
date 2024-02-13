@@ -68,6 +68,8 @@ module View =
                 Type.className term.Type
             ]
 
+            // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
+
             prop.onDragEnter (fun evt ->
                 evt.preventDefault()
                 dispatch (HighlightTerm (term.Name, true)))
