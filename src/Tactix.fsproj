@@ -5,8 +5,8 @@
   <ItemGroup>
     <Compile Include="Proof.fs" />
     <Compile Include="Level.fs" />
-    <Compile Include="Model.fs" />
     <Compile Include="Audio.fs" />
+    <Compile Include="Model.fs" />
     <Compile Include="View.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>

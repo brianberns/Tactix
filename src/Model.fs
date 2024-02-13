@@ -74,9 +74,10 @@ module Model =
         let cmd =
             if model'.Proof.Goal.IsNone then
                 Cmd.OfAsync.perform
-                    (fun () -> Async.Sleep 2000)
+                    (fun () -> Async.Sleep 1000)
                     ()
                     (fun () ->
+                        Audio.playDiscovery ()
                         StartLevel (model'.LevelIndex + 1))
             else
                 Cmd.none

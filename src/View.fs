@@ -158,7 +158,7 @@ module View =
             ]
         ]
 
-    let render (model : Model) (dispatch : Msg -> unit) =
+    let render model dispatch =
         Html.div [
             renderHeader model.LevelIndex
             renderGoal model.Proof.Goal

@@ -19,3 +19,6 @@ module Audio =
 
     let playError () =
         play "https://neal.fun/infinite-craft/error.mp3"
+
+    let playDiscovery () =
+        play "https://neal.fun/infinite-craft/discovery.mp3"
