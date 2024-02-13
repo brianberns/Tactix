@@ -12,11 +12,17 @@ module Audio =
 
     let [<Global("Audio")>] private factory : HTMLAudioElementType = jsNative
 
-    let play src volume =
+    let private play src =
         let audio = factory.Create()
         audio.src <- src
-        audio.volume <- volume
+        audio.volume <- 0.5
         audio.play()
+
+    let playReward () =
+        play "https://neal.fun/infinite-craft/reward.mp3"
+
+    let playError () =
+        play "https://neal.fun/infinite-craft/error.mp3"
 
 type private DragData =
     {
@@ -97,16 +103,14 @@ module View =
 
             prop.onDrop (fun evt ->
                 evt.preventDefault()
-                if allowTacticExact evt then
-                    Audio.play
-                        "https://neal.fun/infinite-craft/reward.mp3"
-                        0.5
-                    dispatch (AddTactic (Exact term))
-                else
-                    Audio.play
-                        "https://neal.fun/infinite-craft/error.mp3"
-                        0.5
-                    dispatch (HighlightTerm (term.Name, false)))
+                let msg =
+                    if allowTacticExact evt then
+                        Audio.playReward ()
+                        AddTactic (Exact term)
+                    else
+                        Audio.playError ()
+                        HighlightTerm (term.Name, false)
+                dispatch msg)
         ]
 
     let private renderTerms model dispatch =
