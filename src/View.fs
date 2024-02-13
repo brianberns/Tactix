@@ -124,7 +124,7 @@ module View =
             ]
         ]
 
-    let private renderTacticTypes levelIdx =
+    let private renderTacticTypes levelIdx draggable =
         let tacticTypes =
             Level.levels[levelIdx].TacticTypes
         Html.div [
@@ -134,10 +134,11 @@ module View =
                     Html.div [
                         prop.className "tactic"
                         prop.text (TacticType.emoji tacticType)
-                        prop.draggable true
-                        prop.onDragStart (
-                            DragData.setData
-                                { TacticType = tacticType })
+                        if draggable then
+                            prop.draggable true
+                            prop.onDragStart (
+                                DragData.setData
+                                    { TacticType = tacticType })
                     ]
             ]
         ]
@@ -162,6 +163,10 @@ module View =
             renderHeader model.LevelIndex
             renderGoal model.Proof.Goal
             renderTerms model dispatch
-            renderTacticTypes model.LevelIndex
-            renderFooter model.AudioEnabled dispatch
+            renderTacticTypes
+                model.LevelIndex
+                model.Proof.Goal.IsSome
+            renderFooter
+                model.AudioEnabled
+                dispatch
         ]
