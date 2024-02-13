@@ -12,8 +12,23 @@ type Type = P | Q | R
 /// proposition.
 type Term =
     {
+        Id : int
         Type : Type
+        Highlight : bool
     }
+
+module Term =
+
+    let mutable private nextId = 0
+
+    let create typ =
+        let id = nextId
+        nextId <- nextId + 1
+        {
+            Id = id
+            Type = typ
+            Highlight = false
+        }
 
 type Tactic =
     | Exact
@@ -27,7 +42,8 @@ type Model =
         Tactics : List<Tactic>
     }
 
-type Msg = unit
+type Msg =
+    | HighlightTerm of (*id*) int * bool
 
 module Model =
 
@@ -36,13 +52,26 @@ module Model =
             {
                 Goal = P
                 Terms = [
-                    { Type = P }
-                    { Type = Q }
-                    { Type = R }
+                    Term.create P
+                    Term.create Q
+                    Term.create R
                 ]
                 Tactics = [ Exact; Intro; Apply ]
             }
         model, Cmd.none
 
     let update (msg : Msg) (model : Model) =
-        model, Cmd.none
+        let model' =
+            match msg with
+                | HighlightTerm (termId, highlight) ->
+                    {
+                        model with
+                            Terms =
+                                model.Terms
+                                    |> List.map (fun term ->
+                                        if term.Id = termId then
+                                            assert(term.Highlight <> highlight)
+                                            { term with Highlight = highlight }
+                                        else term)
+                    }
+        model', Cmd.none

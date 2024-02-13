@@ -50,9 +50,17 @@
 }
 
 .term {
+    margin: 20px;
+}
+
+.term-highlight {
+    width: 96px;
+    height: 96px;
+}
+
+.term-unhighlight {
     width: 48px;
     height: 48px;
-    margin: 20px;
 }
 
 .tactics-area {

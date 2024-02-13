@@ -1,19 +1,10 @@
 ﻿namespace Tactix
 
-open Fable.Core.JsInterop
-open Fable.SimpleJson
 open Feliz
 
 module View =
 
-    // https://github.com/facebook/react/issues/4431
-    type private Browser.Types.DragEvent with
-        member evt.OffsetX : float = evt?nativeEvent?offsetX
-        member evt.OffsetY : float = evt?nativeEvent?offsetY
-
-    let private format = "application/json"
-
-    module Type =
+    module private Type =
 
         let className (typ : Type) =
             (string typ).ToLower()
@@ -31,17 +22,39 @@ module View =
             ]
         ]
 
-    let private renderTerms (terms : seq<Term>) =
+    module private Term =
+
+        let id (term : Term) =
+            $"term-{term.Id}"
+
+    let private renderTerm term goal dispatch =
+        Html.div [
+            prop.id (Term.id term)
+            prop.classes [
+                "term"
+                if term.Highlight then "term-highlight"
+                else "term-unhighlight"
+                Type.className term.Type
+            ]
+            if term.Type = goal then
+                prop.onDragEnter (fun evt ->
+                    evt.preventDefault()
+                    dispatch (HighlightTerm (term.Id, true)))
+                prop.onDragOver (fun evt ->
+                    evt.preventDefault())
+                prop.onDragLeave (fun evt ->
+                    evt.preventDefault()
+                    dispatch (HighlightTerm (term.Id, false)))
+                prop.onDrop (fun evt ->
+                    evt.preventDefault())
+        ]
+
+    let private renderTerms model dispatch =
         Html.div [
             prop.className "terms-area"
             prop.children [
-                for term in terms do
-                    Html.div [
-                        prop.classes [
-                            "term"
-                            Type.className term.Type
-                        ]
-                    ]
+                for term in model.Terms do
+                    renderTerm term model.Goal dispatch
             ]
         ]
 
@@ -65,6 +78,6 @@ module View =
     let render (model : Model) (dispatch : Msg -> unit) =
         Html.div [
             renderGoal model.Goal
-            renderTerms model.Terms
+            renderTerms model dispatch
             renderTactics model.Tactics
         ]
