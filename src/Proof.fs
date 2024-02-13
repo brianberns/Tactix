@@ -23,13 +23,25 @@ module Term =
         }
 
 type Tactic =
-    | Exact
+    | Exact of Term
     | Intro
     | Apply
 
 type Proof =
     {
-        Goal : Type
-        Terms : List<Term>
-        Tactics : List<Tactic>
+        Goal : Option<Type>
+        Terms : Set<Term>
     }
+
+module Proof =
+
+    let add tactic proof =
+        match tactic with
+            | Exact term when
+                proof.Terms.Contains(term)
+                    && Some term.Type = proof.Goal ->
+                {
+                    Goal = None
+                    Terms = proof.Terms.Remove(term)
+                }
+            | _ -> failwith "Unexpected"

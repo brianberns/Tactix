@@ -2,14 +2,22 @@ namespace Tactix
 
 open Elmish
 
+[<RequireQualifiedAccess>]
+type TacticType =
+    | Exact
+    | Intro
+    | Apply
+
 type Model =
     {
         Proof : Proof
+        TacticTypes : List<TacticType>
         HighlightedTermNames : Set<string>
     }
 
 type Msg =
     | HighlightTerm of (*name*) string * bool
+    | AddTactic of Tactic
 
 module Model =
 
@@ -23,14 +31,20 @@ module Model =
             {
                 Proof =
                     {
-                        Goal = P
-                        Terms = [
-                            Term.create P
-                            Term.create Q
-                            Term.create R
-                        ]
-                        Tactics = [ Exact; Intro; Apply ]
+                        Goal = Some P
+                        Terms =
+                            set [
+                                Term.create P
+                                Term.create Q
+                                Term.create R
+                            ]
                     }
+                TacticTypes =
+                    [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                    ]
                 HighlightedTermNames = Set.empty
             }
         model, Cmd.none
@@ -40,10 +54,14 @@ module Model =
             match msg with
                 | HighlightTerm (termName, highlight) ->
                     let termNames =
-                        assert(model.HighlightedTermNames.Contains(termName) = not highlight)
+                        assert(
+                            model.HighlightedTermNames.Contains(termName)
+                                = not highlight)
                         if highlight then
                             model.HighlightedTermNames.Add(termName)
                         else
                             model.HighlightedTermNames.Remove(termName)
                     { model with HighlightedTermNames = termNames }
+                | AddTactic tactic ->
+                    { model with Proof = Proof.add tactic model.Proof }
         model', Cmd.none
