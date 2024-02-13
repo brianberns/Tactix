@@ -13,11 +13,13 @@ type Model =
         Proof : Proof
         TacticTypes : List<TacticType>
         HighlightedTermNames : Set<string>
+        AudioEnabled : bool
     }
 
 type Msg =
     | HighlightTerm of (*name*) string * bool
     | AddTactic of Tactic
+    | EnableAudio of bool
 
 module Model =
 
@@ -46,6 +48,7 @@ module Model =
                         TacticType.Apply
                     ]
                 HighlightedTermNames = Set.empty
+                AudioEnabled = true
             }
         model, Cmd.none
 
@@ -63,6 +66,10 @@ module Model =
     let private updateAddTactic tactic model =
         { model with Proof = Proof.add tactic model.Proof }
 
+    let private updateEnableAudio enable model =
+        assert(model.AudioEnabled <> enable)
+        { model with AudioEnabled = enable }
+
     let update (msg : Msg) (model : Model) =
         let model' =
             match msg with
@@ -70,4 +77,6 @@ module Model =
                     updateHighlightTerm termName highlight model
                 | AddTactic tactic ->
                     updateAddTactic tactic model
+                | EnableAudio enable ->
+                    updateEnableAudio enable model
         model', Cmd.none

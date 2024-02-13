@@ -85,3 +85,13 @@
     justify-content: center;
     align-items: center;
 }
+
+.settings-button {
+    width: 24px;
+}
+
+.settings-area {
+    position: absolute;
+    top: 100%;
+    transform: translateY(-100%);
+}

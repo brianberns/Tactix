@@ -52,7 +52,7 @@ module View =
         let id (term : Term) =
             $"term-{term.Name}"
 
-    let private renderTerm term goalOpt highlight dispatch =
+    let private renderTerm term goalOpt highlight audioEnabled dispatch =
 
         let allowTacticExact (evt : DragEvent) =
             Some term.Type = goalOpt
@@ -85,10 +85,10 @@ module View =
                 evt.preventDefault()
                 let msg =
                     if allowTacticExact evt then
-                        Audio.playReward ()
+                        if audioEnabled then Audio.playReward ()
                         AddTactic (Exact term)
                     else
-                        Audio.playError ()
+                        if audioEnabled then Audio.playError ()
                         HighlightTerm (term.Name, false)
                 dispatch msg)
         ]
@@ -104,6 +104,7 @@ module View =
                         term
                         model.Proof.Goal
                         highlight
+                        model.AudioEnabled
                         dispatch
             ]
         ]
@@ -128,9 +129,25 @@ module View =
             ]
         ]
 
+    let private renderSettings audioEnabled dispatch =
+        Html.div [
+            prop.className "settings-area"
+            prop.children [
+                Html.img [
+                    prop.className "settings-button"
+                    if audioEnabled then "https://neal.fun/infinite-craft/sound.svg"
+                    else "https://neal.fun/infinite-craft/mute.svg"
+                    |> prop.src
+                    prop.onClick (fun _ ->
+                        dispatch (EnableAudio (not audioEnabled)))
+                ]
+            ]
+        ]
+
     let render (model : Model) (dispatch : Msg -> unit) =
         Html.div [
             renderGoal model.Proof.Goal
             renderTerms model dispatch
             renderTacticTypes model.TacticTypes
+            renderSettings model.AudioEnabled dispatch
         ]
