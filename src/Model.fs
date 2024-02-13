@@ -41,7 +41,19 @@ module Model =
         { model with HighlightedTermNames = termNames }
 
     let private updateAddTactic tactic model =
-        { model with Proof = Proof.add tactic model.Proof }
+        let model' =
+            { model with
+                Proof = Proof.add tactic model.Proof }
+        if model'.Proof.Goal.IsNone then
+            let levelIdx =
+                (model.LevelIndex + 1) % Level.levels.Length
+            let level = Level.levels[levelIdx]
+            { model' with
+                LevelIndex = levelIdx
+                Proof = Level.initializeProof level
+                HighlightedTermNames = Set.empty
+            }
+        else model'
 
     let private updateEnableAudio enable model =
         assert(model.AudioEnabled <> enable)

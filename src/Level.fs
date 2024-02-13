@@ -42,12 +42,29 @@ module Level =
                 ]
             Instructions =
                 let exact = TacticType.emoji TacticType.Exact
-                $"Drag {exact} onto the symbol that matches the goal."
+                $"Drag {exact} onto the symbol that matches the top goal."
+        }
+
+    let private level1 =
+        {
+            Goal = R
+            Terms =
+                set [
+                    Term.create P
+                    Term.create Q
+                    Term.create R
+                ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                ]
+            Instructions = ""
         }
 
     let levels =
         [|
             level0
+            level1
         |]
 
     let initializeProof level =
