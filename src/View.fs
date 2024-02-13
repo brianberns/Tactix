@@ -26,6 +26,23 @@ module private DragData =
 
 module View =
 
+    let private renderHeader levelIdx =
+        let instructions = Level.levels[levelIdx].Instructions
+        Html.div [
+            prop.id "header"
+            prop.children [
+                Html.div [
+                    prop.id "level-num"
+                    prop.text $"Level {levelIdx + 1}"
+                ]
+                if instructions <> "" then
+                    Html.div [
+                        prop.id "instructions"
+                        prop.text instructions
+                    ]
+                ]
+        ]
+
     module private Type =
 
         let className (typ : Type) =
@@ -127,9 +144,9 @@ module View =
             ]
         ]
 
-    let private renderSettings audioEnabled dispatch =
+    let private renderFooter audioEnabled dispatch =
         Html.div [
-            prop.className "settings-area"
+            prop.id "footer"
             prop.children [
                 Html.img [
                     prop.className "settings-button"
@@ -144,8 +161,9 @@ module View =
 
     let render (model : Model) (dispatch : Msg -> unit) =
         Html.div [
+            renderHeader model.LevelIndex
             renderGoal model.Proof.Goal
             renderTerms model dispatch
             renderTacticTypes model.LevelIndex
-            renderSettings model.AudioEnabled dispatch
+            renderFooter model.AudioEnabled dispatch
         ]

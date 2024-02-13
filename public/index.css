@@ -4,6 +4,7 @@
     --delft-blue: #3d405bff;
     --cambridge-blue: #81b29aff;
     --sunset: #f2cc8fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .goal-area {
@@ -90,7 +91,21 @@
     width: 24px;
 }
 
-.settings-area {
+#header {
+    position: absolute;
+    z-index: 10;
+    width: 40%;
+}
+
+#level-num {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+#instructions {
+}
+
+#footer {
     position: absolute;
     top: 100%;
     transform: translateY(-100%);
