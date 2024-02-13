@@ -74,10 +74,11 @@ module Model =
         let cmd =
             if model'.Proof.Goal.IsNone then
                 Cmd.OfAsync.perform
-                    (fun () -> Async.Sleep 1000)
+                    (fun () -> Async.Sleep 800)
                     ()
                     (fun () ->
-                        Audio.playDiscovery ()
+                        if model.AudioEnabled then
+                            Audio.playDiscovery ()   // to-do: move this side-effect into the view
                         StartLevel (model'.LevelIndex + 1))
             else
                 Cmd.none
