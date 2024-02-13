@@ -49,19 +49,25 @@ module Model =
             }
         model, Cmd.none
 
+    let private updateHighlightTerm termName highlight model =
+        let termNames =
+            assert(
+                model.HighlightedTermNames.Contains(termName)
+                    = not highlight)
+            if highlight then
+                model.HighlightedTermNames.Add(termName)
+            else
+                model.HighlightedTermNames.Remove(termName)
+        { model with HighlightedTermNames = termNames }
+
+    let private updateAddTactic tactic model =
+        { model with Proof = Proof.add tactic model.Proof }
+
     let update (msg : Msg) (model : Model) =
         let model' =
             match msg with
                 | HighlightTerm (termName, highlight) ->
-                    let termNames =
-                        assert(
-                            model.HighlightedTermNames.Contains(termName)
-                                = not highlight)
-                        if highlight then
-                            model.HighlightedTermNames.Add(termName)
-                        else
-                            model.HighlightedTermNames.Remove(termName)
-                    { model with HighlightedTermNames = termNames }
+                    updateHighlightTerm termName highlight model
                 | AddTactic tactic ->
-                    { model with Proof = Proof.add tactic model.Proof }
+                    updateAddTactic tactic model
         model', Cmd.none
