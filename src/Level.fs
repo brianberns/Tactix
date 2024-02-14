@@ -28,6 +28,7 @@ module Level =
     let private typeR = Primitive "R"
 
     let private exact = TacticType.emoji TacticType.Exact
+    let private intro = TacticType.emoji TacticType.Intro
 
     let private level1 =
         {
@@ -79,11 +80,27 @@ module Level =
             Instructions = $"{exact} also works on more more complex symbols"
         }
 
+    let private level4 =
+        {
+            Goal = typePQ
+            Terms =
+                set [
+                    Term.create "HQ" typeQ
+                ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                ]
+            Instructions = $"Drag {intro} onto the goal to simplify it"
+        }
+
     let levels =
         [|
             level1
             level2
             level3
+            level4
         |]
 
     let initializeProof level =
