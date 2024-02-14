@@ -3,19 +3,25 @@ namespace Tactix
 // https://www.ma.imperial.ac.uk/~buzzard/lean_together/source/contents.html
 
 /// A type corresponds to a proposition that might be provable.
-/// E.g. 1 + 1 = 2.
-type Type = P | Q | R
+/// E.g. P -> Q.
+type Type =
+    | Primitive of name : string
+    | Function of Type * Type
 
 /// A term is an instance of a type and proves the corresponding
-/// proposition.
+/// proposition. E.g. HP : P.
 type Term =
     {
+        /// Name of this term.
         Name : string
+
+        /// Type of this term.
         Type : Type
     }
 
 module Term =
 
+    /// Creates a term of the given type.
     let create name typ =
         {
             Name = name

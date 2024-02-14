@@ -41,31 +41,36 @@ module View =
                 ]
         ]
 
-    module private Type =
-
-        let className (typ : Type) =
-            (string typ).ToLower()
+    let rec private renderType (typ : Type) =
+        Html.div [
+            match typ with
+                | Primitive name ->
+                    prop.classes [
+                        "type"
+                        "primitive-type"
+                        name.ToLower()
+                    ]
+                | Function (typeA, typeB) ->
+                    prop.classes [
+                        "type"
+                        "function-type"
+                    ]
+                    prop.children [
+                        renderType typeA
+                        Html.text "→"
+                        renderType typeB
+                    ]
+        ]
 
     let private renderGoal (goalOpt : Option<Type>) =
         Html.div [
             prop.className "goal-area"
             prop.children [
                 match goalOpt with
-                    | Some goal ->
-                        Html.div [
-                            prop.classes [
-                                "type"
-                                Type.className goal
-                            ]
-                        ]
+                    | Some goal -> renderType goal
                     | None -> ()
             ]
         ]
-
-    module private Term =
-
-        let id (term : Term) =
-            $"term-{term.Name}"
 
     let private renderTerm term goalOpt highlight audioEnabled dispatch =
 
@@ -73,15 +78,34 @@ module View =
             Some term.Type = goalOpt
                 && (DragData.getData evt).TacticType = TacticType.Exact
 
+        let rec loop typ =
+            Html.div [
+                match typ with
+                    | Primitive name ->
+                        prop.classes [
+                            "term"
+                            "primitive-term"
+                            if highlight then "primitive-term-highlight"
+                            name.ToLower()
+                        ]
+                    | Function (typeA, typeB) ->
+                        prop.classes [
+                            "term"
+                            "function-term"
+                        ]
+                        prop.children [
+                            loop typeA
+                            Html.text "→"
+                            loop typeB
+                        ]
+            ]
+
         Html.div [
-
-            prop.id (Term.id term)
-
             prop.classes [
                 "term"
-                if highlight then "term-highlight"
-                Type.className term.Type
+                "top-level-term"
             ]
+            prop.children (loop term.Type)
 
             // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
 

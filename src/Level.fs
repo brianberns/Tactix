@@ -23,18 +23,17 @@ type Level =
 
 module Level =
 
-    module private Term =
-
-        let create typ =
-            Term.create $"H{typ}" typ
+    let private typeP = Primitive "P"
+    let private typeQ = Primitive "Q"
+    let private typeR = Primitive "R"
 
     let private level0 =
         {
-            Goal = P
+            Goal = typeP
             Terms =
                 set [
-                    Term.create P
-                    Term.create Q
+                    Term.create "HP" typeP
+                    Term.create "HQ" typeQ
                 ]
             TacticTypes =
                 set [
@@ -47,12 +46,30 @@ module Level =
 
     let private level1 =
         {
-            Goal = R
+            Goal = typeR
             Terms =
                 set [
-                    Term.create P
-                    Term.create Q
-                    Term.create R
+                    Term.create "HP" typeP
+                    Term.create "HQ" typeQ
+                    Term.create "HR" typeR
+                ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                ]
+            Instructions = ""
+        }
+
+    let private typePQ = Function (typeP, typeQ)
+
+    let private level2 =
+        {
+            Goal = typePQ
+            Terms =
+                set [
+                    Term.create "HP" typeP
+                    Term.create "HQ" typeQ
+                    Term.create "HPQ" typePQ
                 ]
             TacticTypes =
                 set [
@@ -65,6 +82,7 @@ module Level =
         [|
             level0
             level1
+            level2
         |]
 
     let initializeProof level =
