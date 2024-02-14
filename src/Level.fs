@@ -27,7 +27,9 @@ module Level =
     let private typeQ = Primitive "Q"
     let private typeR = Primitive "R"
 
-    let private level0 =
+    let private exact = TacticType.emoji TacticType.Exact
+
+    let private level1 =
         {
             Goal = typeP
             Terms =
@@ -40,11 +42,10 @@ module Level =
                     TacticType.Exact
                 ]
             Instructions =
-                let exact = TacticType.emoji TacticType.Exact
                 $"Drag {exact} onto the symbol that matches the top goal."
         }
 
-    let private level1 =
+    let private level2 =
         {
             Goal = typeR
             Terms =
@@ -62,7 +63,7 @@ module Level =
 
     let private typePQ = Function (typeP, typeQ)
 
-    let private level2 =
+    let private level3 =
         {
             Goal = typePQ
             Terms =
@@ -75,14 +76,14 @@ module Level =
                 set [
                     TacticType.Exact
                 ]
-            Instructions = ""
+            Instructions = $"{exact} also works on more more complex symbols"
         }
 
     let levels =
         [|
-            level0
             level1
             level2
+            level3
         |]
 
     let initializeProof level =
