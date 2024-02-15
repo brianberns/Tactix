@@ -99,7 +99,7 @@ module View =
             renderDragDrop
                 highlightMsg
                 allow
-                model.AudioEnabled
+                model.Settings.AudioEnabled
                 dispatch
         Html.div [
             prop.className "type"
@@ -136,7 +136,7 @@ module View =
             renderDragDrop
                 highlightMsg
                 allow
-                model.AudioEnabled
+                model.Settings.AudioEnabled
                 dispatch
         Html.div [
             prop.className "term"
@@ -202,13 +202,13 @@ module View =
 
     let render model dispatch =
         Html.div [
-            renderHeader model.LevelIndex
+            renderHeader model.Settings.LevelIndex
             renderGoal model dispatch
             renderTerms model dispatch
             renderTacticTypes
-                model.LevelIndex
+                model.Settings.LevelIndex
                 model.Proof.GoalOpt.IsSome
             renderFooter
-                model.AudioEnabled
+                model.Settings.AudioEnabled
                 dispatch
         ]

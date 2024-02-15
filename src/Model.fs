@@ -2,33 +2,36 @@
 
 open Elmish
 
+[<RequireQualifiedAccess>]
+type Highlight =
+    | None
+    | Term of Term
+    | Type of Type
+
 /// Current state of the game.
 type Model =
     {
-        /// 0-based index of the current level.
-        LevelIndex : int
+        /// Current settings.
+        Settings : Settings
 
         /// Current state of the proof.
         Proof : Proof
 
-        /// Currently highlighted term, type, or nothing.
-        Highlighted : Choice<unit, Term, Type>
-
-        /// Audio is currently enabled or disabled?
-        AudioEnabled : bool
+        /// Currently highlighted object.
+        Highlight : Highlight
     }
 
     member model.IsHighlighted(term) =
-        model.Highlighted = Choice2Of3 term
+        model.Highlight = Highlight.Term term
 
     member model.IsHighlighted(typ) =
-        model.Highlighted = Choice3Of3 typ
+        model.Highlight = Highlight.Type typ
 
 /// Message to change the current state of the game.
 type Message =
 
     /// Highlights the given term, type, or nothing.
-    | Highlight of Choice<unit, Term, Type>
+    | Highlight of Highlight
 
     /// Adds the given tactic to the proof.
     | AddTactic of Tactic
@@ -42,36 +45,44 @@ type Message =
 module Model =
 
     let init () =
-        let levelIdx = 6
-        let level = Level.levels[levelIdx]
-        let proof = Level.initializeProof level
+        let settings = Settings.get ()
+        let proof =
+            Level.levels[settings.LevelIndex]
+                |> Level.initializeProof
         let model =
             {
-                LevelIndex = levelIdx
+                Settings = settings
                 Proof = proof
-                Highlighted = Choice1Of3 ()
-                AudioEnabled = true
+                Highlight = Highlight.None
             }
         model, Cmd.none
 
-    let private updateHighlight choice model =
-        assert(model.Highlighted <> choice)
-        { model with Highlighted = choice }
+    let private updateHighlight highlight model =
+        { model with Highlight = highlight }
 
     let private updateAddTactic tactic model =
         { model with
             Proof = Proof.add tactic model.Proof }
 
     let private updateEnableAudio enable model =
-        assert(model.AudioEnabled <> enable)
-        { model with AudioEnabled = enable }
+        let settings =
+            { model.Settings with AudioEnabled = enable }
+        Settings.save settings   // side-effect
+        { model with Settings = settings }
 
     let private updateStartLevel levelIdx model =
+
+        let settings =
+            { model.Settings with LevelIndex = levelIdx }
+        Settings.save settings   // side-effect
+
         let proof = Level.initializeProof Level.levels[levelIdx]
-        { model with
-            LevelIndex = levelIdx
+
+        {
+            Settings = settings
             Proof = proof
-            Highlighted = Choice1Of3 () }
+            Highlight = Highlight.None
+        }
 
     /// Updates the model based on the given message.
     let update msg model =
@@ -91,17 +102,17 @@ module Model =
                     (fun () -> Async.Sleep 800)
                     ()
                     (fun () ->
-                        if model.AudioEnabled then
-                            Audio.playDiscovery ()   // to-do: move this side-effect into the view
-                        StartLevel (model'.LevelIndex + 1))
+                        if model.Settings.AudioEnabled then
+                            Audio.playDiscovery ()   // side-effect
+                        StartLevel (model'.Settings.LevelIndex + 1))
             else
                 Cmd.none
         model', cmd
 
 module Message =
 
-    let noHighlight = Highlight (Choice1Of3 ())
+    let noHighlight = Highlight Highlight.None
 
-    let highlightTerm term = Highlight (Choice2Of3 term)
+    let highlightTerm term = Highlight (Highlight.Term term)
 
-    let highlightType typ = Highlight (Choice3Of3 typ)
+    let highlightType typ = Highlight (Highlight.Type typ)
