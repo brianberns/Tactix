@@ -12,9 +12,6 @@ type Type =
 /// proposition. E.g. HP : P.
 type Term =
     {
-        /// Name of this term.
-        Name : string
-
         /// Type of this term.
         Type : Type
     }
@@ -22,11 +19,8 @@ type Term =
 module Term =
 
     /// Creates a term of the given type.
-    let create name typ =
-        {
-            Name = name
-            Type = typ
-        }
+    let create typ =
+        { Type = typ }
 
 type Tactic =
     | Exact of Term
@@ -35,7 +29,7 @@ type Tactic =
 
 type Proof =
     {
-        Goal : Option<Type>
+        GoalOpt : Option<Type>
         Terms : Set<Term>
     }
 
@@ -45,9 +39,9 @@ module Proof =
         match tactic with
             | Exact term when
                 proof.Terms.Contains(term)
-                    && Some term.Type = proof.Goal ->
+                    && Some term.Type = proof.GoalOpt ->
                 {
-                    Goal = None
+                    GoalOpt = None
                     Terms = proof.Terms.Remove(term)
                 }
             | _ -> failwith "Unexpected"

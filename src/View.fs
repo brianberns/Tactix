@@ -41,25 +41,35 @@ module View =
                 ]
         ]
 
-    let rec private renderType (typ : Type) =
+    let private renderType typ =
+
+        let rec loop (typ : Type) =
+            Html.div [
+                match typ with
+                    | Primitive name ->
+                        prop.classes [
+                            "type"
+                            "primitive-type"
+                            name.ToLower()
+                        ]
+                    | Function (typeA, typeB) ->
+                        prop.classes [
+                            "type"
+                            "function-type"
+                        ]
+                        prop.children [
+                            loop typeA
+                            Html.text "→"
+                            loop typeB
+                        ]
+            ]
+
         Html.div [
-            match typ with
-                | Primitive name ->
-                    prop.classes [
-                        "type"
-                        "primitive-type"
-                        name.ToLower()
-                    ]
-                | Function (typeA, typeB) ->
-                    prop.classes [
-                        "type"
-                        "function-type"
-                    ]
-                    prop.children [
-                        renderType typeA
-                        Html.text "→"
-                        renderType typeB
-                    ]
+            prop.classes [
+                "type"
+                "top-level-type"
+            ]
+            prop.children (loop typ)
         ]
 
     let private renderGoal (goalOpt : Option<Type>) =
@@ -111,14 +121,14 @@ module View =
 
             prop.onDragEnter (fun evt ->
                 evt.preventDefault()
-                dispatch (HighlightTerm (term.Name, true)))
+                dispatch (Highlight (Choice2Of3 term)))
 
             prop.onDragOver (fun evt ->
                 evt.preventDefault())
 
             prop.onDragLeave (fun evt ->
                 evt.preventDefault()
-                dispatch (HighlightTerm (term.Name, false)))
+                dispatch (Highlight (Choice1Of3 ())))
 
             prop.onDrop (fun evt ->
                 evt.preventDefault()
@@ -128,7 +138,7 @@ module View =
                         AddTactic (Exact term)
                     else
                         if audioEnabled then Audio.playError ()
-                        HighlightTerm (term.Name, false)
+                        Highlight (Choice1Of3 ())
                 dispatch msg)
         ]
 
@@ -138,10 +148,10 @@ module View =
             prop.children [
                 for term in model.Proof.Terms do
                     let highlight =
-                        model.HighlightedTermNames.Contains(term.Name)
+                        model.Highlighted = Choice2Of3 term
                     renderTerm
                         term
-                        model.Proof.Goal
+                        model.Proof.GoalOpt
                         highlight
                         model.AudioEnabled
                         dispatch
@@ -185,11 +195,11 @@ module View =
     let render model dispatch =
         Html.div [
             renderHeader model.LevelIndex
-            renderGoal model.Proof.Goal
+            renderGoal model.Proof.GoalOpt
             renderTerms model dispatch
             renderTacticTypes
                 model.LevelIndex
-                model.Proof.Goal.IsSome
+                model.Proof.GoalOpt.IsSome
             renderFooter
                 model.AudioEnabled
                 dispatch

@@ -6,12 +6,12 @@ type Model =
     {
         LevelIndex : int
         Proof : Proof
-        HighlightedTermNames : Set<string>
+        Highlighted : Choice<unit, Term, Type>
         AudioEnabled : bool
     }
 
 type Msg =
-    | HighlightTerm of (*name*) string * bool
+    | Highlight of Choice<unit, Term, Type>
     | AddTactic of Tactic
     | EnableAudio of bool
     | StartLevel of int
@@ -21,25 +21,19 @@ module Model =
     let init () =
         let levelIdx = 0
         let level = Level.levels[levelIdx]
+        let proof = Level.initializeProof level
         let model =
             {
                 LevelIndex = levelIdx
-                Proof = Level.initializeProof level
-                HighlightedTermNames = Set.empty
+                Proof = proof
+                Highlighted = Choice1Of3 ()
                 AudioEnabled = true
             }
         model, Cmd.none
 
-    let private updateHighlightTerm termName highlight model =
-        let termNames =
-            assert(
-                model.HighlightedTermNames.Contains(termName)
-                    = not highlight)
-            if highlight then
-                model.HighlightedTermNames.Add(termName)
-            else
-                model.HighlightedTermNames.Remove(termName)
-        { model with HighlightedTermNames = termNames }
+    let private updateHighlight choice model =
+        assert(model.Highlighted <> choice)
+        { model with Highlighted = choice }
 
     let private updateAddTactic tactic model =
         { model with
@@ -50,16 +44,17 @@ module Model =
         { model with AudioEnabled = enable }
 
     let private updateStartLevel levelIdx model =
+        let proof = Level.initializeProof Level.levels[levelIdx]
         { model with
             LevelIndex = levelIdx
-            Proof = Level.initializeProof Level.levels[levelIdx]
-            HighlightedTermNames = Set.empty }
+            Proof = proof
+            Highlighted = Choice1Of3 () }
 
     let update (msg : Msg) (model : Model) =
         let model' =
             match msg with
-                | HighlightTerm (termName, highlight) ->
-                    updateHighlightTerm termName highlight model
+                | Highlight choice ->
+                    updateHighlight choice model
                 | AddTactic tactic ->
                     updateAddTactic tactic model
                 | EnableAudio enable ->
@@ -67,7 +62,7 @@ module Model =
                 | StartLevel levelIdx ->
                     updateStartLevel levelIdx model
         let cmd =
-            if model'.Proof.Goal.IsNone then
+            if model'.Proof.GoalOpt.IsNone then
                 Cmd.OfAsync.perform
                     (fun () -> Async.Sleep 800)
                     ()

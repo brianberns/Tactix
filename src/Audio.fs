@@ -11,7 +11,7 @@ module Audio =
     let private play src =
         let audio = factory.Create()
         audio.src <- src
-        audio.volume <- 0.5
+        audio.volume <- 0.1
         audio.play()
 
     let playReward () =

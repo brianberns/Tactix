@@ -35,8 +35,8 @@ module Level =
             Goal = typeP
             Terms =
                 set [
-                    Term.create "HP" typeP
-                    Term.create "HQ" typeQ
+                    Term.create typeP
+                    Term.create typeQ
                 ]
             TacticTypes =
                 set [
@@ -51,9 +51,9 @@ module Level =
             Goal = typeR
             Terms =
                 set [
-                    Term.create "HP" typeP
-                    Term.create "HQ" typeQ
-                    Term.create "HR" typeR
+                    Term.create typeP
+                    Term.create typeQ
+                    Term.create typeR
                 ]
             TacticTypes =
                 set [
@@ -69,15 +69,15 @@ module Level =
             Goal = typePQ
             Terms =
                 set [
-                    Term.create "HP" typeP
-                    Term.create "HQ" typeQ
-                    Term.create "HPQ" typePQ
+                    Term.create typeP
+                    Term.create typeQ
+                    Term.create typePQ
                 ]
             TacticTypes =
                 set [
                     TacticType.Exact
                 ]
-            Instructions = $"{exact} also works on more more complex symbols"
+            Instructions = $"You can also use {exact} on more complex symbols"
         }
 
     let private level4 =
@@ -85,7 +85,7 @@ module Level =
             Goal = typePQ
             Terms =
                 set [
-                    Term.create "HQ" typeQ
+                    Term.create typeQ
                 ]
             TacticTypes =
                 set [
@@ -105,6 +105,6 @@ module Level =
 
     let initializeProof level =
         {
-            Goal = Some level.Goal
+            GoalOpt = Some level.Goal
             Terms = level.Terms
         }
