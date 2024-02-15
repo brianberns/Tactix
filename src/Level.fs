@@ -124,7 +124,7 @@ module Level =
                     TacticType.Intro
                     TacticType.Apply
                 ]
-            Instructions = $"You can use {apply} on ▢→■ when your goal is ■ to change the goal to ▢."
+            Instructions = $"Drag {apply} onto ▢→■ when the goal is ■ to change the goal to ▢."
         }
 
     let levels =
