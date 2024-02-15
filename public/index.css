@@ -20,7 +20,6 @@
 }
 
 .type {
-    border: 3px solid var(--eggshell);
 }
 
 .primitive-type {
@@ -36,6 +35,7 @@
 }
 
 .function-type {
+    border: 3px solid black;
     font-size: x-large;
     display: inline-flex;
     padding: 3px;
@@ -70,7 +70,6 @@
 
 .term {
     margin: 20px;
-    border: 3px solid var(--sunset);
 }
 
 .tactics-area {
