@@ -38,10 +38,7 @@ module Level =
                     Term.create typeP
                     Term.create typeQ
                 ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                ]
+            TacticTypes = set [ TacticType.Exact ]
             Instructions =
                 $"Drag {exact} onto the symbol that matches the top goal."
         }
@@ -55,15 +52,13 @@ module Level =
                     Term.create typeQ
                     Term.create typeR
                 ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                ]
+            TacticTypes = set [ TacticType.Exact ]
             Instructions = ""
         }
 
     let private typePP = Function (typeP, typeP)
     let private typePQ = Function (typeP, typeQ)
+    let private typePQR = Function (typeP, Function (typeQ, typeR))
 
     let private level3 =
         {
@@ -74,20 +69,14 @@ module Level =
                     Term.create typeQ
                     Term.create typePQ
                 ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                ]
+            TacticTypes = set [ TacticType.Exact ]
             Instructions = $"You can also use {exact} on more complex symbols"
         }
 
     let private level4 =
         {
             Goal = typePQ
-            Terms =
-                set [
-                    Term.create typeQ
-                ]
+            Terms = set [ Term.create typeQ ]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -108,6 +97,18 @@ module Level =
             Instructions = ""
         }
 
+    let private level6 =
+        {
+            Goal = typePQR
+            Terms = set [ Term.create typeR ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                ]
+            Instructions = ""
+        }
+
     let levels =
         [|
             level1
@@ -115,6 +116,7 @@ module Level =
             level3
             level4
             level5
+            level6
         |]
 
     let initializeProof level =
