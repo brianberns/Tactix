@@ -47,6 +47,15 @@ module View =
 
     let private renderInnerType isHighlighted typ =
 
+        let between content f types =
+            [
+                for (i, typ) in Seq.indexed types do
+                    if i > 0 then
+                        yield Html.span [
+                            prop.innerHtml content ]
+                    yield f typ
+            ]
+
         let rec loop typ =
             Html.div [
                 match typ with
@@ -56,13 +65,18 @@ module View =
                              else "primitive-type")
                             name.ToLower()
                         ]
-                    | Function (typeA, typeB) ->
-                        prop.className "function-type"
-                        prop.children [
-                            loop typeA
-                            Html.text "→"
-                            loop typeB
-                        ]
+                    | Function (p, q) ->
+                        prop.className "compound-type"
+                        between "→" loop [p; q]
+                            |> prop.children
+                    | Product types ->
+                        prop.className "compound-type"
+                        between "&nbsp;∧&nbsp;" loop types
+                            |> prop.children
+                    | Sum types ->
+                        prop.className "compound-type"
+                        between "&nbsp;∨&nbsp;" loop types
+                            |> prop.children
             ]
 
         loop typ

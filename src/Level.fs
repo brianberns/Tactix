@@ -146,6 +146,22 @@ module Level =
             Instructions = ""
         }
 
+    let private p_or_q = Sum [p; q]
+    let private q_or_p = Sum [q; p]
+
+    let private level9 =
+        {
+            Goal = q_or_p
+            Terms = set [ Term.create p_or_q ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                ]
+            Instructions = ""
+        }
+
     let levels =
         [|
             level1
@@ -156,6 +172,7 @@ module Level =
             level6
             level7
             level8
+            level9
         |]
 
     let initializeProof level =

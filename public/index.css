@@ -34,7 +34,7 @@
     pointer-events: none;
 }
 
-.function-type {
+.compound-type {
     border: 3px solid black;
     font-size: x-large;
     display: inline-flex;
