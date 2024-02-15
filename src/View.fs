@@ -22,6 +22,9 @@ module private DragData =
         evt.dataTransfer.getData(format)
             |> Json.parseAs<DragData>
 
+    let tacticType evt =
+        (getData evt).TacticType
+
 module View =
 
     let private renderHeader levelIdx =
@@ -110,12 +113,16 @@ module View =
     let private renderGoal model dispatch =
 
         let allowIntro (evt : DragEvent) =
-            if (DragData.getData evt).TacticType = TacticType.Intro then
-                match model.Proof.GoalOpt with
-                    | Some (Function (typeA, _)) ->
-                        Some (AddTactic (Intro typeA))
-                    | _ -> None
-            else None
+            option {
+                if DragData.tacticType evt = TacticType.Intro then
+                    let! p =
+                        match model.Proof.GoalOpt with
+                            | Some (Function (p, _)) -> Some p
+                            | _ -> None
+                    let tactic = Intro (Term.create p)
+                    let! _ = Proof.tryAdd tactic model.Proof
+                    return AddTactic tactic
+            }
 
         Html.div [
             prop.className "goal-area"
@@ -147,12 +154,12 @@ module View =
     let private renderTerms model dispatch =
 
         let allowExact term (evt : DragEvent) =
-            if (DragData.getData evt).TacticType = TacticType.Exact then
-                let tactic = Exact term
-                if Proof.canAdd tactic model.Proof then
-                    Some (AddTactic tactic)
-                else None
-            else None
+            option {
+                if DragData.tacticType evt = TacticType.Exact then
+                    let tactic = Exact term
+                    let! _ = Proof.tryAdd tactic model.Proof
+                    return AddTactic tactic
+            }
 
         Html.div [
             prop.className "terms-area"

@@ -24,8 +24,8 @@ module Term =
 
 type Tactic =
     | Exact of Term
-    | Intro of Type
-    | Apply
+    | Intro of Term
+    | Apply of Term
 
 type Proof =
     {
@@ -34,29 +34,30 @@ type Proof =
     }
 
 module Proof =
-
-    let canAdd tactic proof =
-        match tactic, proof.GoalOpt with
-            | Exact term, Some goal ->
-                proof.Terms.Contains(term) && term.Type = goal
-            | Intro typ, Some (Function (typeA, _))
-                when typeA = typ -> true
-            | _ -> false
-
-    let add tactic proof =
-        assert(canAdd tactic proof)
-        match tactic, proof.GoalOpt with
-            | Exact term, _ ->
-                {
-                    GoalOpt = None
-                    Terms = proof.Terms.Remove(term)
-                }
-            | Intro typ, Some (Function (_, typeB)) ->
-                {
-                    GoalOpt = Some typeB
-                    Terms =
-                        Term.create typ
-                            |> proof.Terms.Add
-                }
-            | _ -> failwith "Unexpected"
     
+    let tryAdd tactic proof =
+
+        match tactic, proof.GoalOpt with
+
+                // term (HP : P) eliminates goal P
+            | Exact hp, Some p
+                when proof.Terms.Contains(hp)
+                    && hp.Type = p ->
+                Some { proof with GoalOpt = None }
+
+                // introduces term (HP : P) when goal is P -> Q, changing goal to just Q
+            | Intro hp, Some (Function (p, q))
+                when hp.Type = p ->
+                Some {
+                    GoalOpt = Some q
+                    Terms = proof.Terms.Add(hp)
+                }
+
+                // applies term (HPQ : P -> Q) when goal is Q, changing goal to just P
+            | Apply hpq, Some q ->
+                match hpq.Type with
+                    | Function (p, q') when q' = q ->
+                        Some { proof with GoalOpt = Some p }
+                    | _ -> None
+
+            | _ -> None

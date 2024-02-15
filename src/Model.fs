@@ -61,8 +61,11 @@ module Model =
         { model with Highlight = highlight }
 
     let private updateAddTactic tactic model =
-        { model with
-            Proof = Proof.add tactic model.Proof }
+        let proof =
+            model.Proof
+                |> Proof.tryAdd tactic
+                |> Option.defaultValue model.Proof
+        { model with Proof = proof }
 
     let private updateEnableAudio enable model =
         let settings =

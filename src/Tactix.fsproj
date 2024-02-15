@@ -3,6 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Prelude.fs" />
     <Compile Include="Proof.fs" />
     <Compile Include="Level.fs" />
     <Compile Include="Settings.fs" />
