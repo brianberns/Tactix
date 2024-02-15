@@ -23,9 +23,9 @@ type Level =
 
 module Level =
 
-    let private typeP = Primitive "P"
-    let private typeQ = Primitive "Q"
-    let private typeR = Primitive "R"
+    let private p = Primitive "P"
+    let private q = Primitive "Q"
+    let private r = Primitive "R"
 
     let private exact = TacticType.emoji TacticType.Exact
     let private intro = TacticType.emoji TacticType.Intro
@@ -33,11 +33,11 @@ module Level =
 
     let private level1 =
         {
-            Goal = typeP
+            Goal = p
             Terms =
                 set [
-                    Term.create typeP
-                    Term.create typeQ
+                    Term.create p
+                    Term.create q
                 ]
             TacticTypes = set [ TacticType.Exact ]
             Instructions =
@@ -46,30 +46,30 @@ module Level =
 
     let private level2 =
         {
-            Goal = typeR
+            Goal = r
             Terms =
                 set [
-                    Term.create typeP
-                    Term.create typeQ
-                    Term.create typeR
+                    Term.create p
+                    Term.create q
+                    Term.create r
                 ]
             TacticTypes = set [ TacticType.Exact ]
             Instructions = ""
         }
 
-    let private typePP = Function (typeP, typeP)
-    let private typePQ = Function (typeP, typeQ)
-    let private typeQR = Function (typeQ, typeR)
-    let private typePQR = Function (typeP, Function (typeQ, typeR))
+    let private pp = Function (p, p)
+    let private pq = Function (p, q)
+    let private qr = Function (q, r)
+    let private pqr = Function (p, Function (q, r))
 
     let private level3 =
         {
-            Goal = typePQ
+            Goal = pq
             Terms =
                 set [
-                    Term.create typeP
-                    Term.create typeQ
-                    Term.create typePQ
+                    Term.create p
+                    Term.create q
+                    Term.create pq
                 ]
             TacticTypes = set [ TacticType.Exact ]
             Instructions = $"You can also use {exact} on more complex symbols"
@@ -77,8 +77,8 @@ module Level =
 
     let private level4 =
         {
-            Goal = typePQ
-            Terms = set [ Term.create typeQ ]
+            Goal = pq
+            Terms = set [ Term.create q ]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -89,7 +89,7 @@ module Level =
 
     let private level5 =
         {
-            Goal = typePP
+            Goal = pp
             Terms = Set.empty
             TacticTypes =
                 set [
@@ -101,8 +101,8 @@ module Level =
 
     let private level6 =
         {
-            Goal = typePQR
-            Terms = set [ Term.create typeR ]
+            Goal = pqr
+            Terms = set [ Term.create r ]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -113,11 +113,11 @@ module Level =
 
     let private level7 =
         {
-            Goal = typeQ
+            Goal = q
             Terms =
                 set [
-                    Term.create typeP
-                    Term.create typePQ
+                    Term.create p
+                    Term.create pq
                 ]
             TacticTypes =
                 set [
@@ -130,12 +130,12 @@ module Level =
 
     let private level8 =
         {
-            Goal = typeR
+            Goal = r
             Terms =
                 set [
-                    Term.create typeP
-                    Term.create typePQ
-                    Term.create typeQR
+                    Term.create p
+                    Term.create pq
+                    Term.create qr
                 ]
             TacticTypes =
                 set [
