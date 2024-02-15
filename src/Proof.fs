@@ -24,7 +24,7 @@ module Term =
 
 type Tactic =
     | Exact of Term
-    | Intro
+    | Intro of Type
     | Apply
 
 type Proof =
@@ -35,13 +35,28 @@ type Proof =
 
 module Proof =
 
+    let canAdd tactic proof =
+        match tactic, proof.GoalOpt with
+            | Exact term, Some goal ->
+                proof.Terms.Contains(term) && term.Type = goal
+            | Intro typ, Some (Function (typeA, _))
+                when typeA = typ -> true
+            | _ -> false
+
     let add tactic proof =
-        match tactic with
-            | Exact term when
-                proof.Terms.Contains(term)
-                    && Some term.Type = proof.GoalOpt ->
+        assert(canAdd tactic proof)
+        match tactic, proof.GoalOpt with
+            | Exact term, _ ->
                 {
                     GoalOpt = None
                     Terms = proof.Terms.Remove(term)
                 }
+            | Intro typ, Some (Function (_, typeB)) ->
+                {
+                    GoalOpt = Some typeB
+                    Terms =
+                        Term.create typ
+                            |> proof.Terms.Add
+                }
             | _ -> failwith "Unexpected"
+    

@@ -107,13 +107,22 @@ module View =
             yield! dragDrop
         ]
 
-    let private renderGoal allow model dispatch =
+    let private renderGoal model dispatch =
+
+        let allowIntro (evt : DragEvent) =
+            if (DragData.getData evt).TacticType = TacticType.Intro then
+                match model.Proof.GoalOpt with
+                    | Some (Function (typeA, _)) ->
+                        Some (AddTactic (Intro typeA))
+                    | _ -> None
+            else None
+
         Html.div [
             prop.className "goal-area"
             prop.children [
                 match model.Proof.GoalOpt with
                     | Some goal ->
-                        renderType goal allow model dispatch
+                        renderType goal allowIntro model dispatch
                     | None -> ()
             ]
         ]
@@ -138,9 +147,11 @@ module View =
     let private renderTerms model dispatch =
 
         let allowExact term (evt : DragEvent) =
-            if Some term.Type = model.Proof.GoalOpt
-                && (DragData.getData evt).TacticType = TacticType.Exact then
-                    Some (AddTactic (Exact term))
+            if (DragData.getData evt).TacticType = TacticType.Exact then
+                let tactic = Exact term
+                if Proof.canAdd tactic model.Proof then
+                    Some (AddTactic tactic)
+                else None
             else None
 
         Html.div [
@@ -192,10 +203,7 @@ module View =
     let render model dispatch =
         Html.div [
             renderHeader model.LevelIndex
-            renderGoal
-                (fun _ -> None)
-                model
-                dispatch
+            renderGoal model dispatch
             renderTerms model dispatch
             renderTacticTypes
                 model.LevelIndex
