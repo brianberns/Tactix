@@ -25,7 +25,8 @@ module private DragData =
 module View =
 
     let private renderHeader levelIdx =
-        let instructions = Level.levels[levelIdx].Instructions
+        let instructions =
+            Level.levels[levelIdx].Instructions
         Html.div [
             prop.id "header"
             prop.children [
@@ -68,14 +69,14 @@ module View =
         [
             prop.onDragEnter (fun evt ->
                 evt.preventDefault()
-                dispatch (Highlight highlight))
+                dispatch highlight)
 
             prop.onDragOver (fun evt ->
                 evt.preventDefault())
 
             prop.onDragLeave (fun evt ->
                 evt.preventDefault()
-                dispatch (Highlight (Choice1Of3 ())))
+                dispatch Message.noHighlight)
 
             prop.onDrop (fun evt ->
                 evt.preventDefault()
@@ -85,7 +86,7 @@ module View =
                         msg
                     | None ->
                         if audioEnabled then Audio.playError ()
-                        Highlight (Choice1Of3 ())
+                        Message.noHighlight
                     |> dispatch)
         ]
 
@@ -93,7 +94,8 @@ module View =
         Html.div [
             prop.className "type"
             prop.children (renderInnerType isHighlighted typ)
-            yield! renderDragDrop (Choice3Of3 typ) allow audioEnabled dispatch
+            let highlight = Message.highlightType typ
+            yield! renderDragDrop highlight allow audioEnabled dispatch
         ]
 
     let private renderGoal goalOpt isHighlighted allow audioEnabled dispatch =
@@ -123,7 +125,7 @@ module View =
                     renderTerm
                         term
                         isHighlighted
-                        (Choice2Of3 term)
+                        (Message.highlightTerm term)
                         (fun (evt : DragEvent) ->
                             if Some term.Type = model.Proof.GoalOpt
                                 && (DragData.getData evt).TacticType = TacticType.Exact then

@@ -2,18 +2,35 @@
 
 open Elmish
 
+/// Current state of the game.
 type Model =
     {
+        /// 0-based index of the current level.
         LevelIndex : int
+
+        /// Current state of the proof.
         Proof : Proof
+
+        /// Currently highlighted term, type, or nothing.
         Highlighted : Choice<unit, Term, Type>
+
+        /// Audio is currently enabled or disabled?
         AudioEnabled : bool
     }
 
-type Msg =
+/// Message to change the current state of the game.
+type Message =
+
+    /// Highlights the given term, type, or nothing.
     | Highlight of Choice<unit, Term, Type>
+
+    /// Adds the given tactic to the proof.
     | AddTactic of Tactic
+
+    /// Enables/disables audio.
     | EnableAudio of bool
+
+    /// Sarts the given 0-based level.
     | StartLevel of int
 
 module Model =
@@ -50,7 +67,8 @@ module Model =
             Proof = proof
             Highlighted = Choice1Of3 () }
 
-    let update (msg : Msg) (model : Model) =
+    /// Updates the model based on the given message.
+    let update msg model =
         let model' =
             match msg with
                 | Highlight choice ->
@@ -73,3 +91,11 @@ module Model =
             else
                 Cmd.none
         model', cmd
+
+module Message =
+
+    let noHighlight = Highlight (Choice1Of3 ())
+
+    let highlightTerm term = Highlight (Choice2Of3 term)
+
+    let highlightType typ = Highlight (Choice3Of3 typ)
