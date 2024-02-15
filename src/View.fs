@@ -112,7 +112,7 @@ module View =
 
     let private renderGoal model dispatch =
 
-        let allowIntro (evt : DragEvent) =
+        let allowIntro evt =
             option {
                 if DragData.tacticType evt = TacticType.Intro then
                     let! p =
@@ -153,7 +153,7 @@ module View =
 
     let private renderTerms model dispatch =
 
-        let allowExact term (evt : DragEvent) =
+        let allowExact term evt =
             option {
                 if DragData.tacticType evt = TacticType.Exact then
                     let tactic = Exact term
@@ -161,13 +161,25 @@ module View =
                     return AddTactic tactic
             }
 
+        let allowApply term evt =
+            option {
+                if DragData.tacticType evt = TacticType.Apply then
+                    let tactic = Apply term
+                    let! _ = Proof.tryAdd tactic model.Proof
+                    return AddTactic tactic
+            }
+
+        let allow term evt =
+            allowExact term evt
+                |> Option.orElse (allowApply term evt)
+
         Html.div [
             prop.className "terms-area"
             prop.children [
                 for term in model.Proof.Terms do
                     renderTerm
                         term
-                        (allowExact term)
+                        (allow term)
                         model
                         dispatch
             ]
