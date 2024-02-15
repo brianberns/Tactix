@@ -65,7 +65,9 @@ module Model =
             model.Proof
                 |> Proof.tryAdd tactic
                 |> Option.defaultValue model.Proof
-        { model with Proof = proof }
+        { model with
+            Proof = proof
+            Highlight = Highlight.None }
 
     let private updateEnableAudio enable model =
         let settings =
