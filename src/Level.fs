@@ -59,6 +59,7 @@ module Level =
 
     let private typePP = Function (typeP, typeP)
     let private typePQ = Function (typeP, typeQ)
+    let private typeQR = Function (typeQ, typeR)
     let private typePQR = Function (typeP, Function (typeQ, typeR))
 
     let private level3 =
@@ -127,6 +128,24 @@ module Level =
             Instructions = $"Drag {apply} onto ▢→■ when the goal is ■ to change the goal to ▢."
         }
 
+    let private level8 =
+        {
+            Goal = typeR
+            Terms =
+                set [
+                    Term.create typeP
+                    Term.create typePQ
+                    Term.create typeQR
+                ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                ]
+            Instructions = ""
+        }
+
     let levels =
         [|
             level1
@@ -136,6 +155,7 @@ module Level =
             level5
             level6
             level7
+            level8
         |]
 
     let initializeProof level =
