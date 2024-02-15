@@ -62,6 +62,7 @@ module Level =
             Instructions = ""
         }
 
+    let private typePP = Function (typeP, typeP)
     let private typePQ = Function (typeP, typeQ)
 
     let private level3 =
@@ -95,12 +96,25 @@ module Level =
             Instructions = $"Drag {intro} onto the goal to simplify it"
         }
 
+    let private level5 =
+        {
+            Goal = typePP
+            Terms = Set.empty
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                ]
+            Instructions = ""
+        }
+
     let levels =
         [|
             level1
             level2
             level3
             level4
+            level5
         |]
 
     let initializeProof level =
