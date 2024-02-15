@@ -65,11 +65,11 @@ module View =
         loop typ
 
     // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
-    let private renderDragDrop highlight allow audioEnabled dispatch =
+    let private renderDragDrop highlightMsg allow audioEnabled dispatch =
         [
             prop.onDragEnter (fun evt ->
                 evt.preventDefault()
-                dispatch highlight)
+                dispatch highlightMsg)
 
             prop.onDragOver (fun evt ->
                 evt.preventDefault())
@@ -90,48 +90,67 @@ module View =
                     |> dispatch)
         ]
 
-    let private renderType typ isHighlighted allow audioEnabled dispatch =
+    let private renderType (typ : Type) allow (model : Model) dispatch =
+        let children =
+            let isHighlighted = model.IsHighlighted(typ)
+            renderInnerType isHighlighted typ
+        let dragDrop =
+            let highlightMsg = Message.highlightType typ
+            renderDragDrop
+                highlightMsg
+                allow
+                model.AudioEnabled
+                dispatch
         Html.div [
             prop.className "type"
-            prop.children (renderInnerType isHighlighted typ)
-            let highlight = Message.highlightType typ
-            yield! renderDragDrop highlight allow audioEnabled dispatch
+            prop.children children
+            yield! dragDrop
         ]
 
-    let private renderGoal goalOpt isHighlighted allow audioEnabled dispatch =
+    let private renderGoal allow model dispatch =
         Html.div [
             prop.className "goal-area"
             prop.children [
-                match goalOpt with
-                    | Some goal -> renderType goal isHighlighted allow audioEnabled dispatch
+                match model.Proof.GoalOpt with
+                    | Some goal ->
+                        renderType goal allow model dispatch
                     | None -> ()
             ]
         ]
 
-    let private renderTerm term isHighlighted highlight allow audioEnabled dispatch =
+    let private renderTerm (term : Term) allow (model : Model) dispatch =
+        let children =
+            let isHighlighted = model.IsHighlighted(term)
+            renderInnerType isHighlighted term.Type
+        let dragDrop =
+            let highlightMsg = Message.highlightTerm term
+            renderDragDrop
+                highlightMsg
+                allow
+                model.AudioEnabled
+                dispatch
         Html.div [
             prop.className "term"
-            prop.children (renderInnerType isHighlighted term.Type)
-            yield! renderDragDrop highlight allow audioEnabled dispatch
+            prop.children children
+            yield! dragDrop
         ]
 
     let private renderTerms model dispatch =
+
+        let allowExact term (evt : DragEvent) =
+            if Some term.Type = model.Proof.GoalOpt
+                && (DragData.getData evt).TacticType = TacticType.Exact then
+                    Some (AddTactic (Exact term))
+            else None
+
         Html.div [
             prop.className "terms-area"
             prop.children [
                 for term in model.Proof.Terms do
-                    let isHighlighted =
-                        model.Highlighted = Choice2Of3 term
                     renderTerm
                         term
-                        isHighlighted
-                        (Message.highlightTerm term)
-                        (fun (evt : DragEvent) ->
-                            if Some term.Type = model.Proof.GoalOpt
-                                && (DragData.getData evt).TacticType = TacticType.Exact then
-                                    Some (AddTactic (Exact term))
-                            else None)
-                        model.AudioEnabled
+                        (allowExact term)
+                        model
                         dispatch
             ]
         ]
@@ -174,13 +193,8 @@ module View =
         Html.div [
             renderHeader model.LevelIndex
             renderGoal
-                model.Proof.GoalOpt
-                (model.Highlighted =
-                    (model.Proof.GoalOpt
-                        |> Option.map Choice3Of3
-                        |> Option.defaultValue (Choice1Of3 ())))
                 (fun _ -> None)
-                model.AudioEnabled
+                model
                 dispatch
             renderTerms model dispatch
             renderTacticTypes

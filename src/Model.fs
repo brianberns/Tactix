@@ -18,6 +18,12 @@ type Model =
         AudioEnabled : bool
     }
 
+    member model.IsHighlighted(term) =
+        model.Highlighted = Choice2Of3 term
+
+    member model.IsHighlighted(typ) =
+        model.Highlighted = Choice3Of3 typ
+
 /// Message to change the current state of the game.
 type Message =
 
