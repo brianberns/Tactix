@@ -29,6 +29,7 @@ module Level =
 
     let private exact = TacticType.emoji TacticType.Exact
     let private intro = TacticType.emoji TacticType.Intro
+    let private apply = TacticType.emoji TacticType.Apply
 
     let private level1 =
         {
@@ -109,6 +110,23 @@ module Level =
             Instructions = ""
         }
 
+    let private level7 =
+        {
+            Goal = typeQ
+            Terms =
+                set [
+                    Term.create typeP
+                    Term.create typePQ
+                ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                ]
+            Instructions = $"You can use {apply} on ▢→■ when your goal is ■ to change the goal to ▢."
+        }
+
     let levels =
         [|
             level1
@@ -117,6 +135,7 @@ module Level =
             level4
             level5
             level6
+            level7
         |]
 
     let initializeProof level =

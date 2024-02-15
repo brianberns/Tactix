@@ -42,7 +42,7 @@ type Message =
 module Model =
 
     let init () =
-        let levelIdx = 0
+        let levelIdx = 6
         let level = Level.levels[levelIdx]
         let proof = Level.initializeProof level
         let model =
