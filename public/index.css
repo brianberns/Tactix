@@ -26,6 +26,13 @@
 .primitive-type {
     width: 10vh;
     height: 10vh;
+    pointer-events: none;
+}
+
+.primitive-type-highlight {
+    width: 15vh;
+    height: 15vh;
+    pointer-events: none;
 }
 
 .function-type {
@@ -34,6 +41,7 @@
     padding: 3px;
     justify-content: center;
     align-items: center;
+    pointer-events: none;
 }
 
 .p {
@@ -61,32 +69,8 @@
 }
 
 .term {
-}
-
-.top-level-term {
     margin: 20px;
-}
-
-.primitive-term {
-    width: 10vh;
-    height: 10vh;
-    pointer-events: none;
-}
-
-.primitive-term-highlight {
-    width: 15vh;
-    height: 15vh;
-    pointer-events: none;
-}
-
-.function-term {
-    font-size: x-large;
-    display: inline-flex;
-    padding: 3px;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid black;
-    pointer-events: none;
+    border: 3px solid var(--sunset);
 }
 
 .tactics-area {

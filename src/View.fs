@@ -41,68 +41,19 @@ module View =
                 ]
         ]
 
-    let private renderType typ =
-
-        let rec loop (typ : Type) =
-            Html.div [
-                match typ with
-                    | Primitive name ->
-                        prop.classes [
-                            "type"
-                            "primitive-type"
-                            name.ToLower()
-                        ]
-                    | Function (typeA, typeB) ->
-                        prop.classes [
-                            "type"
-                            "function-type"
-                        ]
-                        prop.children [
-                            loop typeA
-                            Html.text "→"
-                            loop typeB
-                        ]
-            ]
-
-        Html.div [
-            prop.classes [
-                "type"
-                "top-level-type"
-            ]
-            prop.children (loop typ)
-        ]
-
-    let private renderGoal (goalOpt : Option<Type>) =
-        Html.div [
-            prop.className "goal-area"
-            prop.children [
-                match goalOpt with
-                    | Some goal -> renderType goal
-                    | None -> ()
-            ]
-        ]
-
-    let private renderTerm term goalOpt highlight audioEnabled dispatch =
-
-        let allowTacticExact (evt : DragEvent) =
-            Some term.Type = goalOpt
-                && (DragData.getData evt).TacticType = TacticType.Exact
+    let private renderInnerType isHighlighted typ =
 
         let rec loop typ =
             Html.div [
                 match typ with
                     | Primitive name ->
                         prop.classes [
-                            "term"
-                            "primitive-term"
-                            if highlight then "primitive-term-highlight"
+                            (if isHighlighted then "primitive-type-highlight"
+                             else "primitive-type")
                             name.ToLower()
                         ]
                     | Function (typeA, typeB) ->
-                        prop.classes [
-                            "term"
-                            "function-term"
-                        ]
+                        prop.className "function-type"
                         prop.children [
                             loop typeA
                             Html.text "→"
@@ -110,18 +61,14 @@ module View =
                         ]
             ]
 
-        Html.div [
-            prop.classes [
-                "term"
-                "top-level-term"
-            ]
-            prop.children (loop term.Type)
+        loop typ
 
-            // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
-
+    // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
+    let private renderDragDrop highlight allow audioEnabled dispatch =
+        [
             prop.onDragEnter (fun evt ->
                 evt.preventDefault()
-                dispatch (Highlight (Choice2Of3 term)))
+                dispatch (Highlight highlight))
 
             prop.onDragOver (fun evt ->
                 evt.preventDefault())
@@ -132,14 +79,38 @@ module View =
 
             prop.onDrop (fun evt ->
                 evt.preventDefault()
-                let msg =
-                    if allowTacticExact evt then
+                match allow evt with
+                    | Some msg ->
                         if audioEnabled then Audio.playReward ()
-                        AddTactic (Exact term)
-                    else
+                        msg
+                    | None ->
                         if audioEnabled then Audio.playError ()
                         Highlight (Choice1Of3 ())
-                dispatch msg)
+                    |> dispatch)
+        ]
+
+    let private renderType typ isHighlighted allow audioEnabled dispatch =
+        Html.div [
+            prop.className "type"
+            prop.children (renderInnerType isHighlighted typ)
+            yield! renderDragDrop (Choice3Of3 typ) allow audioEnabled dispatch
+        ]
+
+    let private renderGoal goalOpt isHighlighted allow audioEnabled dispatch =
+        Html.div [
+            prop.className "goal-area"
+            prop.children [
+                match goalOpt with
+                    | Some goal -> renderType goal isHighlighted allow audioEnabled dispatch
+                    | None -> ()
+            ]
+        ]
+
+    let private renderTerm term isHighlighted highlight allow audioEnabled dispatch =
+        Html.div [
+            prop.className "term"
+            prop.children (renderInnerType isHighlighted term.Type)
+            yield! renderDragDrop highlight allow audioEnabled dispatch
         ]
 
     let private renderTerms model dispatch =
@@ -147,12 +118,17 @@ module View =
             prop.className "terms-area"
             prop.children [
                 for term in model.Proof.Terms do
-                    let highlight =
+                    let isHighlighted =
                         model.Highlighted = Choice2Of3 term
                     renderTerm
                         term
-                        model.Proof.GoalOpt
-                        highlight
+                        isHighlighted
+                        (Choice2Of3 term)
+                        (fun (evt : DragEvent) ->
+                            if Some term.Type = model.Proof.GoalOpt
+                                && (DragData.getData evt).TacticType = TacticType.Exact then
+                                    Some (AddTactic (Exact term))
+                            else None)
                         model.AudioEnabled
                         dispatch
             ]
@@ -195,7 +171,15 @@ module View =
     let render model dispatch =
         Html.div [
             renderHeader model.LevelIndex
-            renderGoal model.Proof.GoalOpt
+            renderGoal
+                model.Proof.GoalOpt
+                (model.Highlighted =
+                    (model.Proof.GoalOpt
+                        |> Option.map Choice3Of3
+                        |> Option.defaultValue (Choice1Of3 ())))
+                (fun _ -> None)
+                model.AudioEnabled
+                dispatch
             renderTerms model dispatch
             renderTacticTypes
                 model.LevelIndex
