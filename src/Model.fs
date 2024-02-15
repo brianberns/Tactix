@@ -77,6 +77,7 @@ module Model =
 
     let private updateStartLevel levelIdx model =
 
+        let levelIdx = levelIdx % Level.levels.Length
         let settings =
             { model.Settings with LevelIndex = levelIdx }
         Settings.save settings   // side-effect
