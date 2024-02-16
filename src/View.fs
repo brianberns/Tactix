@@ -213,6 +213,7 @@ module View =
                     Html.div [
                         prop.className "tactic"
                         prop.text (TacticType.emoji tacticType)
+                        prop.title (TacticType.instructions tacticType)
                         if draggable then
                             prop.draggable true
                             prop.onDragStart (

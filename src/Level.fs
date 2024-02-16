@@ -8,6 +8,12 @@ module TacticType =
         | TacticType.Apply -> "👣"
         | TacticType.Cases -> "💔"
 
+    let instructions = function
+        | TacticType.Exact -> "Drag onto a symbol that matches the goal"
+        | TacticType.Intro -> "Drag onto the goal to simplify it"
+        | TacticType.Apply -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
+        | TacticType.Cases -> "Drag onto ∧ to split it"
+
 type Level =
     {
         Goal : Type
@@ -37,7 +43,7 @@ module Level =
                 ]
             TacticTypes = set [ TacticType.Exact ]
             Instructions =
-                $"Drag {exact} onto the symbol that matches the top goal."
+                $"Drag {exact} onto the symbol that matches the top goal"
         }
 
     let private level2 =
@@ -121,7 +127,7 @@ module Level =
                     TacticType.Intro
                     TacticType.Apply
                 ]
-            Instructions = $"Drag {apply} onto ▢→■ when the goal is ■ to change the goal to ▢."
+            Instructions = $"Drag {apply} onto ▢→■ when the goal is ■ to change the goal to ▢"
         }
 
     let private level8 =
@@ -172,7 +178,7 @@ module Level =
                     TacticType.Apply
                     TacticType.Cases
                 ]
-            Instructions = $"Drag {cases} onto ∧ to split it."
+            Instructions = $"Drag {cases} onto ∧ to split it"
         }
 
     (*
