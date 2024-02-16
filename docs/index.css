@@ -1,0 +1,121 @@
+:root {
+    --eggshell: #f4f1deff;
+    --burnt-sienna: #e07a5fff;
+    --delft-blue: #3d405bff;
+    --cambridge-blue: #81b29aff;
+    --sunset: #f2cc8fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.goal-area {
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 20%;
+    background-color: var(--sunset);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.type {
+}
+
+.primitive-type {
+    width: 10vh;
+    height: 10vh;
+    pointer-events: none;
+}
+
+.primitive-type-highlight {
+    width: 15vh;
+    height: 15vh;
+    pointer-events: none;
+}
+
+.compound-type {
+    border: 3px solid black;
+    font-size: x-large;
+    display: inline-flex;
+    padding: 3px;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+
+.p {
+    background-color: var(--burnt-sienna);
+}
+
+.q {
+    background-color: var(--delft-blue);
+}
+
+.r {
+    background-color: var(--cambridge-blue);
+}
+
+.terms-area {
+    position: absolute;
+    left: 0%;
+    top: 20%;
+    width: 100%;
+    height: 60%;
+    background-color: var(--eggshell);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.term {
+    margin: 20px;
+}
+
+.tactics-area {
+    position: absolute;
+    left: 0%;
+    top: 80%;
+    width: 100%;
+    height: 20%;
+    background-color: var(--sunset);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tactic {
+    margin: 10px;
+    padding: 0px;
+    width: 10vh;
+    height: 10vh;
+    font-size: 8vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
+
+.settings-button {
+    width: 24px;
+}
+
+#header {
+    position: absolute;
+    z-index: 10;
+    width: 25%;
+}
+
+#level-num {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+#instructions {
+}
+
+#footer {
+    position: absolute;
+    top: 100%;
+    transform: translateY(-100%);
+}
