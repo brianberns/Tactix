@@ -223,17 +223,23 @@ module View =
             ]
         ]
 
-    let private renderFooter audioEnabled dispatch =
+    let private renderFooter settings dispatch =
         Html.div [
             prop.id "footer"
             prop.children [
                 Html.img [
                     prop.className "settings-button"
-                    if audioEnabled then "https://neal.fun/infinite-craft/sound.svg"
+                    if settings.AudioEnabled then "https://neal.fun/infinite-craft/sound.svg"
                     else "https://neal.fun/infinite-craft/mute.svg"
                     |> prop.src
                     prop.onClick (fun _ ->
-                        dispatch (EnableAudio (not audioEnabled)))
+                        dispatch (EnableAudio (not settings.AudioEnabled)))
+                ]
+                Html.img [
+                    prop.className "settings-button"
+                    prop.src "refresh.svg"
+                    prop.onClick (fun _ ->
+                        dispatch (StartLevel settings.LevelIndex))
                 ]
             ]
         ]
@@ -247,6 +253,6 @@ module View =
                 model.Settings.LevelIndex
                 model.Proof.GoalOpt.IsSome
             renderFooter
-                model.Settings.AudioEnabled
+                model.Settings
                 dispatch
         ]
