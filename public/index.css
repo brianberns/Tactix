@@ -25,14 +25,14 @@
 }
 
 .primitive-type {
-    width: 10vh;
-    height: 10vh;
+    width: 8vh;
+    height: 8vh;
     pointer-events: none;
 }
 
 .primitive-type-highlight {
-    width: 15vh;
-    height: 15vh;
+    width: 12vh;
+    height: 12vh;
     pointer-events: none;
 }
 
@@ -92,9 +92,9 @@
 .tactic {
     margin: 10px;
     padding: 0px;
-    width: 10vh;
-    height: 10vh;
-    font-size: 8vh;
+    width: 8vh;
+    height: 8vh;
+    font-size: 6vh;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
