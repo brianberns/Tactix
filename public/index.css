@@ -20,6 +20,7 @@
 }
 
 .type {
+    user-select: none;
 }
 
 .primitive-type {
@@ -70,6 +71,7 @@
 
 .term {
     margin: 20px;
+    user-select: none;
 }
 
 .tactics-area {
