@@ -132,24 +132,6 @@ module Level =
 
     let private level8 =
         {
-            Goal = r
-            Terms =
-                set [
-                    Term.create p
-                    Term.create pq
-                    Term.create qr
-                ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                ]
-            Instructions = ""
-        }
-
-    let private level9 =
-        {
             Goal = Function (p, r)
             Terms =
                 set [
@@ -167,7 +149,7 @@ module Level =
 
     let private p_and_q = Product [p; q]
  
-    let private level10 =
+    let private level9 =
         {
             Goal = p
             Terms = set [ Term.create p_and_q ]
@@ -185,7 +167,7 @@ module Level =
     let private p_or_q = Sum [p; q]
     let private q_or_p = Sum [q; p]
 
-    let private level11 =
+    let private level10 =
         {
             Goal = q_or_p
             Terms = set [ Term.create p_or_q ]
@@ -210,7 +192,6 @@ module Level =
             level7
             level8
             level9
-            level10
         |]
 
     let initializeProof level =
