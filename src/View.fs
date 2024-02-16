@@ -165,27 +165,31 @@ module View =
             yield! dragDrop
         ]
 
+    let private allow (tactic : Tactic) proof evt =
+        option {
+            if DragData.tacticType evt = tactic.Type then
+                let! _ = Proof.tryAdd tactic proof
+                return AddTactic tactic
+        }
+
+    let private allowAny allowTactics term evt =
+        allowTactics
+            |> Seq.tryPick (fun allowTactic ->
+                allowTactic term evt)
+
     let private renderTerms model dispatch =
 
-        let allowExact term evt =
-            option {
-                if DragData.tacticType evt = TacticType.Exact then
-                    let tactic = Exact term
-                    let! _ = Proof.tryAdd tactic model.Proof
-                    return AddTactic tactic
-            }
+        let allowExact term =
+            allow (Exact term) model.Proof
 
-        let allowApply term evt =
-            option {
-                if DragData.tacticType evt = TacticType.Apply then
-                    let tactic = Apply term
-                    let! _ = Proof.tryAdd tactic model.Proof
-                    return AddTactic tactic
-            }
+        let allowApply term =
+            allow (Apply term) model.Proof
 
-        let allow term evt =
-            allowExact term evt
-                |> Option.orElse (allowApply term evt)
+        let allowCases term =
+            allow (Cases term) model.Proof
+
+        let allowMulti =
+            allowAny [ allowExact; allowApply; allowCases ]
 
         Html.div [
             prop.className "terms-area"
@@ -193,7 +197,7 @@ module View =
                 for term in model.Proof.Terms do
                     renderTerm
                         term
-                        (allow term)
+                        (allowMulti term)
                         model
                         dispatch
             ]

@@ -31,10 +31,40 @@ module Term =
     let create typ =
         { Type = typ }
 
+    let (|Function|_|) term =
+        match term.Type with
+            | Function (p, q) -> Some (p, q)
+            | _ -> None
+
+    let (|Product|_|) term =
+        match term.Type with
+            | Product types -> Some types
+            | _ -> None
+
+    let (|Sum|_|) term =
+        match term.Type with
+            | Sum types -> Some types
+            | _ -> None
+
+[<RequireQualifiedAccess>]
+type TacticType =
+    | Exact
+    | Intro
+    | Apply
+    | Cases
+
 type Tactic =
     | Exact of Term
     | Intro of Term
     | Apply of Term
+    | Cases of Term
+
+    member tactic.Type =
+        match tactic with
+            | Exact _ -> TacticType.Exact
+            | Intro _ -> TacticType.Intro
+            | Apply _ -> TacticType.Apply
+            | Cases _ -> TacticType.Cases
 
 type Proof =
     {
@@ -43,7 +73,7 @@ type Proof =
     }
 
 module Proof =
-    
+
     let tryAdd tactic proof =
 
         match tactic, proof.GoalOpt with
@@ -63,10 +93,19 @@ module Proof =
                 }
 
                 // applies term (HPQ : P -> Q) when goal is Q, changing goal to just P
-            | Apply hpq, Some q ->
-                match hpq.Type with
-                    | Function (p, q') when q' = q ->
-                        Some { proof with GoalOpt = Some p }
-                    | _ -> None
+            | Apply (Term.Function (p, q')), Some q
+                when q' = q ->
+                Some { proof with GoalOpt = Some p }
+
+            | Cases (Term.Product types as hp), _ ->
+                let terms =
+                    let newTerms =
+                        types
+                            |> Seq.map Term.create
+                            |> set
+                    proof.Terms
+                        |> Set.remove hp
+                        |> Set.union newTerms
+                Some { proof with Terms = terms }
 
             | _ -> None

@@ -1,17 +1,12 @@
 ﻿namespace Tactix
 
-[<RequireQualifiedAccess>]
-type TacticType =
-    | Exact
-    | Intro
-    | Apply
-
 module TacticType =
 
     let emoji = function
         | TacticType.Exact -> "🎆"
         | TacticType.Intro -> "🚀"
         | TacticType.Apply -> "👣"
+        | TacticType.Cases -> "💔"
 
 type Level =
     {
@@ -30,6 +25,7 @@ module Level =
     let private exact = TacticType.emoji TacticType.Exact
     let private intro = TacticType.emoji TacticType.Intro
     let private apply = TacticType.emoji TacticType.Apply
+    let private cases = TacticType.emoji TacticType.Cases
 
     let private level1 =
         {
@@ -146,10 +142,26 @@ module Level =
             Instructions = ""
         }
 
+    let private p_and_q = Product [p; q]
+ 
+    let private level9 =
+        {
+            Goal = p
+            Terms = set [ Term.create p_and_q ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                    TacticType.Cases
+                ]
+            Instructions = $"Drag {cases} onto ∧ to split it."
+        }
+
     let private p_or_q = Sum [p; q]
     let private q_or_p = Sum [q; p]
 
-    let private level9 =
+    let private level10 =
         {
             Goal = q_or_p
             Terms = set [ Term.create p_or_q ]
@@ -173,6 +185,7 @@ module Level =
             level7
             level8
             level9
+            level10
         |]
 
     let initializeProof level =
