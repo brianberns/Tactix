@@ -158,6 +158,7 @@ module Level =
             Instructions = $"Drag {cases} onto ∧ to split it."
         }
 
+    (*
     let private p_or_q = Sum [p; q]
     let private q_or_p = Sum [q; p]
 
@@ -173,6 +174,7 @@ module Level =
                 ]
             Instructions = ""
         }
+    *)
 
     let levels =
         [|
