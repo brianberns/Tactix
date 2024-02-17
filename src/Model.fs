@@ -57,30 +57,36 @@ module Model =
             }
         model, Cmd.none
 
-    let private updateHighlight highlight model =
+    let private setHighlight highlight model =
         { model with Highlight = highlight }
 
-    let private updateAddTactic tactic caseKey model =
+    let private addTactic tactic caseKey model =
 
         let case = model.Proof.CaseMap[caseKey]
         let cases = ProofCase.add tactic case
         assert(not cases.IsEmpty)
 
         let proof =
-            model.Proof
-                |> Proof.remove caseKey
-                |> Proof.addMany cases
+            cases
+                |> List.tryExactlyOne
+                |> Option.map (fun case' ->
+                    model.Proof
+                        |> Proof.update caseKey case')
+                |> Option.defaultWith (fun () ->
+                    model.Proof
+                        |> Proof.remove caseKey
+                        |> Proof.addMany cases)
         { model with
             Proof = proof
             Highlight = Highlight.None }
 
-    let private updateEnableAudio enable model =
+    let private enableAudio enable model =
         let settings =
             { model.Settings with AudioEnabled = enable }
         Settings.save settings   // side-effect
         { model with Settings = settings }
 
-    let private updateStartLevel levelIdx model =
+    let private startLevel levelIdx model =
 
         let levelIdx = levelIdx % Level.levels.Length
         let settings =
@@ -100,13 +106,13 @@ module Model =
         let model' =
             match msg with
                 | Highlight highlight ->
-                    updateHighlight highlight model
+                    setHighlight highlight model
                 | AddTactic (tactic, case) ->
-                    updateAddTactic tactic case model
+                    addTactic tactic case model
                 | EnableAudio enable ->
-                    updateEnableAudio enable model
+                    enableAudio enable model
                 | StartLevel levelIdx ->
-                    updateStartLevel levelIdx model
+                    startLevel levelIdx model
         let cmd =
             if Proof.isComplete model'.Proof then
                 Cmd.OfAsync.perform

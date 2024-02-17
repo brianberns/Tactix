@@ -184,6 +184,13 @@ module Proof =
                 |> Map.remove caseKey
         { proof with CaseMap = caseMap }
 
+    let update caseKey case proof =
+        assert(proof.CaseMap.ContainsKey(caseKey))
+        let caseMap =
+            proof.CaseMap
+                |> Map.add caseKey case
+        { proof with CaseMap = caseMap }
+
     let addMany cases proof =
         (proof, cases)
             ||> Seq.fold (fun acc case ->
