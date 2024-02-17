@@ -65,11 +65,7 @@ module Level =
             Instructions = ""
         }
 
-    let private pp = Function (p, p)
     let private pq = Function (p, q)
-    let private pr = Function (p, r)
-    let private qr = Function (q, r)
-    let private pqr = Function (p, Function (q, r))
 
     let private level3 =
         {
@@ -98,7 +94,7 @@ module Level =
 
     let private level5 =
         {
-            Goal = pp
+            Goal = Function (p, p)
             Terms = Set.empty
             TacticTypes =
                 set [
@@ -110,7 +106,7 @@ module Level =
 
     let private level6 =
         {
-            Goal = pqr
+            Goal = Function (p, Function (q, r))
             Terms = set [ Term.create r ]
             TacticTypes =
                 set [
@@ -154,13 +150,15 @@ module Level =
             Instructions = ""
         }
 
-    let private p_and_q = Product [p; q]
     let private p_or_q = Sum [p; q]
  
     let private level9 =
         {
             Goal = p
-            Terms = set [ Term.create p_and_q ]
+            Terms =
+                set [
+                    Term.create (Product [p; q])
+                ]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -177,8 +175,8 @@ module Level =
             Terms =
                 set [
                     Term.create p_or_q
-                    Term.create pr
-                    Term.create qr
+                    Term.create (Function (p, r))
+                    Term.create (Function (q, r))
                 ]
             TacticTypes =
                 set [
@@ -190,11 +188,9 @@ module Level =
             Instructions = $"Drag {cases} onto ∨ in the field to split it"
         }
 
-    let private q_or_p = Sum [q; p]
-
     let private level11 =
         {
-            Goal = q_or_p
+            Goal = Sum [q; p]
             Terms = set [ Term.create p_or_q ]
             TacticTypes =
                 set [
