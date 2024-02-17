@@ -137,6 +137,11 @@ module View =
             yield! dragDrop
         ]
 
+    let private allowAny allowTactics term evt =
+        allowTactics
+            |> Seq.tryPick (fun allowTactic ->
+                allowTactic term evt)
+
     let private renderGoal (caseKey, case) model dispatch =
         assert(model.Proof.CaseMap[caseKey] = case)
 
@@ -152,6 +157,23 @@ module View =
                         return AddTactic (tactic, caseKey)
             }
 
+        let allowLeftRight (tactic : Tactic) goal evt =
+            option {
+                if DragData.tacticType evt = tactic.Type then
+                    match goal with
+                        | Sum _ ->
+                            if ProofCase.canAdd tactic case then
+                                return AddTactic (tactic, caseKey)
+                        | _ -> ()
+            }
+
+        let allowMulti =
+            allowAny [
+                allowIntro
+                allowLeftRight Left
+                allowLeftRight Right
+            ]
+
         Html.div [
             prop.className "goal"
             prop.children [
@@ -160,7 +182,7 @@ module View =
                         renderType
                             goal
                             caseKey
-                            (allowIntro goal)
+                            (allowMulti goal)
                             model
                             dispatch
                     | None -> ()
@@ -198,11 +220,6 @@ module View =
                 if ProofCase.canAdd tactic case then
                     return AddTactic (tactic, caseKey)
         }
-
-    let private allowAny allowTactics term evt =
-        allowTactics
-            |> Seq.tryPick (fun allowTactic ->
-                allowTactic term evt)
 
     let private renderTerms
         ((caseKey, case) as casePair)

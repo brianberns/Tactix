@@ -54,6 +54,12 @@ module ProofCase =
                             Terms =
                                 Set.add (Term.create typ) terms })
 
+            | Left, Some (Sum (P :: _)) ->
+                [ { case with GoalOpt = Some P }]
+
+            | Right, Some (Sum (_ :: Q :: [])) ->
+                [ { case with GoalOpt = Some Q }]
+
             | _ -> []
 
     /// Can the given tactic be added to the given case?

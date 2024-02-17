@@ -9,12 +9,16 @@ module TacticType =
         | TacticType.Intro -> "🚀"
         | TacticType.Apply -> "👣"
         | TacticType.Cases -> "🔪"
+        | TacticType.Left -> "👈🏾"
+        | TacticType.Right -> "👉🏾"
 
     let instructions = function
         | TacticType.Exact -> "Drag onto a symbol that matches the goal"
         | TacticType.Intro -> "Drag onto an arrow goal to simplify it"
         | TacticType.Apply -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
         | TacticType.Cases -> "Drag onto ∧ or ∨ in the field to split them"
+        | TacticType.Left -> ""
+        | TacticType.Right -> ""
 
 type Level =
     {
@@ -186,10 +190,9 @@ module Level =
             Instructions = $"Drag {cases} onto ∨ in the field to split it"
         }
 
-    (*
     let private q_or_p = Sum [q; p]
 
-    let private level10 =
+    let private level11 =
         {
             Goal = q_or_p
             Terms = set [ Term.create p_or_q ]
@@ -198,10 +201,12 @@ module Level =
                     TacticType.Exact
                     TacticType.Intro
                     TacticType.Apply
+                    TacticType.Cases
+                    TacticType.Left
+                    TacticType.Right
                 ]
             Instructions = ""
         }
-    *)
 
     let levels =
         [|
@@ -215,6 +220,7 @@ module Level =
             level8
             level9
             level10
+            level11
         |]
 
     let initializeProof level =

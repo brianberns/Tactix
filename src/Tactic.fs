@@ -9,6 +9,8 @@ type TacticType =
     | Intro
     | Apply
     | Cases
+    | Left
+    | Right
 
 /// A tactic used in a proof.
 type Tactic =
@@ -28,6 +30,9 @@ type Tactic =
     /// parts, creating goals for each constructor of P.
     | Cases of Term
 
+    | Left
+    | Right
+
     /// Tactic type.
     member tactic.Type =
         match tactic with
@@ -35,3 +40,5 @@ type Tactic =
             | Intro _ -> TacticType.Intro
             | Apply _ -> TacticType.Apply
             | Cases _ -> TacticType.Cases
+            | Left -> TacticType.Left
+            | Right -> TacticType.Right
