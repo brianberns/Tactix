@@ -13,7 +13,7 @@ module TacticType =
         | TacticType.Exact -> "Drag onto a symbol that matches the goal"
         | TacticType.Intro -> "Drag onto the goal to simplify it"
         | TacticType.Apply -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
-        | TacticType.Cases -> "Drag onto ∧ to split it"
+        | TacticType.Cases -> "Drag onto ∧ or ∨ to split them"
 
 type Level =
     {
