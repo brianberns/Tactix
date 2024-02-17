@@ -1,5 +1,6 @@
 ﻿namespace Tactix
 
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]   // https://stackoverflow.com/questions/64929689/avoiding-the-error-where-a-module-and-a-type-definition-occur-in-two-parts-of-an
 module TacticType =
 
     let emoji = function
@@ -195,7 +196,9 @@ module Level =
         |]
 
     let initializeProof level =
-        {
-            GoalOpt = Some level.Goal
-            Terms = level.Terms
-        }
+        let case =
+            {
+                GoalOpt = Some level.Goal
+                Terms = level.Terms
+            }
+        Proof.create [case]

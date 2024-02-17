@@ -107,12 +107,20 @@ module View =
                     |> dispatch)
         ]
 
-    let private renderType (typ : Type) allow (model : Model) dispatch =
+    let private renderType
+        (typ : Type)
+        caseKey
+        allow
+        (model : Model)
+        dispatch =
+
         let children =
-            let isHighlighted = model.IsHighlighted(typ)
+            let isHighlighted =
+                model.IsHighlighted(typ, caseKey)
             renderInnerType isHighlighted typ
         let dragDrop =
-            let highlightMsg = Message.highlightType typ
+            let highlightMsg =
+                Message.highlightType typ caseKey
             renderDragDrop
                 highlightMsg
                 allow
@@ -124,36 +132,49 @@ module View =
             yield! dragDrop
         ]
 
-    let private renderGoal model dispatch =
+    let private renderGoal case model dispatch =
 
-        let allowIntro evt =
+        let allowIntro goal evt =
             option {
                 if DragData.tacticType evt = TacticType.Intro then
                     let! p =
-                        match model.Proof.GoalOpt with
-                            | Some (Function (p, _)) -> Some p
+                        match goal with
+                            | Function (p, _) -> Some p
                             | _ -> None
                     let tactic = Intro (Term.create p)
-                    let! _ = Proof.tryAdd tactic model.Proof
-                    return AddTactic tactic
+                    let! _ = ProofCase.tryAdd tactic case
+                    return AddTactic (tactic, case.Key)
             }
 
         Html.div [
             prop.className "goal-area"
             prop.children [
-                match model.Proof.GoalOpt with
+                match case.GoalOpt with
                     | Some goal ->
-                        renderType goal allowIntro model dispatch
+                        renderType
+                            goal
+                            case.Key
+                            (allowIntro goal)
+                            model
+                            dispatch
                     | None -> ()
             ]
         ]
 
-    let private renderTerm (term : Term) allow (model : Model) dispatch =
+    let private renderTerm
+        (term : Term)
+        caseKey
+        allow
+        (model : Model)
+        dispatch =
+
         let children =
-            let isHighlighted = model.IsHighlighted(term)
+            let isHighlighted =
+                model.IsHighlighted(term, caseKey)
             renderInnerType isHighlighted term.Type
         let dragDrop =
-            let highlightMsg = Message.highlightTerm term
+            let highlightMsg =
+                Message.highlightTerm term caseKey
             renderDragDrop
                 highlightMsg
                 allow
@@ -165,11 +186,11 @@ module View =
             yield! dragDrop
         ]
 
-    let private allow (tactic : Tactic) proof evt =
+    let private allow (tactic : Tactic) case evt =
         option {
             if DragData.tacticType evt = tactic.Type then
-                let! _ = Proof.tryAdd tactic proof
-                return AddTactic tactic
+                let! _ = ProofCase.tryAdd tactic case
+                return AddTactic (tactic, case.Key)
         }
 
     let private allowAny allowTactics term evt =
@@ -177,16 +198,16 @@ module View =
             |> Seq.tryPick (fun allowTactic ->
                 allowTactic term evt)
 
-    let private renderTerms model dispatch =
+    let private renderTerms case model dispatch =
 
         let allowExact term =
-            allow (Exact term) model.Proof
+            allow (Exact term) case
 
         let allowApply term =
-            allow (Apply term) model.Proof
+            allow (Apply term) case
 
         let allowCases term =
-            allow (Cases term) model.Proof
+            allow (Cases term) case
 
         let allowMulti =
             allowAny [ allowExact; allowApply; allowCases ]
@@ -194,9 +215,10 @@ module View =
         Html.div [
             prop.className "terms-area"
             prop.children [
-                for term in model.Proof.Terms do
+                for term in case.Terms do
                     renderTerm
                         term
+                        case.Key
                         (allowMulti term)
                         model
                         dispatch
@@ -247,11 +269,12 @@ module View =
     let render model dispatch =
         Html.div [
             renderHeader model.Settings.LevelIndex
-            renderGoal model dispatch
-            renderTerms model dispatch
+            for case in model.Proof.CaseMap.Values do
+                renderGoal case model dispatch
+                renderTerms case model dispatch
             renderTacticTypes
                 model.Settings.LevelIndex
-                model.Proof.GoalOpt.IsSome
+                (not <| Proof.isComplete model.Proof)
             renderFooter
                 model.Settings
                 dispatch

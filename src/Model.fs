@@ -5,8 +5,8 @@ open Elmish
 [<RequireQualifiedAccess>]
 type Highlight =
     | None
-    | Term of Term
-    | Type of Type
+    | Term of Term * ProofCaseKey
+    | Type of Type * ProofCaseKey
 
 /// Current state of the game.
 type Model =
@@ -21,11 +21,11 @@ type Model =
         Highlight : Highlight
     }
 
-    member model.IsHighlighted(term) =
-        model.Highlight = Highlight.Term term
+    member model.IsHighlighted(term, caseKey) =
+        model.Highlight = Highlight.Term (term, caseKey)
 
-    member model.IsHighlighted(typ) =
-        model.Highlight = Highlight.Type typ
+    member model.IsHighlighted(typ, caseKey) =
+        model.Highlight = Highlight.Type (typ, caseKey)
 
 /// Message to change the current state of the game.
 type Message =
@@ -33,8 +33,8 @@ type Message =
     /// Highlights the given term, type, or nothing.
     | Highlight of Highlight
 
-    /// Adds the given tactic to the proof.
-    | AddTactic of Tactic
+    /// Adds the given tactic to the proof case.
+    | AddTactic of Tactic * ProofCaseKey
 
     /// Enables/disables audio.
     | EnableAudio of bool
@@ -60,11 +60,14 @@ module Model =
     let private updateHighlight highlight model =
         { model with Highlight = highlight }
 
-    let private updateAddTactic tactic model =
+    let private updateAddTactic tactic caseKey model =
         let proof =
-            model.Proof
-                |> Proof.tryAdd tactic
-                |> Option.defaultValue model.Proof
+            let case = model.Proof.CaseMap[caseKey]
+            let case' =
+                case
+                    |> ProofCase.tryAdd tactic
+                    |> Option.defaultValue case
+            Proof.update case' model.Proof
         { model with
             Proof = proof
             Highlight = Highlight.None }
@@ -94,16 +97,16 @@ module Model =
     let update msg model =
         let model' =
             match msg with
-                | Highlight choice ->
-                    updateHighlight choice model
-                | AddTactic tactic ->
-                    updateAddTactic tactic model
+                | Highlight highlight ->
+                    updateHighlight highlight model
+                | AddTactic (tactic, case) ->
+                    updateAddTactic tactic case model
                 | EnableAudio enable ->
                     updateEnableAudio enable model
                 | StartLevel levelIdx ->
                     updateStartLevel levelIdx model
         let cmd =
-            if model'.Proof.GoalOpt.IsNone then
+            if Proof.isComplete model'.Proof then
                 Cmd.OfAsync.perform
                     (fun () -> Async.Sleep 800)
                     ()
@@ -119,6 +122,8 @@ module Message =
 
     let noHighlight = Highlight Highlight.None
 
-    let highlightTerm term = Highlight (Highlight.Term term)
+    let highlightTerm term caseKey =
+        Highlight (Highlight.Term (term, caseKey))
 
-    let highlightType typ = Highlight (Highlight.Type typ)
+    let highlightType typ caseKey =
+        Highlight (Highlight.Type (typ, caseKey))

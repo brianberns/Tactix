@@ -17,6 +17,19 @@ type Type =
     /// Disjuction (or), such as P ∨ Q.
     | Sum of List<Type>
 
+    override typ.ToString() =
+
+        let toString sep types =
+            types
+                |> Seq.map string
+                |> String.concat (string sep)
+
+        match typ with
+            | Primitive name -> name
+            | Function (P, Q) -> $"({P}→{Q})"
+            | Product types -> $"({toString '∧' types})"
+            | Sum types -> $"({toString '∨' types})"
+
 /// A term is an instance of a type and proves the corresponding
 /// proposition. E.g. HP : P.
 type Term =
@@ -80,33 +93,42 @@ type Tactic =
             | Apply _ -> TacticType.Apply
             | Cases _ -> TacticType.Cases
 
-type Proof =
+type ProofCase =
     {
+        /// Proposition to be proved.
         GoalOpt : Option<Type>
+
+        /// Hypotheses.
         Terms : Set<Term>
     }
 
-module Proof =
+    /// Distinct key of this case within a proof.
+    member case.Key =
+        case.GoalOpt
+            |> Option.map string
+            |> Option.defaultValue ""
 
-    /// Adds the given tactic to the given proof, if possible.
-    let tryAdd tactic proof =
+module ProofCase =
 
-        match tactic, proof.GoalOpt with
+    /// Adds the given tactic to the given proof case, if possible.
+    let tryAdd tactic case =
+
+        match tactic, case.GoalOpt with
 
             | Exact hp, Some p
-                when proof.Terms.Contains(hp) && hp.Type = p ->
-                Some { proof with GoalOpt = None }
+                when case.Terms.Contains(hp) && hp.Type = p ->
+                Some { case with GoalOpt = None }
 
             | Intro hp, Some (Function (p, q))
                 when hp.Type = p ->
                 Some {
                     GoalOpt = Some q
-                    Terms = proof.Terms.Add(hp)
+                    Terms = case.Terms.Add(hp)
                 }
 
             | Apply (Term.Function (p, q')), Some q
                 when q' = q ->
-                Some { proof with GoalOpt = Some p }
+                Some { case with GoalOpt = Some p }
 
             | Cases (Term.Product types as hp), _ ->
                 let terms =
@@ -114,9 +136,39 @@ module Proof =
                         types
                             |> Seq.map Term.create
                             |> set
-                    proof.Terms
+                    case.Terms
                         |> Set.remove hp
                         |> Set.union newTerms
-                Some { proof with Terms = terms }
+                Some { case with Terms = terms }
 
             | _ -> None
+
+type ProofCaseKey = string
+
+type Proof =
+    {
+        CaseMap : Map<ProofCaseKey, ProofCase>
+    }
+
+module Proof =
+
+    let create cases =
+        {
+            CaseMap =
+                cases
+                    |> Seq.map (fun (case : ProofCase) ->
+                        case.Key, case)
+                    |> Map
+        }
+
+    let update (case : ProofCase) proof =
+        assert(proof.CaseMap.ContainsKey(case.Key))
+        {
+            CaseMap =
+                proof.CaseMap
+                    |> Map.add case.Key case
+        }
+
+    let isComplete proof =
+        Map.forall (fun _ case ->
+            case.GoalOpt.IsNone) proof.CaseMap
