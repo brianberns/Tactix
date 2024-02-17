@@ -4,16 +4,16 @@
 module TacticType =
 
     let emoji = function
-        | TacticType.Exact -> "🎉"
+        | TacticType.Exact -> "❤️"
         | TacticType.Intro -> "🚀"
         | TacticType.Apply -> "👣"
-        | TacticType.Cases -> "💔"
+        | TacticType.Cases -> "🔪"
 
     let instructions = function
         | TacticType.Exact -> "Drag onto a symbol that matches the goal"
-        | TacticType.Intro -> "Drag onto the goal to simplify it"
+        | TacticType.Intro -> "Drag onto an arrow goal to simplify it"
         | TacticType.Apply -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
-        | TacticType.Cases -> "Drag onto ∧ or ∨ to split them"
+        | TacticType.Cases -> "Drag onto ∧ or ∨ in the field to split them"
 
 type Level =
     {
@@ -88,7 +88,7 @@ module Level =
                     TacticType.Exact
                     TacticType.Intro
                 ]
-            Instructions = $"Drag {intro} onto the goal to simplify it"
+            Instructions = $"Drag {intro} onto an arrow goal to simplify it"
         }
 
     let private level5 =
@@ -163,7 +163,7 @@ module Level =
                     TacticType.Apply
                     TacticType.Cases
                 ]
-            Instructions = $"Drag {cases} onto ∧ to split it"
+            Instructions = $"Drag {cases} onto ∧ in the field to split it"
         }
  
     let private level10 =
@@ -182,7 +182,7 @@ module Level =
                     TacticType.Apply
                     TacticType.Cases
                 ]
-            Instructions = $"Drag {cases} onto ∨ to split it"
+            Instructions = $"Drag {cases} onto ∨ in the field to split it"
         }
 
     (*
