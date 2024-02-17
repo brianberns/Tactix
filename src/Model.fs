@@ -39,7 +39,7 @@ type Message =
     /// Enables/disables audio.
     | EnableAudio of bool
 
-    /// Sarts the given 0-based level.
+    /// Starts the given 0-based level.
     | StartLevel of int
 
 module Model =

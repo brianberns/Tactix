@@ -4,7 +4,7 @@
 module TacticType =
 
     let emoji = function
-        | TacticType.Exact -> "🎆"
+        | TacticType.Exact -> "🎉"
         | TacticType.Intro -> "🚀"
         | TacticType.Apply -> "👣"
         | TacticType.Cases -> "💔"

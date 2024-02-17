@@ -27,7 +27,7 @@ module private DragData =
 
 module View =
 
-    let private renderHeader levelIdx =
+    let private renderHeader levelIdx dispatch =
         let instructions =
             Level.levels[levelIdx].Instructions
         Html.div [
@@ -36,6 +36,11 @@ module View =
                 Html.div [
                     prop.id "level-num"
                     prop.text $"Level {levelIdx + 1}"
+#if DEBUG
+                    prop.onCut (fun _ ->
+                        if levelIdx > 0 then
+                            dispatch (StartLevel (levelIdx - 1)))
+#endif
                 ]
                 if instructions <> "" then
                     Html.div [
@@ -287,7 +292,9 @@ module View =
 
     let render model dispatch =
         Html.div [
-            renderHeader model.Settings.LevelIndex
+            renderHeader
+                model.Settings.LevelIndex
+                dispatch
             renderProof model dispatch
             renderTacticTypes
                 model.Settings.LevelIndex
