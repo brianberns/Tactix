@@ -45,7 +45,13 @@ type Message =
 module Model =
 
     let init () =
-        let settings = Settings.get ()
+        let settings =
+            let settings = Settings.get ()
+            let levelIdx =
+                min
+                    settings.LevelIndex
+                    (Level.levels.Length - 1)
+            { settings with LevelIndex = levelIdx }
         let proof =
             Level.levels[settings.LevelIndex]
                 |> Level.initializeProof
