@@ -96,13 +96,8 @@ type Tactic =
             | Apply _ -> TacticType.Apply
             | Cases _ -> TacticType.Cases
 
-type ProofCaseKey = int
-
 type ProofCase =
     {
-        /// Distinct key within a proof.
-        Key : ProofCaseKey
-
         /// Proposition to be proved.
         GoalOpt : Option<Type>
 
@@ -112,26 +107,27 @@ type ProofCase =
 
 module ProofCase =
 
-    /// Adds the given tactic to the given proof case, if possible.
-    let tryAdd tactic case =
+    /// Adds the given tactic to the given proof case.
+    let add tactic case =
 
         match tactic, case.GoalOpt with
 
             | Exact hp, Some p
                 when case.Terms.Contains(hp) && hp.Type = p ->
-                Some { case with GoalOpt = None }
+                [ { case with GoalOpt = None } ]
 
             | Intro hp, Some (Function (p, q))
                 when hp.Type = p ->
-                Some {
-                    case with
+                [
+                    {
                         GoalOpt = Some q
                         Terms = case.Terms.Add(hp)
-                }
+                    }
+                ]
 
             | Apply (Term.Function (p, q')), Some q
                 when q' = q ->
-                Some { case with GoalOpt = Some p }
+                [ { case with GoalOpt = Some p } ]
 
             | Cases (Term.Product types as hp), _ ->
                 let terms =
@@ -142,38 +138,49 @@ module ProofCase =
                     case.Terms
                         |> Set.remove hp
                         |> Set.union newTerms
-                Some { case with Terms = terms }
+                [ { case with Terms = terms } ]
 
-            | _ -> None
+            | _ -> []
+
+    /// Can the given tactic be added to the given case?
+    let canAdd tactic case =
+        (add tactic case).IsEmpty |> not
+
+type ProofCaseKey = int
 
 type Proof =
     {
+        NextKey : ProofCaseKey
         CaseMap : Map<ProofCaseKey, ProofCase>
     }
 
 module Proof =
 
-    let empty = { CaseMap = Map.empty }
-
-    let private addCase case proof =
+    let empty =
         {
-            CaseMap =
-                proof.CaseMap
-                    |> Map.add case.Key case
+            NextKey = 0
+            CaseMap = Map.empty
         }
 
-    let add goal terms proof =
-        let case =
-            {
-                Key = proof.CaseMap.Count
-                GoalOpt = Some goal
-                Terms = terms
-            }
-        addCase case proof
+    let add case proof =
+        {
+            NextKey = proof.NextKey + 1
+            CaseMap =
+                proof.CaseMap
+                    |> Map.add proof.NextKey case
+        }
 
-    let update case proof =
-        assert(proof.CaseMap.ContainsKey(case.Key))
-        addCase case proof
+    let remove caseKey proof =
+        assert(proof.CaseMap.ContainsKey(caseKey))
+        let caseMap =
+            proof.CaseMap
+                |> Map.remove caseKey
+        { proof with CaseMap = caseMap }
+
+    let addMany cases proof =
+        (proof, cases)
+            ||> Seq.fold (fun acc case ->
+                add case acc)
 
     let isComplete proof =
         Map.forall (fun _ case ->

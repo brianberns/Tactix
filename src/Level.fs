@@ -196,5 +196,10 @@ module Level =
         |]
 
     let initializeProof level =
+        let case =
+            {
+                GoalOpt = Some level.Goal
+                Terms = level.Terms
+            }
         Proof.empty
-            |> Proof.add level.Goal level.Terms
+            |> Proof.add case

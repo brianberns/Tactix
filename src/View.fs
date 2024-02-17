@@ -132,7 +132,8 @@ module View =
             yield! dragDrop
         ]
 
-    let private renderGoal case model dispatch =
+    let private renderGoal (caseKey, case) model dispatch =
+        assert(model.Proof.CaseMap[caseKey] = case)
 
         let allowIntro goal evt =
             option {
@@ -142,8 +143,8 @@ module View =
                             | Function (p, _) -> Some p
                             | _ -> None
                     let tactic = Intro (Term.create p)
-                    let! _ = ProofCase.tryAdd tactic case
-                    return AddTactic (tactic, case.Key)
+                    if ProofCase.canAdd tactic case then
+                        return AddTactic (tactic, caseKey)
             }
 
         Html.div [
@@ -153,7 +154,7 @@ module View =
                     | Some goal ->
                         renderType
                             goal
-                            case.Key
+                            caseKey
                             (allowIntro goal)
                             model
                             dispatch
@@ -186,11 +187,11 @@ module View =
             yield! dragDrop
         ]
 
-    let private allow (tactic : Tactic) case evt =
+    let private allow (tactic : Tactic) (caseKey, case) evt =
         option {
             if DragData.tacticType evt = tactic.Type then
-                let! _ = ProofCase.tryAdd tactic case
-                return AddTactic (tactic, case.Key)
+                if ProofCase.canAdd tactic case then
+                    return AddTactic (tactic, caseKey)
         }
 
     let private allowAny allowTactics term evt =
@@ -198,16 +199,19 @@ module View =
             |> Seq.tryPick (fun allowTactic ->
                 allowTactic term evt)
 
-    let private renderTerms case model dispatch =
+    let private renderTerms
+        ((caseKey, case) as casePair)
+        model
+        dispatch =
 
         let allowExact term =
-            allow (Exact term) case
+            allow (Exact term) casePair
 
         let allowApply term =
-            allow (Apply term) case
+            allow (Apply term) casePair
 
         let allowCases term =
-            allow (Cases term) case
+            allow (Cases term) casePair
 
         let allowMulti =
             allowAny [ allowExact; allowApply; allowCases ]
@@ -218,7 +222,7 @@ module View =
                 for term in case.Terms do
                     renderTerm
                         term
-                        case.Key
+                        caseKey
                         (allowMulti term)
                         model
                         dispatch
@@ -229,12 +233,12 @@ module View =
         Html.div [
             prop.id "proof"
             prop.children [
-                for case in model.Proof.CaseMap.Values do
+                for casePair in Map.toSeq model.Proof.CaseMap do
                     Html.div [
                         prop.className "proof-case"
                         prop.children [
-                            renderGoal case model dispatch
-                            renderTerms case model dispatch
+                            renderGoal casePair model dispatch
+                            renderTerms casePair model dispatch
                         ]
                     ]
             ]
