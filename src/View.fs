@@ -38,8 +38,10 @@ module View =
                     prop.text $"Level {levelIdx + 1}"
 #if DEBUG
                     prop.onCut (fun _ ->
-                        if levelIdx > 0 then
-                            dispatch (StartLevel (levelIdx - 1)))
+                        let levelIdx =
+                            if levelIdx > 0 then levelIdx - 1
+                            else Level.levels.Length - 1
+                        dispatch (StartLevel levelIdx))
 #endif
                 ]
                 if instructions <> "" then

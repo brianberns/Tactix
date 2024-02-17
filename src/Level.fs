@@ -17,8 +17,8 @@ module TacticType =
         | TacticType.Intro -> "Drag onto an arrow goal to simplify it"
         | TacticType.Apply -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
         | TacticType.Cases -> "Drag onto ∧ or ∨ in the field to split them"
-        | TacticType.Left -> ""
-        | TacticType.Right -> ""
+        | TacticType.Left -> "Drag onto a ∨ goal to choose its left symbol"
+        | TacticType.Right -> "Drag onto a ∨ goal to choose its right symbol"
 
 type Level =
     {
@@ -38,6 +38,8 @@ module Level =
     let private intro = TacticType.emoji TacticType.Intro
     let private apply = TacticType.emoji TacticType.Apply
     let private cases = TacticType.emoji TacticType.Cases
+    let private left = TacticType.emoji TacticType.Left
+    let private right = TacticType.emoji TacticType.Right
 
     let private level1 =
         {
@@ -201,7 +203,7 @@ module Level =
                     TacticType.Left
                     TacticType.Right
                 ]
-            Instructions = ""
+            Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
         }
 
     let levels =
