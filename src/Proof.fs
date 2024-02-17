@@ -161,14 +161,6 @@ module Proof =
                     |> Map
         }
 
-    let update (case : ProofCase) proof =
-        assert(proof.CaseMap.ContainsKey(case.Key))
-        {
-            CaseMap =
-                proof.CaseMap
-                    |> Map.add case.Key case
-        }
-
     let isComplete proof =
         Map.forall (fun _ case ->
             case.GoalOpt.IsNone) proof.CaseMap
