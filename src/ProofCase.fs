@@ -1,5 +1,6 @@
 ﻿namespace Tactix
 
+/// One case in a proof.
 type ProofCase =
     {
         /// Proposition to be proved.
@@ -11,7 +12,8 @@ type ProofCase =
 
 module ProofCase =
 
-    /// Adds the given tactic to the given proof case.
+    /// Adds the given tactic to the given proof case. If
+    /// successful, one or more resulting cases are answered.
     let add tactic case =
 
         match tactic, case.GoalOpt with
@@ -55,4 +57,4 @@ module ProofCase =
 
     /// Can the given tactic be added to the given case?
     let canAdd tactic case =
-        (add tactic case).IsEmpty |> not
+        not (add tactic case).IsEmpty

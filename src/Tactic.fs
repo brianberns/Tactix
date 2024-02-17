@@ -10,6 +10,7 @@ type TacticType =
     | Apply
     | Cases
 
+/// A tactic used in a proof.
 type Tactic =
 
     /// Term (HP : P) eliminates goal P.

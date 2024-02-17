@@ -8,6 +8,7 @@ type Term =
         Type : Type
     }
 
+    /// Display string.
     override term.ToString() =
         $"H{term.Type}"
 

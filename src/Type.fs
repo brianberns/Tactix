@@ -15,6 +15,7 @@ type Type =
     /// Disjuction (or), such as P ∨ Q.
     | Sum of List<Type>
 
+    /// Display string.
     override typ.ToString() =
 
         let toString sep types =
