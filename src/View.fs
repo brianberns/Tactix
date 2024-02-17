@@ -147,7 +147,7 @@ module View =
             }
 
         Html.div [
-            prop.className "goal-area"
+            prop.className "goal"
             prop.children [
                 match case.GoalOpt with
                     | Some goal ->
@@ -213,7 +213,7 @@ module View =
             allowAny [ allowExact; allowApply; allowCases ]
 
         Html.div [
-            prop.className "terms-area"
+            prop.className "terms"
             prop.children [
                 for term in case.Terms do
                     renderTerm
@@ -225,11 +225,26 @@ module View =
             ]
         ]
 
+    let private renderProof model dispatch =
+        Html.div [
+            prop.id "proof"
+            prop.children [
+                for case in model.Proof.CaseMap.Values do
+                    Html.div [
+                        prop.className "proof-case"
+                        prop.children [
+                            renderGoal case model dispatch
+                            renderTerms case model dispatch
+                        ]
+                    ]
+            ]
+        ]
+
     let private renderTacticTypes levelIdx draggable =
         let tacticTypes =
             Level.levels[levelIdx].TacticTypes
         Html.div [
-            prop.className "tactics-area"
+            prop.className "tactics"
             prop.children [
                 for tacticType in tacticTypes do
                     Html.div [
@@ -269,9 +284,7 @@ module View =
     let render model dispatch =
         Html.div [
             renderHeader model.Settings.LevelIndex
-            for case in model.Proof.CaseMap.Values do
-                renderGoal case model dispatch
-                renderTerms case model dispatch
+            renderProof model dispatch
             renderTacticTypes
                 model.Settings.LevelIndex
                 (not <| Proof.isComplete model.Proof)

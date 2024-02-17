@@ -38,6 +38,9 @@ type Term =
         Type : Type
     }
 
+    override term.ToString() =
+        $"H{term.Type}"
+
 module Term =
 
     /// Creates a term of the given type.
@@ -93,20 +96,19 @@ type Tactic =
             | Apply _ -> TacticType.Apply
             | Cases _ -> TacticType.Cases
 
+type ProofCaseKey = int
+
 type ProofCase =
     {
+        /// Distinct key within a proof.
+        Key : ProofCaseKey
+
         /// Proposition to be proved.
         GoalOpt : Option<Type>
 
         /// Hypotheses.
         Terms : Set<Term>
     }
-
-    /// Distinct key of this case within a proof.
-    member case.Key =
-        case.GoalOpt
-            |> Option.map string
-            |> Option.defaultValue ""
 
 module ProofCase =
 
@@ -122,8 +124,9 @@ module ProofCase =
             | Intro hp, Some (Function (p, q))
                 when hp.Type = p ->
                 Some {
-                    GoalOpt = Some q
-                    Terms = case.Terms.Add(hp)
+                    case with
+                        GoalOpt = Some q
+                        Terms = case.Terms.Add(hp)
                 }
 
             | Apply (Term.Function (p, q')), Some q
@@ -143,8 +146,6 @@ module ProofCase =
 
             | _ -> None
 
-type ProofCaseKey = string
-
 type Proof =
     {
         CaseMap : Map<ProofCaseKey, ProofCase>
@@ -152,14 +153,27 @@ type Proof =
 
 module Proof =
 
-    let create cases =
+    let empty = { CaseMap = Map.empty }
+
+    let private addCase case proof =
         {
             CaseMap =
-                cases
-                    |> Seq.map (fun (case : ProofCase) ->
-                        case.Key, case)
-                    |> Map
+                proof.CaseMap
+                    |> Map.add case.Key case
         }
+
+    let add goal terms proof =
+        let case =
+            {
+                Key = proof.CaseMap.Count
+                GoalOpt = Some goal
+                Terms = terms
+            }
+        addCase case proof
+
+    let update case proof =
+        assert(proof.CaseMap.ContainsKey(case.Key))
+        addCase case proof
 
     let isComplete proof =
         Map.forall (fun _ case ->

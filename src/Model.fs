@@ -61,17 +61,12 @@ module Model =
         { model with Highlight = highlight }
 
     let private updateAddTactic tactic caseKey model =
-        let proof =
-            let caseMap =
-                let case = model.Proof.CaseMap[caseKey]
-                let case' =
-                    case
-                        |> ProofCase.tryAdd tactic
-                        |> Option.defaultValue case
-                model.Proof.CaseMap
-                    |> Map.remove case.Key
-                    |> Map.add case'.Key case'
-            { CaseMap = caseMap }
+        let case' =
+            let case = model.Proof.CaseMap[caseKey]
+            case
+                |> ProofCase.tryAdd tactic
+                |> Option.defaultValue case
+        let proof = Proof.update case' model.Proof
         { model with
             Proof = proof
             Highlight = Highlight.None }
