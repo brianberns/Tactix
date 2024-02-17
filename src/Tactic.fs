@@ -24,6 +24,8 @@ type Tactic =
     /// goal to just P.
     | Apply of Term
 
+    /// Breaks up an hypothesis (HP : P) into its component
+    /// parts, creating goals for each constructor of P.
     | Cases of Term
 
     /// Tactic type.

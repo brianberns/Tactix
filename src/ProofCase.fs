@@ -51,7 +51,8 @@ module ProofCase =
                 types
                     |> List.map (fun typ ->
                         { case with
-                            Terms = Set.add (Term.create typ) terms })
+                            Terms =
+                                Set.add (Term.create typ) terms })
 
             | _ -> []
 
