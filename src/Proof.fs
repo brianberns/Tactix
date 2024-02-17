@@ -31,21 +31,25 @@ module Term =
     let create typ =
         { Type = typ }
 
+    /// Matches a function term.
     let (|Function|_|) term =
         match term.Type with
             | Function (p, q) -> Some (p, q)
             | _ -> None
 
+    /// Matches a product term.
     let (|Product|_|) term =
         match term.Type with
             | Product types -> Some types
             | _ -> None
 
+    /// Matches a sum term.
     let (|Sum|_|) term =
         match term.Type with
             | Sum types -> Some types
             | _ -> None
 
+/// Tactic type.
 [<RequireQualifiedAccess>]
 type TacticType =
     | Exact
@@ -54,11 +58,21 @@ type TacticType =
     | Cases
 
 type Tactic =
+
+    /// Term (HP : P) eliminates goal P.
     | Exact of Term
+
+    /// Introduces term (HP : P) when goal is P -> Q, changing
+    /// goal to just Q.
     | Intro of Term
+
+    /// Applies term (HPQ : P -> Q) when goal is Q, changing
+    /// goal to just P.
     | Apply of Term
+
     | Cases of Term
 
+    /// Tactic type.
     member tactic.Type =
         match tactic with
             | Exact _ -> TacticType.Exact
@@ -74,17 +88,15 @@ type Proof =
 
 module Proof =
 
+    /// Adds the given tactic to the given proof, if possible.
     let tryAdd tactic proof =
 
         match tactic, proof.GoalOpt with
 
-                // term (HP : P) eliminates goal P
             | Exact hp, Some p
-                when proof.Terms.Contains(hp)
-                    && hp.Type = p ->
+                when proof.Terms.Contains(hp) && hp.Type = p ->
                 Some { proof with GoalOpt = None }
 
-                // introduces term (HP : P) when goal is P -> Q, changing goal to just Q
             | Intro hp, Some (Function (p, q))
                 when hp.Type = p ->
                 Some {
@@ -92,7 +104,6 @@ module Proof =
                     Terms = proof.Terms.Add(hp)
                 }
 
-                // applies term (HPQ : P -> Q) when goal is Q, changing goal to just P
             | Apply (Term.Function (p, q')), Some q
                 when q' = q ->
                 Some { proof with GoalOpt = Some p }
