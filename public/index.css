@@ -106,11 +106,16 @@
     width: 8vh;
     height: 8vh;
     font-size: 6vh;
+    cursor: grab;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     user-select: none;
+}
+
+.tactic:active {
+    cursor: grabbing;
 }
 
 .settings-button {
