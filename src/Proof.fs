@@ -140,6 +140,13 @@ module ProofCase =
                         |> Set.union newTerms
                 [ { case with Terms = terms } ]
 
+            | Cases (Term.Sum types as hp), _ ->
+                let terms = Set.remove hp case.Terms
+                types
+                    |> List.map (fun typ ->
+                        { case with
+                            Terms = Set.add (Term.create typ) terms })
+
             | _ -> []
 
     /// Can the given tactic be added to the given case?

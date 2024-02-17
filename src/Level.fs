@@ -62,6 +62,7 @@ module Level =
 
     let private pp = Function (p, p)
     let private pq = Function (p, q)
+    let private pr = Function (p, r)
     let private qr = Function (q, r)
     let private pqr = Function (p, Function (q, r))
 
@@ -149,6 +150,7 @@ module Level =
         }
 
     let private p_and_q = Product [p; q]
+    let private p_or_q = Sum [p; q]
  
     let private level9 =
         {
@@ -163,9 +165,27 @@ module Level =
                 ]
             Instructions = $"Drag {cases} onto ∧ to split it"
         }
+ 
+    let private level10 =
+        {
+            Goal = r
+            Terms =
+                set [
+                    Term.create p_or_q
+                    Term.create pr
+                    Term.create qr
+                ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                    TacticType.Cases
+                ]
+            Instructions = $"Drag {cases} onto ∨ to split it"
+        }
 
     (*
-    let private p_or_q = Sum [p; q]
     let private q_or_p = Sum [q; p]
 
     let private level10 =
@@ -193,6 +213,7 @@ module Level =
             level7
             level8
             level9
+            level10
         |]
 
     let initializeProof level =
