@@ -19,6 +19,7 @@
 }
 
 .proof-case {
+    flex-grow: 1;
 }
 
 .goal {

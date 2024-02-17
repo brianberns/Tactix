@@ -244,7 +244,7 @@ module View =
         let tacticTypes =
             Level.levels[levelIdx].TacticTypes
         Html.div [
-            prop.className "tactics"
+            prop.id "tactics"
             prop.children [
                 for tacticType in tacticTypes do
                     Html.div [
