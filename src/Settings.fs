@@ -3,6 +3,7 @@
 open Browser
 open Fable.SimpleJson
 
+/// User settings.
 type Settings =
     {
         /// Audio enabled/disabled.

@@ -1,6 +1,7 @@
 ﻿namespace Tactix
 
-[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]   // https://stackoverflow.com/questions/64929689/avoiding-the-error-where-a-module-and-a-type-definition-occur-in-two-parts-of-an
+// https://stackoverflow.com/questions/64929689/avoiding-the-error-where-a-module-and-a-type-definition-occur-in-two-parts-of-an
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module TacticType =
 
     let emoji = function
