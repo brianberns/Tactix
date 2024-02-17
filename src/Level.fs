@@ -34,6 +34,12 @@ module Level =
     let private q = Primitive "Q"
     let private r = Primitive "R"
 
+    let private pq = Function (p, q)
+    let private pqr = Function (p, Function (q, r))
+
+    let private p_and_q = Product [p; q]
+    let private p_or_q = Sum [p; q]
+
     let private exact = TacticType.emoji TacticType.Exact
     let private intro = TacticType.emoji TacticType.Intro
     let private apply = TacticType.emoji TacticType.Apply
@@ -66,8 +72,6 @@ module Level =
             TacticTypes = set [ TacticType.Exact ]
             Instructions = ""
         }
-
-    let private pq = Function (p, q)
 
     let private level3 =
         {
@@ -108,7 +112,7 @@ module Level =
 
     let private level6 =
         {
-            Goal = Function (p, Function (q, r))
+            Goal = pqr
             Terms = set [ Term.create r ]
             TacticTypes =
                 set [
@@ -152,8 +156,6 @@ module Level =
             Instructions = ""
         }
 
-    let private p_or_q = Sum [p; q]
- 
     let private level9 =
         {
             Goal = p
@@ -206,6 +208,28 @@ module Level =
             Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
         }
 
+    (*
+    // https://www.wikiwand.com/en/Absorption_(logic)
+    let private level12 =
+        {
+            Goal = pqr
+            Terms =
+                set [
+                    Term.create (Function (p_and_q, r))
+                ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                    TacticType.Cases
+                    TacticType.Left
+                    TacticType.Right
+                ]
+            Instructions = ""
+        }
+    *)
+
     let levels =
         [|
             level1
@@ -219,6 +243,7 @@ module Level =
             level9
             level10
             level11
+            // level12
         |]
 
     let initializeProof level =
