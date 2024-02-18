@@ -47,14 +47,15 @@ module Level =
     let private left = TacticType.emoji TacticType.Left
     let private right = TacticType.emoji TacticType.Right
 
+    let private terms types =
+        types
+            |> Seq.map Term.create
+            |> set
+
     let private level1 =
         {
             Goal = p
-            Terms =
-                set [
-                    Term.create p
-                    Term.create q
-                ]
+            Terms = terms [p; q]
             TacticTypes = set [ TacticType.Exact ]
             Instructions =
                 $"Drag {exact} onto the symbol that matches the top goal"
@@ -63,12 +64,7 @@ module Level =
     let private level2 =
         {
             Goal = r
-            Terms =
-                set [
-                    Term.create p
-                    Term.create q
-                    Term.create r
-                ]
+            Terms = terms [p; q; r]
             TacticTypes = set [ TacticType.Exact ]
             Instructions = ""
         }
@@ -76,12 +72,7 @@ module Level =
     let private level3 =
         {
             Goal = pq
-            Terms =
-                set [
-                    Term.create p
-                    Term.create q
-                    Term.create pq
-                ]
+            Terms = terms [p; q; pq]
             TacticTypes = set [ TacticType.Exact ]
             Instructions = $"You can also use {exact} on more complex symbols"
         }
@@ -89,7 +80,7 @@ module Level =
     let private level4 =
         {
             Goal = pq
-            Terms = set [ Term.create q ]
+            Terms = terms [q]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -101,7 +92,7 @@ module Level =
     let private level5 =
         {
             Goal = Function (p, p)
-            Terms = Set.empty
+            Terms = terms []
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -113,7 +104,7 @@ module Level =
     let private level6 =
         {
             Goal = pqr
-            Terms = set [ Term.create r ]
+            Terms = terms [r]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -125,11 +116,7 @@ module Level =
     let private level7 =
         {
             Goal = q
-            Terms =
-                set [
-                    Term.create p
-                    Term.create pq
-                ]
+            Terms = terms [p; pq]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -143,9 +130,9 @@ module Level =
         {
             Goal = Function (p, r)
             Terms =
-                set [
-                    Term.create (Function (p, q))
-                    Term.create (Function (q, r))
+                terms [
+                    Function (p, q)
+                    Function (q, r)
                 ]
             TacticTypes =
                 set [
@@ -159,12 +146,7 @@ module Level =
     let private level9 =
         {
             Goal = r
-            Terms =
-                set [
-                    Term.create p
-                    Term.create q
-                    Term.create pqr
-                ]
+            Terms = terms [p; q; pqr]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -178,10 +160,7 @@ module Level =
     let private level10 =
         {
             Goal = p
-            Terms =
-                set [
-                    Term.create (Product [p; q])
-                ]
+            Terms = terms [ Product [p; q] ]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -196,10 +175,10 @@ module Level =
         {
             Goal = r
             Terms =
-                set [
-                    Term.create p_or_q
-                    Term.create (Function (p, r))
-                    Term.create (Function (q, r))
+                terms [
+                    p_or_q
+                    Function (p, r)
+                    Function (q, r)
                 ]
             TacticTypes =
                 set [
@@ -214,7 +193,7 @@ module Level =
     let private level12 =
         {
             Goal = Function (p_and_q, r)
-            Terms = set [ Term.create pqr ]
+            Terms = terms [pqr]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -225,14 +204,27 @@ module Level =
             Instructions = ""
         }
 
+    let private level13 =
+        {
+            Goal = Sum [q; p]
+            Terms = terms [p_or_q]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                    TacticType.Cases
+                    TacticType.Left
+                    TacticType.Right
+                ]
+            Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
+        }
+
     (*
     let private level14 =
         {
             Goal = pqr
-            Terms =
-                set [
-                    Term.create (Function (p_and_q, r))
-                ]
+            Terms = terms [ Function (p_and_q, r) ]
             TacticTypes =
                 set [
                     TacticType.Exact
@@ -245,22 +237,6 @@ module Level =
             Instructions = ""
         }
     *)
-
-    let private level13 =
-        {
-            Goal = Sum [q; p]
-            Terms = set [ Term.create p_or_q ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
-                ]
-            Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
-        }
 
     let levels =
         [|
@@ -277,6 +253,7 @@ module Level =
             level11
             level12
             level13
+            // level14
         |]
 
     let initializeProof level =
