@@ -308,14 +308,8 @@ module View =
 
     let render model dispatch =
         Html.div [
+
             let levelIdx = model.Settings.LevelIndex
-#if DEBUG
-            prop.onCut (fun _ ->
-                let levelIdx =
-                    if levelIdx > 0 then levelIdx - 1
-                    else Level.levels.Length - 1
-                dispatch (StartLevel levelIdx))
-#endif
             prop.children [
                 renderHeader model.Proof levelIdx
                 renderProof model dispatch
@@ -326,4 +320,10 @@ module View =
                     model.Settings
                     dispatch
             ]
+                // easter egg for revisiting levels
+            prop.onCut (fun _ ->
+                let levelIdx =
+                    if levelIdx > 0 then levelIdx - 1
+                    else Level.levels.Length - 1
+                dispatch (StartLevel levelIdx))
         ]
