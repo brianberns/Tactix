@@ -36,13 +36,6 @@ module View =
                 Html.div [
                     prop.id "level-num"
                     prop.text $"Level {levelIdx + 1}"
-#if DEBUG
-                    prop.onCut (fun _ ->
-                        let levelIdx =
-                            if levelIdx > 0 then levelIdx - 1
-                            else Level.levels.Length - 1
-                        dispatch (StartLevel levelIdx))
-#endif
                 ]
                 if instructions <> "" then
                     Html.div [
@@ -311,14 +304,22 @@ module View =
 
     let render model dispatch =
         Html.div [
-            renderHeader
-                model.Settings.LevelIndex
-                dispatch
-            renderProof model dispatch
-            renderTacticTypes
-                model.Settings.LevelIndex
-                (not <| Proof.isComplete model.Proof)
-            renderFooter
-                model.Settings
-                dispatch
+            let levelIdx = model.Settings.LevelIndex
+#if DEBUG
+            prop.onCut (fun _ ->
+                let levelIdx =
+                    if levelIdx > 0 then levelIdx - 1
+                    else Level.levels.Length - 1
+                dispatch (StartLevel levelIdx))
+#endif
+            prop.children [
+                renderHeader levelIdx dispatch
+                renderProof model dispatch
+                renderTacticTypes
+                    levelIdx
+                    (not <| Proof.isComplete model.Proof)
+                renderFooter
+                    model.Settings
+                    dispatch
+            ]
         ]
