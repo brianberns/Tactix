@@ -257,6 +257,30 @@ module Level =
             Instructions = ""
         }
 
+    let private level16 =
+        {
+            Goal =
+                Sum [
+                    Product [p; r]
+                    Product [q; r]
+                ]
+            Terms =
+                terms [
+                    Product [Sum [p; q]; r]
+                ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                    TacticType.Cases
+                    TacticType.Left
+                    TacticType.Right
+                    TacticType.Split
+                ]
+            Instructions = ""
+        }
+
     let levels =
         [|
             level1
@@ -274,6 +298,7 @@ module Level =
             level13
             level14
             level15
+            level16
         |]
 
     let initializeProof level =
