@@ -31,7 +31,10 @@ type Tactic =
     /// parts, creating goals for each constructor of P.
     | Cases of Term
 
+    /// Changes goal (P v Q) to just P.
     | Left
+
+    /// Changes goal (P v Q) to just Q.
     | Right
 
     /// Tactic type.
