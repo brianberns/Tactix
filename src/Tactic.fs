@@ -23,7 +23,7 @@ type Tactic =
     /// goal to just Q.
     | Intro of Term
 
-    /// Apples term (P1 -> P2 -> ... -> PN -> Q), where the
+    /// Applies term (P1 -> P2 -> ... -> PN -> Q), where the
     /// goal is Q, replacing the goal with N separate goals,
     /// P1 through PN.
     | Apply of Term
