@@ -158,6 +158,25 @@ module Level =
 
     let private level9 =
         {
+            Goal = r
+            Terms =
+                set [
+                    Term.create p
+                    Term.create q
+                    Term.create pqr
+                ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                    TacticType.Cases
+                ]
+            Instructions = $"You can also use {apply} on nested ▢→■ symbols when the goal is ■"
+        }
+
+    let private level10 =
+        {
             Goal = p
             Terms =
                 set [
@@ -173,7 +192,7 @@ module Level =
             Instructions = $"Drag {cases} onto ∧ in the field to split it"
         }
  
-    let private level10 =
+    let private level11 =
         {
             Goal = r
             Terms =
@@ -192,23 +211,6 @@ module Level =
             Instructions = $"Drag {cases} onto ∨ in the field to split it"
         }
 
-    let private level11 =
-        {
-            Goal = Sum [q; p]
-            Terms = set [ Term.create p_or_q ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
-                ]
-            Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
-        }
-
-    // https://www.wikiwand.com/en/Exportation_(logic)
     let private level12 =
         {
             Goal = Function (p_and_q, r)
@@ -219,14 +221,12 @@ module Level =
                     TacticType.Intro
                     TacticType.Apply
                     TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
                 ]
             Instructions = ""
         }
 
     (*
-    let private level13 =
+    let private level14 =
         {
             Goal = pqr
             Terms =
@@ -246,6 +246,22 @@ module Level =
         }
     *)
 
+    let private level13 =
+        {
+            Goal = Sum [q; p]
+            Terms = set [ Term.create p_or_q ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                    TacticType.Cases
+                    TacticType.Left
+                    TacticType.Right
+                ]
+            Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
+        }
+
     let levels =
         [|
             level1
@@ -260,6 +276,7 @@ module Level =
             level10
             level11
             level12
+            level13
         |]
 
     let initializeProof level =
