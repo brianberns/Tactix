@@ -208,9 +208,25 @@ module Level =
             Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
         }
 
-    (*
-    // https://www.wikiwand.com/en/Absorption_(logic)
+    // https://www.wikiwand.com/en/Exportation_(logic)
     let private level12 =
+        {
+            Goal = Function (p_and_q, r)
+            Terms = set [ Term.create pqr ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                    TacticType.Cases
+                    TacticType.Left
+                    TacticType.Right
+                ]
+            Instructions = ""
+        }
+
+    (*
+    let private level13 =
         {
             Goal = pqr
             Terms =
@@ -243,7 +259,7 @@ module Level =
             level9
             level10
             level11
-            // level12
+            level12
         |]
 
     let initializeProof level =
