@@ -11,6 +11,7 @@ type TacticType =
     | Cases
     | Left
     | Right
+    | Split
 
 /// A tactic used in a proof.
 type Tactic =
@@ -37,6 +38,8 @@ type Tactic =
     /// Changes goal (P v Q) to just Q.
     | Right
 
+    | Split
+
     /// Tactic type.
     member tactic.Type =
         match tactic with
@@ -46,3 +49,4 @@ type Tactic =
             | Cases _ -> TacticType.Cases
             | Left -> TacticType.Left
             | Right -> TacticType.Right
+            | Split -> TacticType.Split

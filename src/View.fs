@@ -166,11 +166,23 @@ module View =
                         | _ -> ()
             }
 
+        let allowSplit goal evt =
+            option {
+                if DragData.tacticType evt = TacticType.Split then
+                    match goal with
+                        | Product _ ->
+                            let tactic = Split
+                            if ProofCase.canAdd tactic case then
+                                return AddTactic (tactic, caseKey)
+                        | _ -> ()
+            }
+
         let allowMulti =
             allowAny [
                 allowIntro
                 allowLeftRight Left
                 allowLeftRight Right
+                allowSplit
             ]
 
         Html.div [

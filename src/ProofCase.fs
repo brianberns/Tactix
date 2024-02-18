@@ -76,6 +76,11 @@ module ProofCase =
             | Right, Some (Sum (_ :: Q :: [])) ->
                 [ { case with GoalOpt = Some Q }]
 
+            | Split, Some (Product types) ->
+                types
+                    |> List.map (fun typ ->
+                        { case with GoalOpt = Some typ })
+
             | _ -> []
 
     /// Can the given tactic be added to the given case?

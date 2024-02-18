@@ -11,6 +11,7 @@ module TacticType =
         | TacticType.Cases -> "🔪"
         | TacticType.Left -> "👈🏾"
         | TacticType.Right -> "👉🏾"
+        | TacticType.Split -> "🎳"
 
     let instructions = function
         | TacticType.Exact -> "Drag onto a symbol that matches the goal"
@@ -19,6 +20,7 @@ module TacticType =
         | TacticType.Cases -> "Drag onto ∧ or ∨ in the field to split them"
         | TacticType.Left -> "Drag onto a ∨ goal to choose its left symbol"
         | TacticType.Right -> "Drag onto a ∨ goal to choose its right symbol"
+        | TacticType.Split -> "Drag onto a ∧ goal to split it"
 
 type Level =
     {
@@ -46,6 +48,7 @@ module Level =
     let private cases = TacticType.emoji TacticType.Cases
     let private left = TacticType.emoji TacticType.Left
     let private right = TacticType.emoji TacticType.Right
+    let private split = TacticType.emoji TacticType.Split
 
     let private terms types =
         types
@@ -220,8 +223,24 @@ module Level =
             Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
         }
 
-    (*
     let private level14 =
+        {
+            Goal = Product [p; q]
+            Terms = terms [p; q]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                    TacticType.Cases
+                    TacticType.Left
+                    TacticType.Right
+                    TacticType.Split
+                ]
+            Instructions = $"Drag {split} onto a ∧ goal to split it"
+        }
+
+    let private level15 =
         {
             Goal = pqr
             Terms = terms [ Function (p_and_q, r) ]
@@ -233,10 +252,10 @@ module Level =
                     TacticType.Cases
                     TacticType.Left
                     TacticType.Right
+                    TacticType.Split
                 ]
             Instructions = ""
         }
-    *)
 
     let levels =
         [|
@@ -253,7 +272,8 @@ module Level =
             level11
             level12
             level13
-            // level14
+            level14
+            level15
         |]
 
     let initializeProof level =
