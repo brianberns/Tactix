@@ -7,14 +7,27 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.goal-area {
+#proof {
     position: absolute;
     left: 0%;
     top: 0%;
     width: 100%;
-    height: 20%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.proof-case {
+    flex-grow: 1;
+    border: 1px solid black;
+}
+
+.goal {
+    height: 20vh;
     background-color: var(--sunset);
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 }
@@ -24,19 +37,21 @@
 }
 
 .primitive-type {
-    width: 10vh;
-    height: 10vh;
+    width: 8vh;
+    height: 8vh;
+    border-radius: 8px;
     pointer-events: none;
 }
 
 .primitive-type-highlight {
-    width: 15vh;
-    height: 15vh;
+    width: 12vh;
+    height: 12vh;
+    border-radius: 16px;
     pointer-events: none;
 }
 
 .compound-type {
-    border: 3px solid black;
+    border: 2px solid black;
     font-size: x-large;
     display: inline-flex;
     padding: 3px;
@@ -57,16 +72,14 @@
     background-color: var(--cambridge-blue);
 }
 
-.terms-area {
-    position: absolute;
-    left: 0%;
-    top: 20%;
-    width: 100%;
-    height: 60%;
+.terms {
+    height: 60vh;
     background-color: var(--eggshell);
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    align-content: center;
 }
 
 .term {
@@ -74,7 +87,7 @@
     user-select: none;
 }
 
-.tactics-area {
+#tactics {
     position: absolute;
     left: 0%;
     top: 80%;
@@ -82,6 +95,7 @@
     height: 20%;
     background-color: var(--sunset);
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 }
@@ -89,17 +103,24 @@
 .tactic {
     margin: 10px;
     padding: 0px;
-    width: 10vh;
-    height: 10vh;
-    font-size: 8vh;
+    width: 8vh;
+    height: 8vh;
+    font-size: 6vh;
+    cursor: grab;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     user-select: none;
 }
 
+.tactic:active {
+    cursor: grabbing;
+}
+
 .settings-button {
     width: 24px;
+    margin: 2px;
 }
 
 #header {
@@ -111,6 +132,8 @@
 #level-num {
     font-size: x-large;
     font-weight: bold;
+    display: flex;
+    align-items: center;
 }
 
 #instructions {
