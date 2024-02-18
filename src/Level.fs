@@ -225,8 +225,8 @@ module Level =
 
     let private level14 =
         {
-            Goal = Product [p; q]
-            Terms = terms [p; q]
+            Goal = Product [q; p]
+            Terms = terms [ Product [p; q] ]
             TacticTypes =
                 set [
                     TacticType.Exact
