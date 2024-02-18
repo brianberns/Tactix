@@ -27,7 +27,7 @@ module private DragData =
 
 module View =
 
-    let private renderHeader levelIdx dispatch =
+    let private renderHeader levelIdx =
         let instructions =
             Level.levels[levelIdx].Instructions
         Html.div [
@@ -313,7 +313,7 @@ module View =
                 dispatch (StartLevel levelIdx))
 #endif
             prop.children [
-                renderHeader levelIdx dispatch
+                renderHeader levelIdx
                 renderProof model dispatch
                 renderTacticTypes
                     levelIdx
