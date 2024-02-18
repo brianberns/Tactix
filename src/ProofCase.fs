@@ -12,6 +12,21 @@ type ProofCase =
 
 module ProofCase =
 
+    /// Applies p -> q with the given goal, if possible.
+    let private apply p q goal =
+
+        let rec loop p q =
+            if q = goal then [p]
+            else
+                match q with
+                    | Function (qIn, qOut) ->
+                        let goals = loop qIn qOut
+                        if goals = [] then []
+                        else p :: goals
+                    | _ -> []
+
+        loop p q
+
     /// Adds the given tactic to the given proof case. If
     /// successful, one or more resulting cases are answered.
     let add tactic case =
@@ -31,9 +46,10 @@ module ProofCase =
                     }
                 ]
 
-            | Apply (Term.Function (p, q')), Some q
-                when q' = q ->
-                [ { case with GoalOpt = Some p } ]
+            | Apply (Term.Function (p, q)), Some goal ->
+                (apply p q goal)
+                    |> List.map (fun goal' ->
+                        { case with GoalOpt = Some goal' })
 
             | Cases (Term.Product types as hp), _ ->
                 let terms =

@@ -22,8 +22,9 @@ type Tactic =
     /// goal to just Q.
     | Intro of Term
 
-    /// Applies term (HPQ : P -> Q) when goal is Q, changing
-    /// goal to just P.
+    /// Apples term (P1 -> P2 -> ... -> PN -> Q), where the
+    /// goal is Q, replacing the goal with N separate goals,
+    /// P1 through PN.
     | Apply of Term
 
     /// Breaks up an hypothesis (HP : P) into its component
