@@ -27,21 +27,25 @@ module private DragData =
 
 module View =
 
-    let private renderHeader levelIdx =
-        let instructions =
-            Level.levels[levelIdx].Instructions
+    let private renderHeader proof levelIdx =
         Html.div [
             prop.id "header"
             prop.children [
+
                 Html.div [
                     prop.id "level-num"
                     prop.text $"Level {levelIdx + 1}"
                 ]
+
+                let level = Level.levels[levelIdx]
+                let instructions = level.Instructions
                 if instructions <> "" then
-                    Html.div [
-                        prop.id "instructions"
-                        prop.text instructions
-                    ]
+                    let proof' = Level.initializeProof level
+                    if proof = proof' then
+                        Html.div [
+                            prop.id "instructions"
+                            prop.text instructions
+                        ]
                 ]
         ]
 
@@ -313,7 +317,7 @@ module View =
                 dispatch (StartLevel levelIdx))
 #endif
             prop.children [
-                renderHeader levelIdx
+                renderHeader model.Proof levelIdx
                 renderProof model dispatch
                 renderTacticTypes
                     levelIdx
