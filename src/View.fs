@@ -6,7 +6,7 @@ open Feliz
 
 type private DragData =
     {
-        TacticType : TacticType
+        ActionType : ActionType
     }
 
 module private DragData =
@@ -22,8 +22,8 @@ module private DragData =
         evt.dataTransfer.getData(format)
             |> Json.parseAs<DragData>
 
-    let tacticType evt =
-        (getData evt).TacticType
+    let actionType evt =
+        (getData evt).ActionType
 
 module View =
 
@@ -145,17 +145,17 @@ module View =
             yield! dragDrop
         ]
 
-    let private allowAny allowTactics term evt =
-        allowTactics
-            |> Seq.tryPick (fun allowTactic ->
-                allowTactic term evt)
+    let private allowAny allowActions term evt =
+        allowActions
+            |> Seq.tryPick (fun allowAction ->
+                allowAction term evt)
 
     let private renderGoal (caseKey, case) model dispatch =
         assert(model.Proof.CaseMap[caseKey] = case)
 
         let allowIntro goal evt =
             option {
-                if DragData.tacticType evt = TacticType.Intro then
+                if DragData.actionType evt = ActionType.Intro then
                     let! p =
                         match goal with
                             | Function (p, _) -> Some p
@@ -165,9 +165,9 @@ module View =
                         return AddTactic (tactic, caseKey)
             }
 
-        let allowLeftRight (tactic : Tactic) goal evt =
+        let allowLeftRight tactic goal evt =
             option {
-                if DragData.tacticType evt = tactic.Type then
+                if DragData.actionType evt = ActionType.ofTactic tactic then
                     match goal with
                         | Sum _ ->
                             if ProofCase.canAdd tactic case then
@@ -177,7 +177,7 @@ module View =
 
         let allowSplit goal evt =
             option {
-                if DragData.tacticType evt = TacticType.Split then
+                if DragData.actionType evt = ActionType.Split then
                     match goal with
                         | Product _ ->
                             let tactic = Split
@@ -234,9 +234,9 @@ module View =
             yield! dragDrop
         ]
 
-    let private allow (tactic : Tactic) (caseKey, case) evt =
+    let private allow tactic (caseKey, case) evt =
         option {
-            if DragData.tacticType evt = tactic.Type then
+            if DragData.actionType evt = ActionType.ofTactic tactic then
                 if ProofCase.canAdd tactic case then
                     return AddTactic (tactic, caseKey)
         }
@@ -286,25 +286,25 @@ module View =
             ]
         ]
 
-    let private renderTacticTypes levelIdx draggable dispatch =
-        let tacticTypes =
-            Level.levels[levelIdx].TacticTypes
+    let private renderActionTypes levelIdx draggable dispatch =
+        let actionTypes =
+            Level.levels[levelIdx].ActionTypes
         Html.div [
-            prop.id "tactics"
+            prop.id "actions"
             prop.children [
-                for tacticType in tacticTypes do
+                for actionType in actionTypes do
                     Html.div [
-                        prop.className "tactic"
-                        prop.text (TacticType.emoji tacticType)
-                        prop.title (TacticType.instructions tacticType)
+                        prop.className "action"
+                        prop.text (ActionType.emoji actionType)
+                        prop.title (ActionType.instructions actionType)
                         if draggable then
                             prop.draggable true
                             prop.onDragStart (
                                 DragData.setData
-                                    { TacticType = tacticType })
+                                    { ActionType = actionType })
                     ]
                 Html.button [
-                    prop.className "tactic"
+                    prop.className "action"
                     prop.text "🧣"
                     prop.onClick (fun _ -> dispatch ExpandAliases)
                 ]
@@ -339,7 +339,7 @@ module View =
             prop.children [
                 renderHeader model.Proof levelIdx
                 renderProof model dispatch
-                renderTacticTypes
+                renderActionTypes
                     levelIdx
                     (not <| Proof.isComplete model.Proof)
                     dispatch

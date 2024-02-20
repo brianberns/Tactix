@@ -91,7 +91,7 @@
     user-select: none;
 }
 
-#tactics {
+#actions {
     position: absolute;
     left: 0%;
     top: 80%;
@@ -104,7 +104,7 @@
     align-items: center;
 }
 
-.tactic {
+.action {
     margin: 10px;
     padding: 0px;
     width: 8vh;
@@ -118,7 +118,7 @@
     user-select: none;
 }
 
-.tactic:active {
+.action:active {
     cursor: grabbing;
 }
 

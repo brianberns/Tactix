@@ -1,26 +1,44 @@
 ﻿namespace Tactix
 
-// https://stackoverflow.com/questions/64929689/avoiding-the-error-where-a-module-and-a-type-definition-occur-in-two-parts-of-an
-[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
-module TacticType =
+/// Action type.
+[<RequireQualifiedAccess>]
+type ActionType =
+    | Exact
+    | Intro
+    | Apply
+    | Cases
+    | Left
+    | Right
+    | Split
+
+module ActionType =
+
+    let ofTactic = function
+        | Exact _ -> ActionType.Exact
+        | Intro _ -> ActionType.Intro
+        | Apply _ -> ActionType.Apply
+        | Cases _ -> ActionType.Cases
+        | Left -> ActionType.Left
+        | Right -> ActionType.Right
+        | Split -> ActionType.Split
 
     let emoji = function
-        | TacticType.Exact -> "❤️"
-        | TacticType.Intro -> "🚀"
-        | TacticType.Apply -> "👣"
-        | TacticType.Cases -> "🔪"
-        | TacticType.Left -> "👈🏾"
-        | TacticType.Right -> "👉🏾"
-        | TacticType.Split -> "🎳"
+        | ActionType.Exact -> "❤️"
+        | ActionType.Intro -> "🚀"
+        | ActionType.Apply -> "👣"
+        | ActionType.Cases -> "🔪"
+        | ActionType.Left -> "👈🏾"
+        | ActionType.Right -> "👉🏾"
+        | ActionType.Split -> "🎳"
 
     let instructions = function
-        | TacticType.Exact -> "Drag onto a symbol that matches the goal"
-        | TacticType.Intro -> "Drag onto an arrow goal to simplify it"
-        | TacticType.Apply -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
-        | TacticType.Cases -> "Drag onto ∧ or ∨ in the field to split them"
-        | TacticType.Left -> "Drag onto a ∨ goal to choose its left symbol"
-        | TacticType.Right -> "Drag onto a ∨ goal to choose its right symbol"
-        | TacticType.Split -> "Drag onto a ∧ goal to split it"
+        | ActionType.Exact -> "Drag onto a symbol that matches the goal"
+        | ActionType.Intro -> "Drag onto an arrow goal to simplify it"
+        | ActionType.Apply -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
+        | ActionType.Cases -> "Drag onto ∧ or ∨ in the field to split them"
+        | ActionType.Left -> "Drag onto a ∨ goal to choose its left symbol"
+        | ActionType.Right -> "Drag onto a ∨ goal to choose its right symbol"
+        | ActionType.Split -> "Drag onto a ∧ goal to split it"
 
 /// A puzzle to be solved.
 type Level =
@@ -32,7 +50,7 @@ type Level =
         Terms : Set<Term>
 
         /// Available actions.
-        TacticTypes : Set<TacticType>
+        ActionTypes : Set<ActionType>
 
         /// Hint for the user.
         Instructions : string
@@ -50,13 +68,13 @@ module Level =
     let private p_and_q = Product [p; q]
     let private p_or_q = Sum [p; q]
 
-    let private exact = TacticType.emoji TacticType.Exact
-    let private intro = TacticType.emoji TacticType.Intro
-    let private apply = TacticType.emoji TacticType.Apply
-    let private cases = TacticType.emoji TacticType.Cases
-    let private left = TacticType.emoji TacticType.Left
-    let private right = TacticType.emoji TacticType.Right
-    let private split = TacticType.emoji TacticType.Split
+    let private exact = ActionType.emoji ActionType.Exact
+    let private intro = ActionType.emoji ActionType.Intro
+    let private apply = ActionType.emoji ActionType.Apply
+    let private cases = ActionType.emoji ActionType.Cases
+    let private left =  ActionType.emoji ActionType.Left
+    let private right = ActionType.emoji ActionType.Right
+    let private split = ActionType.emoji ActionType.Split
 
     /// Builds terms from types.
     let private terms types =
@@ -71,7 +89,7 @@ module Level =
             {
                 Goal = p
                 Terms = terms [p; q]
-                TacticTypes = set [ TacticType.Exact ]
+                ActionTypes = set [ ActionType.Exact ]
                 Instructions =
                     $"Drag {exact} onto the symbol that matches the top goal"
             }
@@ -81,7 +99,7 @@ module Level =
             {
                 Goal = r
                 Terms = terms [p; q; r]
-                TacticTypes = set [ TacticType.Exact ]
+                ActionTypes = set [ ActionType.Exact ]
                 Instructions = ""
             }
 
@@ -90,7 +108,7 @@ module Level =
             {
                 Goal = pq
                 Terms = terms [p; q; pq]
-                TacticTypes = set [ TacticType.Exact ]
+                ActionTypes = set [ ActionType.Exact ]
                 Instructions = $"You can also use {exact} on more complex symbols"
             }
 
@@ -101,10 +119,10 @@ module Level =
             {
                 Goal = pq
                 Terms = terms [q]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
+                        ActionType.Exact
+                        ActionType.Intro
                     ]
                 Instructions = $"Drag {intro} onto an arrow goal to simplify it"
             }
@@ -114,10 +132,10 @@ module Level =
             {
                 Goal = Function (p, p)
                 Terms = terms []
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
+                        ActionType.Exact
+                        ActionType.Intro
                     ]
                 Instructions = ""
             }
@@ -127,10 +145,10 @@ module Level =
             {
                 Goal = pqr
                 Terms = terms [r]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
+                        ActionType.Exact
+                        ActionType.Intro
                     ]
                 Instructions = ""
             }
@@ -142,11 +160,11 @@ module Level =
             {
                 Goal = q
                 Terms = terms [p; pq]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
                     ]
                 Instructions = $"Drag {apply} onto ▢→■ when the goal is ■ to change the goal to ▢"
             }
@@ -160,11 +178,11 @@ module Level =
                         Function (p, q)
                         Function (q, r)
                     ]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
                     ]
                 Instructions = ""
             }
@@ -174,11 +192,11 @@ module Level =
             {
                 Goal = r
                 Terms = terms [p; q; pqr]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
                     ]
                 Instructions = $"You can also use {apply} on nested ▢→■ symbols when the goal is ■"
             }
@@ -190,12 +208,12 @@ module Level =
             {
                 Goal = p
                 Terms = terms [ Product [p; q] ]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
                     ]
                 Instructions = $"Drag {cases} onto ∧ in the field to split it"
             }
@@ -210,12 +228,12 @@ module Level =
                         Function (p, r)
                         Function (q, r)
                     ]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
                     ]
                 Instructions = $"Drag {cases} onto ∨ in the field to split it"
             }
@@ -225,12 +243,12 @@ module Level =
             {
                 Goal = Function (p_and_q, r)
                 Terms = terms [pqr]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
                     ]
                 Instructions = ""
             }
@@ -242,14 +260,14 @@ module Level =
             {
                 Goal = Sum [q; p]
                 Terms = terms [p_or_q]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
-                        TacticType.Left
-                        TacticType.Right
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
+                        ActionType.Left
+                        ActionType.Right
                     ]
                 Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
             }
@@ -261,15 +279,15 @@ module Level =
             {
                 Goal = Product [q; p]
                 Terms = terms [ Product [p; q] ]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
-                        TacticType.Left
-                        TacticType.Right
-                        TacticType.Split
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Split
                     ]
                 Instructions = $"Drag {split} onto a ∧ goal to split it"
             }
@@ -279,15 +297,15 @@ module Level =
             {
                 Goal = pqr
                 Terms = terms [ Function (p_and_q, r) ]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
-                        TacticType.Left
-                        TacticType.Right
-                        TacticType.Split
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Split
                     ]
                 Instructions = ""
             }
@@ -304,15 +322,15 @@ module Level =
                     terms [
                         Product [Sum [p; q]; r]
                     ]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
-                        TacticType.Left
-                        TacticType.Right
-                        TacticType.Split
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Split
                     ]
                 Instructions = ""
             }
@@ -324,15 +342,15 @@ module Level =
             {
                 Goal = Type.not (Type.not p)
                 Terms = terms [ p ]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
-                        TacticType.Left
-                        TacticType.Right
-                        TacticType.Split
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Split
                     ]
                 Instructions = ""
             }
@@ -349,15 +367,15 @@ module Level =
                     terms [
                         Type.not (Sum [p; q])
                     ]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
-                        TacticType.Left
-                        TacticType.Right
-                        TacticType.Split
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Split
                     ]
                 Instructions = ""
             }
@@ -373,15 +391,15 @@ module Level =
                             Type.not q
                         ]
                     ]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
-                        TacticType.Left
-                        TacticType.Right
-                        TacticType.Split
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Split
                     ]
                 Instructions = ""
             }
@@ -391,15 +409,15 @@ module Level =
             {
                 Goal = Function (Type.not q, Type.not p)
                 Terms = terms [ pq ]
-                TacticTypes =
+                ActionTypes =
                     set [
-                        TacticType.Exact
-                        TacticType.Intro
-                        TacticType.Apply
-                        TacticType.Cases
-                        TacticType.Left
-                        TacticType.Right
-                        TacticType.Split
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Split
                     ]
                 Instructions = ""
             }

@@ -6,7 +6,6 @@
     <Compile Include="Prelude.fs" />
     <Compile Include="Type.fs" />
     <Compile Include="Term.fs" />
-    <Compile Include="Tactic.fs" />
     <Compile Include="ProofCase.fs" />
     <Compile Include="Proof.fs" />
     <Compile Include="Level.fs" />
