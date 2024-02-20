@@ -304,7 +304,8 @@ module View =
                                     { TacticType = tacticType })
                     ]
                 Html.button [
-                    prop.text "Expand"
+                    prop.className "tactic"
+                    prop.text "🧣"
                     prop.onClick (fun _ -> dispatch ExpandAliases)
                 ]
             ]

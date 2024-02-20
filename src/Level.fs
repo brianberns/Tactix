@@ -22,11 +22,19 @@ module TacticType =
         | TacticType.Right -> "Drag onto a ∨ goal to choose its right symbol"
         | TacticType.Split -> "Drag onto a ∧ goal to split it"
 
+/// A puzzle to be solved.
 type Level =
     {
+        /// Proposition to be proved.
         Goal : Type
+
+        /// Hypotheses.
         Terms : Set<Term>
+
+        /// Available actions.
         TacticTypes : Set<TacticType>
+
+        /// Hint for the user.
         Instructions : string
     }
 
@@ -50,195 +58,221 @@ module Level =
     let private right = TacticType.emoji TacticType.Right
     let private split = TacticType.emoji TacticType.Split
 
+    /// Builds terms from types.
     let private terms types =
         types
             |> Seq.map Term.create
             |> set
 
-    let private level1 =
-        {
-            Goal = p
-            Terms = terms [p; q]
-            TacticTypes = set [ TacticType.Exact ]
-            Instructions =
-                $"Drag {exact} onto the symbol that matches the top goal"
-        }
+    module private Exact =
 
-    let private level2 =
-        {
-            Goal = r
-            Terms = terms [p; q; r]
-            TacticTypes = set [ TacticType.Exact ]
-            Instructions = ""
-        }
+        /// Introduces the "exact" tactic.
+        let level1 =
+            {
+                Goal = p
+                Terms = terms [p; q]
+                TacticTypes = set [ TacticType.Exact ]
+                Instructions =
+                    $"Drag {exact} onto the symbol that matches the top goal"
+            }
 
-    let private level3 =
-        {
-            Goal = pq
-            Terms = terms [p; q; pq]
-            TacticTypes = set [ TacticType.Exact ]
-            Instructions = $"You can also use {exact} on more complex symbols"
-        }
+        /// More practice with "exact".
+        let level2 =
+            {
+                Goal = r
+                Terms = terms [p; q; r]
+                TacticTypes = set [ TacticType.Exact ]
+                Instructions = ""
+            }
 
-    let private level4 =
-        {
-            Goal = pq
-            Terms = terms [q]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                ]
-            Instructions = $"Drag {intro} onto an arrow goal to simplify it"
-        }
+        /// Introduces function types.
+        let level3 =
+            {
+                Goal = pq
+                Terms = terms [p; q; pq]
+                TacticTypes = set [ TacticType.Exact ]
+                Instructions = $"You can also use {exact} on more complex symbols"
+            }
 
-    let private level5 =
-        {
-            Goal = Function (p, p)
-            Terms = terms []
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                ]
-            Instructions = ""
-        }
+    module private Intro =
 
-    let private level6 =
-        {
-            Goal = pqr
-            Terms = terms [r]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                ]
-            Instructions = ""
-        }
+        /// Introduces the "intro" tactic with Q ⊢ P → Q.
+        let level1 =
+            {
+                Goal = pq
+                Terms = terms [q]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                    ]
+                Instructions = $"Drag {intro} onto an arrow goal to simplify it"
+            }
 
-    let private level7 =
-        {
-            Goal = q
-            Terms = terms [p; pq]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                ]
-            Instructions = $"Drag {apply} onto ▢→■ when the goal is ■ to change the goal to ▢"
-        }
+        /// P → P.
+        let level2 =
+            {
+                Goal = Function (p, p)
+                Terms = terms []
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                    ]
+                Instructions = ""
+            }
 
-    let private level8 =
-        {
-            Goal = Function (p, r)
-            Terms =
-                terms [
-                    Function (p, q)
-                    Function (q, r)
-                ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                ]
-            Instructions = ""
-        }
+        /// More practice with intro.
+        let level3 =
+            {
+                Goal = pqr
+                Terms = terms [r]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                    ]
+                Instructions = ""
+            }
 
-    let private level9 =
-        {
-            Goal = r
-            Terms = terms [p; q; pqr]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                ]
-            Instructions = $"You can also use {apply} on nested ▢→■ symbols when the goal is ■"
-        }
+    module private Apply =
 
-    let private level10 =
-        {
-            Goal = p
-            Terms = terms [ Product [p; q] ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                ]
-            Instructions = $"Drag {cases} onto ∧ in the field to split it"
-        }
+        /// Modus ponens.
+        let level1 =
+            {
+                Goal = q
+                Terms = terms [p; pq]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                    ]
+                Instructions = $"Drag {apply} onto ▢→■ when the goal is ■ to change the goal to ▢"
+            }
+
+        /// Implication is transitive.
+        let level2 =
+            {
+                Goal = Function (p, r)
+                Terms =
+                    terms [
+                        Function (p, q)
+                        Function (q, r)
+                    ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                    ]
+                Instructions = ""
+            }
+
+        /// Appling a function with two inputs results in two cases.
+        let level3 =
+            {
+                Goal = r
+                Terms = terms [p; q; pqr]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                    ]
+                Instructions = $"You can also use {apply} on nested ▢→■ symbols when the goal is ■"
+            }
+
+    module private Cases =
+
+        /// Splitting a ∧ term with the "cases" tactic.
+        let level1 =
+            {
+                Goal = p
+                Terms = terms [ Product [p; q] ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                    ]
+                Instructions = $"Drag {cases} onto ∧ in the field to split it"
+            }
  
-    let private level11 =
-        {
-            Goal = r
-            Terms =
-                terms [
-                    p_or_q
-                    Function (p, r)
-                    Function (q, r)
-                ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                ]
-            Instructions = $"Drag {cases} onto ∨ in the field to split it"
-        }
+        /// Splitting a ∨ term with the "cases" tactic.
+        let level2 =
+            {
+                Goal = r
+                Terms =
+                    terms [
+                        p_or_q
+                        Function (p, r)
+                        Function (q, r)
+                    ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                    ]
+                Instructions = $"Drag {cases} onto ∨ in the field to split it"
+            }
 
-    let private level12 =
-        {
-            Goal = Function (p_and_q, r)
-            Terms = terms [pqr]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                ]
-            Instructions = ""
-        }
+        /// Currying.
+        let level3 =
+            {
+                Goal = Function (p_and_q, r)
+                Terms = terms [pqr]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                    ]
+                Instructions = ""
+            }
 
-    let private level13 =
-        {
-            Goal = Sum [q; p]
-            Terms = terms [p_or_q]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
-                ]
-            Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
-        }
+    module private LeftRight =
 
-    let private level14 =
-        {
-            Goal = Product [q; p]
-            Terms = terms [ Product [p; q] ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
-                    TacticType.Split
-                ]
-            Instructions = $"Drag {split} onto a ∧ goal to split it"
-        }
+        /// Commutivity of ∨.
+        let level13 =
+            {
+                Goal = Sum [q; p]
+                Terms = terms [p_or_q]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                        TacticType.Left
+                        TacticType.Right
+                    ]
+                Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
+            }
+
+    module Split =
+
+        /// Commutivity of ∧.
+        let level1 =
+            {
+                Goal = Product [q; p]
+                Terms = terms [ Product [p; q] ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                        TacticType.Left
+                        TacticType.Right
+                        TacticType.Split
+                    ]
+                Instructions = $"Drag {split} onto a ∧ goal to split it"
+            }
 
     let private level15 =
         {
@@ -364,20 +398,24 @@ module Level =
 
     let levels =
         [|
-            level1
-            level2
-            level3
-            level4
-            level5
-            level6
-            level7
-            level8
-            level9
-            level10
-            level11
-            level12
-            level13
-            level14
+            Exact.level1
+            Exact.level2
+            Exact.level3
+
+            Intro.level1
+            Intro.level2
+            Intro.level3
+
+            Apply.level1
+            Apply.level2
+            Apply.level3
+
+            Cases.level1
+            Cases.level2
+            Cases.level3
+
+            LeftRight.level13
+
             level15
             level16
             level17
