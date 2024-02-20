@@ -81,6 +81,15 @@ module View =
                         prop.className "compound-type"
                         between "&nbsp;∨&nbsp;" loop types
                             |> prop.children
+                    | Alias (_, [inner], _)
+                        when typ = Type.not inner ->
+                        prop.className "compound-type"
+                        prop.children [
+                            Html.span [
+                                prop.innerHtml "¬" ]
+                            loop inner
+                        ]
+                    | _ -> failwith "Unexpected"
             ]
 
         loop typ

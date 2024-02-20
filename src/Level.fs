@@ -281,6 +281,27 @@ module Level =
             Instructions = ""
         }
 
+    let private level17 =
+        {
+            Goal = Type.not p
+            Terms =
+                terms [
+                    pq
+                    Type.not q
+                ]
+            TacticTypes =
+                set [
+                    TacticType.Exact
+                    TacticType.Intro
+                    TacticType.Apply
+                    TacticType.Cases
+                    TacticType.Left
+                    TacticType.Right
+                    TacticType.Split
+                ]
+            Instructions = ""
+        }
+
     let levels =
         [|
             level1
@@ -299,6 +320,7 @@ module Level =
             level14
             level15
             level16
+            level17
         |]
 
     let initializeProof level =

@@ -15,6 +15,9 @@ type Type =
     /// Disjuction (or), such as P ∨ Q.
     | Sum of List<Type>
 
+    /// Type alias, such as Not<T> = T → false.
+    | Alias of name : string * parms : List<Type> * rhs : Type
+
     /// Display string.
     override typ.ToString() =
 
@@ -28,3 +31,13 @@ type Type =
             | Function (P, Q) -> $"({P}→{Q})"
             | Product types -> $"({toString '∧' types})"
             | Sum types -> $"({toString '∨' types})"
+            | Alias (name, parms, rhs) ->
+                $"({name}<{toString parms}> = {rhs})"
+
+module Type =
+
+    let top = Primitive "top"
+    let bottom = Primitive "bottom"
+
+    let not typ =
+        Alias ("Not", [typ], Function (typ, bottom))
