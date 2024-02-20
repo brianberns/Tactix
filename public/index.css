@@ -72,6 +72,10 @@
     background-color: var(--cambridge-blue);
 }
 
+.bottom {
+    background-color: darkgray;
+}
+
 .terms {
     height: 60vh;
     background-color: var(--eggshell);

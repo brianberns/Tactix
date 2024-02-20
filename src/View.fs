@@ -286,7 +286,7 @@ module View =
             ]
         ]
 
-    let private renderTacticTypes levelIdx draggable =
+    let private renderTacticTypes levelIdx draggable dispatch =
         let tacticTypes =
             Level.levels[levelIdx].TacticTypes
         Html.div [
@@ -303,6 +303,10 @@ module View =
                                 DragData.setData
                                     { TacticType = tacticType })
                     ]
+                Html.button [
+                    prop.text "Expand"
+                    prop.onClick (fun _ -> dispatch ExpandAliases)
+                ]
             ]
         ]
 
@@ -337,6 +341,7 @@ module View =
                 renderTacticTypes
                     levelIdx
                     (not <| Proof.isComplete model.Proof)
+                    dispatch
                 renderFooter
                     model.Settings
                     dispatch

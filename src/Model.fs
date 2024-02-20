@@ -42,6 +42,9 @@ type Message =
     /// Starts the given 0-based level.
     | StartLevel of int
 
+    /// Expands the all type aliases.
+    | ExpandAliases
+
 module Model =
 
     let init () =
@@ -107,6 +110,36 @@ module Model =
             Highlight = Highlight.None
         }
 
+    let private expandAliases model =
+
+        let rec loop = function
+            | Primitive name -> Primitive name
+            | Function (P, Q) -> Function (loop P, loop Q)
+            | Product types -> List.map loop types |> Product
+            | Sum types -> List.map loop types |> Sum
+            | Alias (_, _, rhs) -> loop rhs
+
+        let proof =
+            {
+                model.Proof with
+                    CaseMap =
+                        model.Proof.CaseMap
+                            |> Map.map (fun _ case ->
+                                {
+                                    GoalOpt = Option.map loop case.GoalOpt
+                                    Terms =
+                                        case.Terms
+                                            |> Seq.map (fun term ->
+                                                loop term.Type
+                                                    |> Term.create)
+                                            |> set
+                                })
+            }
+        {
+            model with
+                Proof = proof
+        }
+
     /// Updates the model based on the given message.
     let update msg model =
         let model' =
@@ -119,6 +152,8 @@ module Model =
                     enableAudio enable model
                 | StartLevel levelIdx ->
                     startLevel levelIdx model
+                | ExpandAliases ->
+                    expandAliases model
         let cmd =
             if Proof.isComplete model'.Proof then
                 Cmd.OfAsync.perform
