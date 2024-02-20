@@ -238,7 +238,7 @@ module Level =
     module private LeftRight =
 
         /// Commutivity of ∨.
-        let level13 =
+        let level1 =
             {
                 Goal = Sum [q; p]
                 Terms = terms [p_or_q]
@@ -274,127 +274,135 @@ module Level =
                 Instructions = $"Drag {split} onto a ∧ goal to split it"
             }
 
-    let private level15 =
-        {
-            Goal = pqr
-            Terms = terms [ Function (p_and_q, r) ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
-                    TacticType.Split
-                ]
-            Instructions = ""
-        }
+        /// Exportation.
+        let level2 =
+            {
+                Goal = pqr
+                Terms = terms [ Function (p_and_q, r) ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                        TacticType.Left
+                        TacticType.Right
+                        TacticType.Split
+                    ]
+                Instructions = ""
+            }
 
-    let private level16 =
-        {
-            Goal =
-                Sum [
-                    Product [p; r]
-                    Product [q; r]
-                ]
-            Terms =
-                terms [
-                    Product [Sum [p; q]; r]
-                ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
-                    TacticType.Split
-                ]
-            Instructions = ""
-        }
-
-    let private level17 =
-        {
-            Goal = Type.not (Type.not p)
-            Terms = terms [ p ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
-                    TacticType.Split
-                ]
-            Instructions = ""
-        }
-
-    let private level18 =
-        {
-            Goal =
-                Product [
-                    Type.not p
-                    Type.not q
-                ]
-            Terms =
-                terms [
-                    Type.not (Sum [p; q])
-                ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
-                    TacticType.Split
-                ]
-            Instructions = ""
-        }
-
-    let private level19 =
-        {
-            Goal = Type.not (Product [p; q])
-            Terms =
-                terms [
+        /// Distributive property.
+        let level3 =
+            {
+                Goal =
                     Sum [
+                        Product [p; r]
+                        Product [q; r]
+                    ]
+                Terms =
+                    terms [
+                        Product [Sum [p; q]; r]
+                    ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                        TacticType.Left
+                        TacticType.Right
+                        TacticType.Split
+                    ]
+                Instructions = ""
+            }
+
+    module private Negation =
+
+        /// Double negative (but not the law of excluded middle).
+        let level1 =
+            {
+                Goal = Type.not (Type.not p)
+                Terms = terms [ p ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                        TacticType.Left
+                        TacticType.Right
+                        TacticType.Split
+                    ]
+                Instructions = ""
+            }
+
+        /// de Morgan's laws.
+        let level2 =
+            {
+                Goal =
+                    Product [
                         Type.not p
                         Type.not q
                     ]
-                ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
-                    TacticType.Split
-                ]
-            Instructions = ""
-        }
+                Terms =
+                    terms [
+                        Type.not (Sum [p; q])
+                    ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                        TacticType.Left
+                        TacticType.Right
+                        TacticType.Split
+                    ]
+                Instructions = ""
+            }
 
-    let private level20 =
-        {
-            Goal = Function (Type.not q, Type.not p)
-            Terms = terms [ pq ]
-            TacticTypes =
-                set [
-                    TacticType.Exact
-                    TacticType.Intro
-                    TacticType.Apply
-                    TacticType.Cases
-                    TacticType.Left
-                    TacticType.Right
-                    TacticType.Split
-                ]
-            Instructions = ""
-        }
+        /// de Morgan's laws.
+        let level3 =
+            {
+                Goal = Type.not (Product [p; q])
+                Terms =
+                    terms [
+                        Sum [
+                            Type.not p
+                            Type.not q
+                        ]
+                    ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                        TacticType.Left
+                        TacticType.Right
+                        TacticType.Split
+                    ]
+                Instructions = ""
+            }
+
+        /// Modus tollens.
+        let level4 =
+            {
+                Goal = Function (Type.not q, Type.not p)
+                Terms = terms [ pq ]
+                TacticTypes =
+                    set [
+                        TacticType.Exact
+                        TacticType.Intro
+                        TacticType.Apply
+                        TacticType.Cases
+                        TacticType.Left
+                        TacticType.Right
+                        TacticType.Split
+                    ]
+                Instructions = ""
+            }
 
     let levels =
         [|
@@ -414,14 +422,16 @@ module Level =
             Cases.level2
             Cases.level3
 
-            LeftRight.level13
+            LeftRight.level1
 
-            level15
-            level16
-            level17
-            level18
-            level19
-            level20
+            Split.level1
+            Split.level2
+            Split.level3
+
+            Negation.level1
+            Negation.level2
+            Negation.level3
+            Negation.level4
         |]
 
     let initializeProof level =
