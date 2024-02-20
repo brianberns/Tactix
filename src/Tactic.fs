@@ -1,7 +1,5 @@
 ﻿namespace Tactix
 
-// https://www.ma.imperial.ac.uk/~buzzard/lean_together/source/contents.html
-
 /// Tactic type.
 [<RequireQualifiedAccess>]
 type TacticType =
@@ -13,7 +11,8 @@ type TacticType =
     | Right
     | Split
 
-/// A tactic used in a proof.
+/// A tactic used in a proof, from the Lean language.
+// https://www.ma.imperial.ac.uk/~buzzard/lean_together/source/contents.html
 type Tactic =
 
     /// Term (HP : P) eliminates goal P.
@@ -32,12 +31,13 @@ type Tactic =
     /// parts, creating goals for each constructor of P.
     | Cases of Term
 
-    /// Changes goal (P v Q) to just P.
+    /// Changes goal (P ∨ Q) to just P.
     | Left
 
-    /// Changes goal (P v Q) to just Q.
+    /// Changes goal (P ∨ Q) to just Q.
     | Right
 
+    /// Splits goal (P ∧ Q) into two cases.
     | Split
 
     /// Tactic type.
