@@ -283,12 +283,8 @@ module Level =
 
     let private level17 =
         {
-            Goal = Type.not p
-            Terms =
-                terms [
-                    pq
-                    Type.not q
-                ]
+            Goal = Type.not (Type.not p)
+            Terms = terms [ p ]
             TacticTypes =
                 set [
                     TacticType.Exact

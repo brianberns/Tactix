@@ -117,28 +117,24 @@ module Model =
             | Function (P, Q) -> Function (loop P, loop Q)
             | Product types -> List.map loop types |> Product
             | Sum types -> List.map loop types |> Sum
-            | Alias (_, _, rhs) -> loop rhs
+            | Alias (_, _, rhs) -> rhs   // one level only
 
-        let proof =
-            {
-                model.Proof with
-                    CaseMap =
-                        model.Proof.CaseMap
-                            |> Map.map (fun _ case ->
-                                {
-                                    GoalOpt = Option.map loop case.GoalOpt
-                                    Terms =
-                                        case.Terms
-                                            |> Seq.map (fun term ->
-                                                loop term.Type
-                                                    |> Term.create)
-                                            |> set
-                                })
-            }
-        {
-            model with
-                Proof = proof
-        }
+        let caseMap =
+            model.Proof.CaseMap
+                |> Map.map (fun _ case ->
+                    {
+                        GoalOpt = Option.map loop case.GoalOpt
+                        Terms =
+                            set [
+                                for term in case.Terms do
+                                    loop term.Type |> Term.create
+                            ]
+                    })
+
+        { model with
+            Proof =
+                { model.Proof with
+                    CaseMap = caseMap } }
 
     /// Updates the model based on the given message.
     let update msg model =
