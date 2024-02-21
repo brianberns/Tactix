@@ -1,7 +1,6 @@
 ﻿namespace Tactix
 
 open Browser.Types
-open Fable.SimpleJson
 open Feliz
 
 type private DragData =
@@ -9,21 +8,22 @@ type private DragData =
         ActionType : ActionType
     }
 
+// https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
+// https://stackoverflow.com/questions/31915653/how-to-get-data-from-datatransfer-getdata-in-event-dragover-or-dragenter
 module private DragData =
 
-    let private format = "application/json"
+    let mutable shared : Option<DragData> = None
 
     let setData dragData (evt : DragEvent) =
-        evt.dataTransfer.setData(
-            format, Json.serialize<DragData> dragData)
-            |> ignore
+        shared <- Some dragData
 
     let getData (evt : DragEvent) =
-        evt.dataTransfer.getData(format)
-            |> Json.parseAs<DragData>
+        shared
 
     let actionType evt =
-        (getData evt).ActionType
+        match getData evt with
+            | Some dragData -> dragData.ActionType
+            | None -> failwith "Unexpected"
 
 module View =
 
@@ -94,7 +94,6 @@ module View =
 
         loop typ
 
-    // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
     let private renderDragDrop
         highlightMsg
         allow
@@ -106,17 +105,20 @@ module View =
 
                     // start highlighting the target
                 prop.onDragEnter (fun evt ->
-                    evt.preventDefault()
-                    dispatch highlightMsg)
+                    if allow evt |> Option.isSome then
+                        evt.preventDefault()
+                        dispatch highlightMsg)
 
                     // stop highlighting the target
                 prop.onDragLeave (fun evt ->
-                    evt.preventDefault()
-                    dispatch Message.noHighlight)
+                    if allow evt |> Option.isSome then
+                        evt.preventDefault()
+                        dispatch Message.noHighlight)
 
                 // allow drop
             prop.onDragOver (fun evt ->
-                evt.preventDefault())
+                if allow evt |> Option.isSome then
+                    evt.preventDefault())
 
             prop.onDrop (fun evt ->
                 evt.preventDefault()
@@ -247,6 +249,7 @@ module View =
     let private allowTactic tactic (caseKey, case) evt =
         option {
             if DragData.actionType evt = ActionType.ofTactic tactic then
+                Browser.Dom.console.log($"ProofCase.canAdd {tactic} {case}: {ProofCase.canAdd tactic case}")
                 if ProofCase.canAdd tactic case then
                     return AddTactic (tactic, caseKey)
         }
