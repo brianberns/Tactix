@@ -10,6 +10,7 @@ type ActionType =
     | Left
     | Right
     | Split
+    | Expand
 
 module ActionType =
 
@@ -18,27 +19,29 @@ module ActionType =
         | Intro _ -> ActionType.Intro
         | Apply _ -> ActionType.Apply
         | Cases _ -> ActionType.Cases
-        | Left -> ActionType.Left
-        | Right -> ActionType.Right
-        | Split -> ActionType.Split
+        | Left    -> ActionType.Left
+        | Right   -> ActionType.Right
+        | Split   -> ActionType.Split
 
     let emoji = function
-        | ActionType.Exact -> "❤️"
-        | ActionType.Intro -> "🚀"
-        | ActionType.Apply -> "👣"
-        | ActionType.Cases -> "🔪"
-        | ActionType.Left -> "👈🏾"
-        | ActionType.Right -> "👉🏾"
-        | ActionType.Split -> "🎳"
+        | ActionType.Exact  -> "❤️"
+        | ActionType.Intro  -> "🚀"
+        | ActionType.Apply  -> "👣"
+        | ActionType.Cases  -> "🔪"
+        | ActionType.Left   -> "👈🏾"
+        | ActionType.Right  -> "👉🏾"
+        | ActionType.Split  -> "🎳"
+        | ActionType.Expand -> "🧣"
 
     let instructions = function
-        | ActionType.Exact -> "Drag onto a symbol that matches the goal"
-        | ActionType.Intro -> "Drag onto an arrow goal to simplify it"
-        | ActionType.Apply -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
-        | ActionType.Cases -> "Drag onto ∧ or ∨ in the field to split them"
-        | ActionType.Left -> "Drag onto a ∨ goal to choose its left symbol"
-        | ActionType.Right -> "Drag onto a ∨ goal to choose its right symbol"
-        | ActionType.Split -> "Drag onto a ∧ goal to split it"
+        | ActionType.Exact  -> "Drag onto a symbol that matches the goal"
+        | ActionType.Intro  -> "Drag onto an arrow goal to simplify it"
+        | ActionType.Apply  -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
+        | ActionType.Cases  -> "Drag onto ∧ or ∨ in the field to split them"
+        | ActionType.Left   -> "Drag onto a ∨ goal to choose its left symbol"
+        | ActionType.Right  -> "Drag onto a ∨ goal to choose its right symbol"
+        | ActionType.Split  -> "Drag onto a ∧ goal to split it"
+        | ActionType.Expand -> "Drag anywhere to expand ¬ symbols"
 
 /// A puzzle to be solved.
 type Level =
@@ -68,13 +71,14 @@ module Level =
     let private p_and_q = Product [p; q]
     let private p_or_q = Sum [p; q]
 
-    let private exact = ActionType.emoji ActionType.Exact
-    let private intro = ActionType.emoji ActionType.Intro
-    let private apply = ActionType.emoji ActionType.Apply
-    let private cases = ActionType.emoji ActionType.Cases
-    let private left =  ActionType.emoji ActionType.Left
-    let private right = ActionType.emoji ActionType.Right
-    let private split = ActionType.emoji ActionType.Split
+    let private exact  = ActionType.emoji ActionType.Exact
+    let private intro  = ActionType.emoji ActionType.Intro
+    let private apply  = ActionType.emoji ActionType.Apply
+    let private cases  = ActionType.emoji ActionType.Cases
+    let private left   = ActionType.emoji ActionType.Left
+    let private right  = ActionType.emoji ActionType.Right
+    let private split  = ActionType.emoji ActionType.Split
+    let private expand = ActionType.emoji ActionType.Expand
 
     /// Builds terms from types.
     let private terms types =
@@ -311,6 +315,7 @@ module Level =
                 ActionType.Left
                 ActionType.Right
                 ActionType.Split
+                ActionType.Expand
             ]
 
         /// Double negative (but not the law of excluded middle).
@@ -319,7 +324,7 @@ module Level =
                 Goal = Type.not (Type.not p)
                 Terms = terms [ p ]
                 ActionTypes = actionTypes
-                Instructions = ""
+                Instructions = $"Drag {expand} anywhere to expand ¬ symbols"
             }
 
         /// de Morgan's laws.

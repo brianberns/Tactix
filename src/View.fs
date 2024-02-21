@@ -97,16 +97,21 @@ module View =
     // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
     let private renderDragDrop highlightMsg allow audioEnabled dispatch =
         [
-            prop.onDragEnter (fun evt ->
-                evt.preventDefault()
-                dispatch highlightMsg)
+            if highlightMsg <> Message.noHighlight then
 
+                    // start highlighting the target
+                prop.onDragEnter (fun evt ->
+                    evt.preventDefault()
+                    dispatch highlightMsg)
+
+                    // stop highlighting the target
+                prop.onDragLeave (fun evt ->
+                    evt.preventDefault()
+                    dispatch Message.noHighlight)
+
+                // allow drop
             prop.onDragOver (fun evt ->
                 evt.preventDefault())
-
-            prop.onDragLeave (fun evt ->
-                evt.preventDefault()
-                dispatch Message.noHighlight)
 
             prop.onDrop (fun evt ->
                 evt.preventDefault()
@@ -145,10 +150,10 @@ module View =
             yield! dragDrop
         ]
 
-    let private allowAny allowActions term evt =
+    let private allowAny allowActions arg (evt : DragEvent) =
         allowActions
             |> Seq.tryPick (fun allowAction ->
-                allowAction term evt)
+                allowAction arg evt : Option<Message>)
 
     let private renderGoal (caseKey, case) model dispatch =
         assert(model.Proof.CaseMap[caseKey] = case)
@@ -234,7 +239,7 @@ module View =
             yield! dragDrop
         ]
 
-    let private allow tactic (caseKey, case) evt =
+    let private allowTactic tactic (caseKey, case) evt =
         option {
             if DragData.actionType evt = ActionType.ofTactic tactic then
                 if ProofCase.canAdd tactic case then
@@ -247,13 +252,13 @@ module View =
         dispatch =
 
         let allowExact term =
-            allow (Exact term) casePair
+            allowTactic (Exact term) casePair
 
         let allowApply term =
-            allow (Apply term) casePair
+            allowTactic (Apply term) casePair
 
         let allowCases term =
-            allow (Cases term) casePair
+            allowTactic (Cases term) casePair
 
         let allowMulti =
             allowAny [ allowExact; allowApply; allowCases ]
@@ -271,18 +276,33 @@ module View =
             ]
         ]
 
+    let private renderProofCase casePair model dispatch =
+
+        let allow evt =
+            option {
+                if DragData.actionType evt = ActionType.Expand then
+                    return ExpandAliases
+            }
+
+        Html.div [
+            prop.className "proof-case"
+            prop.children [
+                renderGoal casePair model dispatch
+                renderTerms casePair model dispatch
+            ]
+            yield! renderDragDrop   // ugly
+                Message.noHighlight
+                allow
+                model.Settings.AudioEnabled
+                dispatch
+        ]
+
     let private renderProof model dispatch =
         Html.div [
             prop.id "proof"
             prop.children [
                 for casePair in Map.toSeq model.Proof.CaseMap do
-                    Html.div [
-                        prop.className "proof-case"
-                        prop.children [
-                            renderGoal casePair model dispatch
-                            renderTerms casePair model dispatch
-                        ]
-                    ]
+                    renderProofCase casePair model dispatch
             ]
         ]
 
@@ -303,11 +323,6 @@ module View =
                                 DragData.setData
                                     { ActionType = actionType })
                     ]
-                Html.button [
-                    prop.className "action"
-                    prop.text "🧣"
-                    prop.onClick (fun _ -> dispatch ExpandAliases)
-                ]
             ]
         ]
 
