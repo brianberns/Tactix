@@ -95,7 +95,12 @@ module View =
         loop typ
 
     // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
-    let private renderDragDrop highlightMsg allow audioEnabled dispatch =
+    let private renderDragDrop
+        highlightMsg
+        allow
+        audioEnabled
+        dispatch =
+
         [
             if highlightMsg <> Message.noHighlight then
 
@@ -306,7 +311,7 @@ module View =
             ]
         ]
 
-    let private renderActionTypes levelIdx draggable dispatch =
+    let private renderActionTypes levelIdx draggable =
         let actionTypes =
             Level.levels[levelIdx].ActionTypes
         Html.div [
@@ -357,7 +362,6 @@ module View =
                 renderActionTypes
                     levelIdx
                     (not <| Proof.isComplete model.Proof)
-                    dispatch
                 renderFooter
                     model.Settings
                     dispatch
