@@ -58,6 +58,7 @@ module Level =
 
     let private pq = Function (p, q)
     let private qr = Function (q, r)
+    let private pr = Function (p, r)
     let private pqr = Function (p, Function (q, r))
 
     let private p_and_q = Product [p; q]
@@ -243,8 +244,8 @@ module Level =
                 Terms =
                     terms [
                         p_or_q
-                        Function (p, r)
-                        Function (q, r)
+                        pr
+                        qr
                     ]
                 ActionTypes =
                     set [
