@@ -184,13 +184,57 @@ module Level =
                 Instructions = ""
             }
 
-        /// Appling a function with two inputs results in two cases.
-        let level3 =
+    module Split =
+
+        let actionTypes =
+            set [
+                ActionType.Exact
+                ActionType.Intro
+                ActionType.Apply
+                ActionType.Split
+            ]
+
+        /// Commutivity of ∧.
+        let level1 =
+            {
+                Goal = Product [q; p]
+                Terms = terms [ Product [p; q] ]
+                ActionTypes = actionTypes
+                Instructions = $"Drag {split} onto a ∧ goal to split it"
+            }
+
+        /// Applying a function with two inputs.
+        let level2 =
             {
                 Goal = r
                 Terms = terms [p; q; pqr]
                 ActionTypes = actionTypes
-                Instructions = $"You can also use {apply} on nested ▢→■ symbols when the goal is ■"
+                Instructions = $"Use {apply} on nested ▢→■ symbols when the goal is ■"
+            }
+
+        /// Exportation.
+        let level3 =
+            {
+                Goal = pqr
+                Terms = terms [ Function (p_and_q, r) ]
+                ActionTypes = actionTypes
+                Instructions = ""
+            }
+
+        /// Distributive property.
+        let level4 =
+            {
+                Goal =
+                    Sum [
+                        Product [p; r]
+                        Product [q; r]
+                    ]
+                Terms =
+                    terms [
+                        Product [Sum [p; q]; r]
+                    ]
+                ActionTypes = actionTypes
+                Instructions = ""
             }
 
     module private Cases =
@@ -255,53 +299,6 @@ module Level =
                 Terms = terms [p_or_q]
                 ActionTypes = actionTypes
                 Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
-            }
-
-    module Split =
-
-        let actionTypes =
-            set [
-                ActionType.Exact
-                ActionType.Intro
-                ActionType.Apply
-                ActionType.Cases
-                ActionType.Left
-                ActionType.Right
-                ActionType.Split
-            ]
-
-        /// Commutivity of ∧.
-        let level1 =
-            {
-                Goal = Product [q; p]
-                Terms = terms [ Product [p; q] ]
-                ActionTypes = actionTypes
-                Instructions = $"Drag {split} onto a ∧ goal to split it"
-            }
-
-        /// Exportation.
-        let level2 =
-            {
-                Goal = pqr
-                Terms = terms [ Function (p_and_q, r) ]
-                ActionTypes = actionTypes
-                Instructions = ""
-            }
-
-        /// Distributive property.
-        let level3 =
-            {
-                Goal =
-                    Sum [
-                        Product [p; r]
-                        Product [q; r]
-                    ]
-                Terms =
-                    terms [
-                        Product [Sum [p; q]; r]
-                    ]
-                ActionTypes = actionTypes
-                Instructions = ""
             }
 
     module private Negation =
@@ -379,17 +376,17 @@ module Level =
 
             Apply.level1
             Apply.level2
-            Apply.level3
+
+            Split.level1
+            Split.level2
+            Split.level3
+            Split.level4
 
             Cases.level1
             Cases.level2
             Cases.level3
 
             LeftRight.level1
-
-            Split.level1
-            Split.level2
-            Split.level3
 
             Negation.level1
             Negation.level2

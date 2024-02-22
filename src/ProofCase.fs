@@ -12,8 +12,9 @@ type Tactic =
     | Intro of Term
 
     /// Applies term (P1 -> P2 -> ... -> PN -> Q), where the
-    /// goal is Q, replacing the goal with N separate goals,
-    /// P1 through PN.
+    /// goal is Q, replacing the goal with (P1 ∧ P2 ... ∧ PN).
+    /// (This behavior is slightly different from Lean, which
+    /// replaces the goal with N separate goals, P1 through PN.)
     | Apply of Term
 
     /// Breaks up an hypothesis (HP : P) into its component
@@ -76,9 +77,13 @@ module ProofCase =
                 ]
 
             | Apply (Term.Function (p, q)), Some goal ->
-                (apply p q goal)
-                    |> List.map (fun goal' ->
+                match apply p q goal with
+                    | [] -> None
+                    | [typ] -> Some typ
+                    | types -> Some (Product types)
+                    |> Option.map (fun goal' ->
                         { case with GoalOpt = Some goal' })
+                    |> Option.toList
 
             | Cases (Term.Product types as hp), _ ->
                 let terms =
