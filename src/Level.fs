@@ -14,15 +14,6 @@ type ActionType =
 
 module ActionType =
 
-    let ofTactic = function
-        | Exact _ -> ActionType.Exact
-        | Intro _ -> ActionType.Intro
-        | Apply _ -> ActionType.Apply
-        | Cases _ -> ActionType.Cases
-        | Left    -> ActionType.Left
-        | Right   -> ActionType.Right
-        | Split   -> ActionType.Split
-
     let emoji = function
         | ActionType.Exact  -> "❤️"
         | ActionType.Intro  -> "🚀"
@@ -30,7 +21,7 @@ module ActionType =
         | ActionType.Cases  -> "🔪"
         | ActionType.Left   -> "👈🏾"
         | ActionType.Right  -> "👉🏾"
-        | ActionType.Split  -> "🎳"
+        | ActionType.Split  -> "🌈"
         | ActionType.Expand -> "🧣"
 
     let instructions = function
@@ -191,7 +182,11 @@ module Level =
                 ActionType.Exact
                 ActionType.Intro
                 ActionType.Apply
+                ActionType.Cases
+                ActionType.Left
+                ActionType.Right
                 ActionType.Split
+                ActionType.Expand
             ]
 
         /// Commutivity of ∧.
@@ -245,6 +240,10 @@ module Level =
                 ActionType.Intro
                 ActionType.Apply
                 ActionType.Cases
+                ActionType.Left
+                ActionType.Right
+                ActionType.Split
+                ActionType.Expand
             ]
 
 
@@ -290,6 +289,8 @@ module Level =
                 ActionType.Cases
                 ActionType.Left
                 ActionType.Right
+                ActionType.Split
+                ActionType.Expand
             ]
 
         /// Commutivity of ∨.

@@ -180,9 +180,9 @@ module View =
                         return AddTactic (tactic, caseKey)
             }
 
-        let allowLeftRight tactic goal evt =
+        let allowLeftRight actionType tactic goal evt =
             option {
-                if DragData.actionType evt = ActionType.ofTactic tactic then
+                if DragData.actionType evt = actionType then
                     match goal with
                         | Sum _ ->
                             if ProofCase.canAdd tactic case then
@@ -190,9 +190,9 @@ module View =
                         | _ -> ()
             }
 
-        let allowSplit goal evt =
+        let allowCases goal evt =
             option {
-                if DragData.actionType evt = ActionType.Split then
+                if DragData.actionType evt = ActionType.Cases then
                     match goal with
                         | Product _ ->
                             let tactic = Split
@@ -204,9 +204,9 @@ module View =
         let allowMulti =
             allowAny [
                 allowIntro
-                allowLeftRight Left
-                allowLeftRight Right
-                allowSplit
+                allowLeftRight ActionType.Left Left
+                allowLeftRight ActionType.Right Right
+                allowCases
             ]
 
         Html.div [
@@ -253,30 +253,53 @@ module View =
             yield! dragDrop
         ]
 
-    let private allowTactic tactic (caseKey, case) evt =
-        option {
-            if DragData.actionType evt = ActionType.ofTactic tactic then
-                Browser.Dom.console.log($"ProofCase.canAdd {tactic} {case}: {ProofCase.canAdd tactic case}")
-                if ProofCase.canAdd tactic case then
-                    return AddTactic (tactic, caseKey)
-        }
-
     let private renderTerms
         ((caseKey, case) as casePair)
         model
         dispatch =
 
+        let allowSimple actionType tactic evt =
+            option {
+                if DragData.actionType evt = actionType then
+                    if ProofCase.canAdd tactic case then
+                        return AddTactic (tactic, caseKey)
+            }
+
         let allowExact term =
-            allowTactic (Exact term) casePair
+            allowSimple ActionType.Exact (Exact term)
 
         let allowApply term =
-            allowTactic (Apply term) casePair
+            allowSimple ActionType.Apply (Apply term)
 
-        let allowCases term =
-            allowTactic (Cases term) casePair
+        let allowCases term evt =
+            option {
+                if DragData.actionType evt = ActionType.Cases then
+                    match term.Type with
+                        | Sum _ ->
+                            let tactic = Cases term
+                            if ProofCase.canAdd tactic case then
+                                return AddTactic (tactic, caseKey)
+                        | _ -> ()
+            }
+
+        let allowSplit term evt =
+            option {
+                if DragData.actionType evt = ActionType.Split then
+                    match term.Type with
+                        | Product _ ->
+                            let tactic = Cases term
+                            if ProofCase.canAdd tactic case then
+                                return AddTactic (tactic, caseKey)
+                        | _ -> ()
+            }
 
         let allowMulti =
-            allowAny [ allowExact; allowApply; allowCases ]
+            allowAny [
+                allowExact
+                allowApply
+                allowCases
+                allowSplit
+            ]
 
         Html.div [
             prop.className "terms"
