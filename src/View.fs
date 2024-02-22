@@ -149,9 +149,13 @@ module View =
                 dispatch
         let isHighlighted =
             model.IsHighlighted(typ, caseKey)
+        let isPrimitive = Type.isPrimitive typ
         Html.div [
-            (if isHighlighted then "type-highlight"
-             else "type") |> prop.className
+            match isHighlighted, isPrimitive with
+                | true, true -> "primitive-type-highlight"
+                | true, false -> "compound-type-highlight"
+                | false, _ -> "type"
+                |> prop.className
             prop.children children
             yield! dragDrop
         ]
@@ -238,9 +242,13 @@ module View =
                 dispatch
         let isHighlighted =
             model.IsHighlighted(term, caseKey)
+        let isPrimitive = Type.isPrimitive term.Type
         Html.div [
-            (if isHighlighted then "term-highlight"
-             else "term") |> prop.className
+            match isHighlighted, isPrimitive with
+                | true, true -> "primitive-term-highlight"
+                | true, false -> "compound-term-highlight"
+                | false, _ -> "term"
+                |> prop.className
             prop.children children
             yield! dragDrop
         ]

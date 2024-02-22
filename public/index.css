@@ -56,10 +56,15 @@
     border-radius: 16px;
 }
 
-.type-highlight {
+.primitive-type-highlight {
     user-select: none;
     border: 8px solid var(--highlight);
     border-radius: 16px;
+}
+
+.compound-type-highlight {
+    user-select: none;
+    border: 8px solid var(--highlight);
 }
 
 .p {
@@ -95,11 +100,17 @@
     border-radius: 16px;
 }
 
-.term-highlight {
+.primitive-term-highlight {
     margin: 12px;
     user-select: none;
     border: 8px solid var(--highlight);
     border-radius: 16px;
+}
+
+.compound-term-highlight {
+    margin: 12px;
+    user-select: none;
+    border: 8px solid var(--highlight);
 }
 
 #actions {

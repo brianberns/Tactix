@@ -36,6 +36,10 @@ type Type =
 
 module Type =
 
+    let isPrimitive = function
+        | Primitive _ -> true
+        | _ -> false
+
     let top = Primitive "top"
     let bottom = Primitive "bottom"
 
