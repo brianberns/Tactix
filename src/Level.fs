@@ -27,11 +27,11 @@ module ActionType =
     let instructions = function
         | ActionType.Exact  -> "Drag onto a symbol that matches the goal"
         | ActionType.Intro  -> "Drag onto an arrow goal to simplify it"
-        | ActionType.Apply  -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
-        | ActionType.Cases  -> "Drag onto ∧ or ∨ in the field to split them"
         | ActionType.Left   -> "Drag onto a ∨ goal to choose its left symbol"
         | ActionType.Right  -> "Drag onto a ∨ goal to choose its right symbol"
+        | ActionType.Apply  -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
         | ActionType.Split  -> "Drag onto a ∧ symbol to dissolve it"
+        | ActionType.Cases  -> "Drag onto a ∧ goal or ∨ term to create separate cases"
         | ActionType.Expand -> "Drag anywhere to expand ¬ symbols"
 
 /// A puzzle to be solved.
@@ -256,6 +256,20 @@ module Level =
                 Instructions = ""
             }
 
+        /// Commutivity of ∧.
+        let level3 =
+            {
+                Goal = Product [q; p]
+                Terms = terms [ p_and_q ]
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Split
+                        ActionType.Cases
+                    ]
+                Instructions = $"You can also drag {cases} onto a ∧ symbol to create separate cases"
+            }
+
     module private Other =
 
         let private actionTypes =
@@ -289,21 +303,6 @@ module Level =
                         ActionType.Exact
                         ActionType.Intro
                         ActionType.Apply
-                        ActionType.Split
-                    ]
-                Instructions = ""
-            }
-
-        /// Commutivity of ∧.
-        let level4 =
-            {
-                Goal = Product [q; p]
-                Terms = terms [ p_and_q ]
-                ActionTypes =
-                    set [
-                        ActionType.Exact
-                        ActionType.Left
-                        ActionType.Right
                         ActionType.Split
                     ]
                 Instructions = ""
@@ -417,6 +416,7 @@ module Level =
 
             Cases.level1
             Cases.level2
+            Cases.level3
 
             Negation.level1
             Negation.level2
