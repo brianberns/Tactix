@@ -5,10 +5,10 @@
 type ActionType =
     | Exact
     | Intro
-    | Apply
-    | Cases
     | Left
     | Right
+    | Apply
+    | Cases
     | Split
     | Expand
 
@@ -17,10 +17,10 @@ module ActionType =
     let emoji = function
         | ActionType.Exact  -> "❤️"
         | ActionType.Intro  -> "🚀"
-        | ActionType.Apply  -> "👣"
-        | ActionType.Cases  -> "🔪"
         | ActionType.Left   -> "👈🏾"
         | ActionType.Right  -> "👉🏾"
+        | ActionType.Apply  -> "👣"
+        | ActionType.Cases  -> "🔪"
         | ActionType.Split  -> "🌈"
         | ActionType.Expand -> "🧣"
 
@@ -31,7 +31,7 @@ module ActionType =
         | ActionType.Cases  -> "Drag onto ∧ or ∨ in the field to split them"
         | ActionType.Left   -> "Drag onto a ∨ goal to choose its left symbol"
         | ActionType.Right  -> "Drag onto a ∨ goal to choose its right symbol"
-        | ActionType.Split  -> "Drag onto a ∧ goal to split it"
+        | ActionType.Split  -> "Drag onto a ∧ symbol to dissolve it"
         | ActionType.Expand -> "Drag anywhere to expand ¬ symbols"
 
 /// A puzzle to be solved.
@@ -57,6 +57,7 @@ module Level =
     let private r = Primitive "R"
 
     let private pq = Function (p, q)
+    let private qr = Function (q, r)
     let private pqr = Function (p, Function (q, r))
 
     let private p_and_q = Product [p; q]
@@ -81,7 +82,7 @@ module Level =
 
         let private actionTypes = set [ ActionType.Exact ]
 
-        /// Introduces the "exact" tactic.
+        /// Introduces the "exact" action.
         let level1 =
             {
                 Goal = p
@@ -117,7 +118,7 @@ module Level =
                 ActionType.Intro
             ]
 
-        /// Introduces the "intro" tactic with Q ⊢ P → Q.
+        /// Introduces the "intro" action with Q ⊢ P → Q.
         let level1 =
             {
                 Goal = pq
@@ -140,6 +141,34 @@ module Level =
             {
                 Goal = pqr
                 Terms = terms [r]
+                ActionTypes = actionTypes
+                Instructions = ""
+            }
+
+    module private LeftRight =
+
+        let private actionTypes =
+            set [
+                ActionType.Exact
+                ActionType.Intro
+                ActionType.Left
+                ActionType.Right
+            ]
+
+        /// Introduces the left action.
+        let level1 =
+            {
+                Goal = Sum [p; q]
+                Terms = terms [p]
+                ActionTypes = actionTypes
+                Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
+            }
+
+        /// Introduces the right action.
+        let level2 =
+            {
+                Goal = Sum [p; qr]
+                Terms = terms [qr]
                 ActionTypes = actionTypes
                 Instructions = ""
             }
@@ -177,7 +206,58 @@ module Level =
 
     module Split =
 
-        let actionTypes =
+        /// Introduces the split action.
+        let level1 =
+            {
+                Goal = p
+                Terms = terms [ p_and_q ]
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Split
+                    ]
+                Instructions = $"Drag {split} onto a ∧ symbol to dissolve it"
+            }
+
+    module private Cases =
+
+        /// Commutivity of ∨.
+        let level1 =
+            {
+                Goal = Sum [q; p]
+                Terms = terms [p_or_q]
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Cases
+                    ]
+                Instructions = $"Drag {cases} onto ∨ in the field to create separate cases"
+            }
+
+        /// More practice with multiple cases.
+        let level2 =
+            {
+                Goal = r
+                Terms =
+                    terms [
+                        p_or_q
+                        Function (p, r)
+                        Function (q, r)
+                    ]
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Apply
+                        ActionType.Cases
+                    ]
+                Instructions = ""
+            }
+
+    module private Other =
+
+        let private actionTypes =
             set [
                 ActionType.Exact
                 ActionType.Intro
@@ -189,17 +269,8 @@ module Level =
                 ActionType.Expand
             ]
 
-        /// Commutivity of ∧.
-        let level1 =
-            {
-                Goal = Product [q; p]
-                Terms = terms [ Product [p; q] ]
-                ActionTypes = actionTypes
-                Instructions = $"Drag {split} onto a ∧ goal to split it"
-            }
-
         /// Applying a function with two inputs.
-        let level2 =
+        let level1 =
             {
                 Goal = r
                 Terms = terms [p; q; pqr]
@@ -207,8 +278,38 @@ module Level =
                 Instructions = $"Use {apply} on nested ▢→■ symbols when the goal is ■"
             }
 
+        /// Currying.
+        let level2 =
+            {
+                Goal = Function (p_and_q, r)
+                Terms = terms [pqr]
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Split
+                    ]
+                Instructions = ""
+            }
+
+        /// Commutivity of ∧.
+        let level4 =
+            {
+                Goal = Product [q; p]
+                Terms = terms [ p_and_q ]
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Split
+                    ]
+                Instructions = ""
+            }
+
         /// Exportation.
-        let level3 =
+        let level5 =
             {
                 Goal = pqr
                 Terms = terms [ Function (p_and_q, r) ]
@@ -217,7 +318,7 @@ module Level =
             }
 
         /// Distributive property.
-        let level4 =
+        let level6 =
             {
                 Goal =
                     Sum [
@@ -230,76 +331,6 @@ module Level =
                     ]
                 ActionTypes = actionTypes
                 Instructions = ""
-            }
-
-    module private Cases =
-
-        let private actionTypes =
-            set [
-                ActionType.Exact
-                ActionType.Intro
-                ActionType.Apply
-                ActionType.Cases
-                ActionType.Left
-                ActionType.Right
-                ActionType.Split
-                ActionType.Expand
-            ]
-
-
-        /// Splitting a ∧ term with the "cases" tactic.
-        let level1 =
-            {
-                Goal = p
-                Terms = terms [ Product [p; q] ]
-                ActionTypes = actionTypes
-                Instructions = $"Drag {cases} onto ∧ in the field to split it"
-            }
- 
-        /// Splitting a ∨ term with the "cases" tactic.
-        let level2 =
-            {
-                Goal = r
-                Terms =
-                    terms [
-                        p_or_q
-                        Function (p, r)
-                        Function (q, r)
-                    ]
-                ActionTypes = actionTypes
-                Instructions = $"Drag {cases} onto ∨ in the field to split it"
-            }
-
-        /// Currying.
-        let level3 =
-            {
-                Goal = Function (p_and_q, r)
-                Terms = terms [pqr]
-                ActionTypes = actionTypes
-                Instructions = ""
-            }
-
-    module private LeftRight =
-
-        let private actionTypes =
-            set [
-                ActionType.Exact
-                ActionType.Intro
-                ActionType.Apply
-                ActionType.Cases
-                ActionType.Left
-                ActionType.Right
-                ActionType.Split
-                ActionType.Expand
-            ]
-
-        /// Commutivity of ∨.
-        let level1 =
-            {
-                Goal = Sum [q; p]
-                Terms = terms [p_or_q]
-                ActionTypes = actionTypes
-                Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
             }
 
     module private Negation =
@@ -344,7 +375,7 @@ module Level =
         /// de Morgan's laws.
         let level3 =
             {
-                Goal = Type.not (Product [p; q])
+                Goal = Type.not p_and_q
                 Terms =
                     terms [
                         Sum [
@@ -375,19 +406,16 @@ module Level =
             Intro.level2
             Intro.level3
 
+            LeftRight.level1
+            LeftRight.level2
+
             Apply.level1
             Apply.level2
 
             Split.level1
-            Split.level2
-            Split.level3
-            Split.level4
 
             Cases.level1
             Cases.level2
-            Cases.level3
-
-            LeftRight.level1
 
             Negation.level1
             Negation.level2
