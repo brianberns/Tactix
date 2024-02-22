@@ -49,7 +49,7 @@ module View =
                 ]
         ]
 
-    let private renderInnerType isHighlighted typ =
+    let private renderInnerType typ =
 
         let between content f types =
             [
@@ -65,8 +65,7 @@ module View =
                 match typ with
                     | Primitive name ->
                         prop.classes [
-                            (if isHighlighted then "primitive-type-highlight"
-                             else "primitive-type")
+                            "primitive-type"
                             name.ToLower()
                         ]
                     | Function (p, q) ->
@@ -139,10 +138,7 @@ module View =
         (model : Model)
         dispatch =
 
-        let children =
-            let isHighlighted =
-                model.IsHighlighted(typ, caseKey)
-            renderInnerType isHighlighted typ
+        let children = renderInnerType typ
         let dragDrop =
             let highlightMsg =
                 Message.highlightType typ caseKey
@@ -151,8 +147,11 @@ module View =
                 allow
                 model.Settings.AudioEnabled
                 dispatch
+        let isHighlighted =
+            model.IsHighlighted(typ, caseKey)
         Html.div [
-            prop.className "type"
+            (if isHighlighted then "type-highlight"
+             else "type") |> prop.className
             prop.children children
             yield! dragDrop
         ]
@@ -228,10 +227,7 @@ module View =
         (model : Model)
         dispatch =
 
-        let children =
-            let isHighlighted =
-                model.IsHighlighted(term, caseKey)
-            renderInnerType isHighlighted term.Type
+        let children = renderInnerType term.Type
         let dragDrop =
             let highlightMsg =
                 Message.highlightTerm term caseKey
@@ -240,8 +236,11 @@ module View =
                 allow
                 model.Settings.AudioEnabled
                 dispatch
+        let isHighlighted =
+            model.IsHighlighted(term, caseKey)
         Html.div [
-            prop.className "term"
+            (if isHighlighted then "term-highlight"
+             else "term") |> prop.className
             prop.children children
             yield! dragDrop
         ]
