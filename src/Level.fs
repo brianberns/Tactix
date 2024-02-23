@@ -2,7 +2,7 @@
 
 module Text =
 
-    let andSymbol = "∧"
+    let andSymbol = "☔️"
     let orSymbol = "👈🏾👉🏾"
     let notSymbol = "¬"
 
@@ -48,7 +48,7 @@ module ActionType =
         | ActionType.Right    -> "👉🏾"
         | ActionType.Dissolve -> "🌈"
         | ActionType.Apply    -> "👣"
-        | ActionType.Cases    -> "🔪"
+        | ActionType.Cases    -> "⚔️"
         | ActionType.Expand   -> "🧣"
 
     let instructions = function
@@ -310,7 +310,7 @@ module Level =
                         ActionType.Dissolve
                         ActionType.Cases
                     ]
-                Instructions = $"You can also drag {cases} onto a ${Text.andSymbol} goal to create separate cases"
+                Instructions = $"You can also drag {cases} onto a {Text.andSymbol} goal to create separate cases"
             }
 
         /// Exportation.

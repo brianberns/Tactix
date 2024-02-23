@@ -74,11 +74,11 @@ module View =
                             |> prop.children
                     | Product types ->
                         prop.className "compound-type"
-                        between $"&nbsp;{Text.andHtml}&nbsp;" loop types
+                        between Text.andHtml loop types
                             |> prop.children
                     | Sum types ->
                         prop.className "compound-type"
-                        between $"&nbsp;{Text.orHtml}&nbsp;" loop types
+                        between Text.orHtml loop types
                             |> prop.children
                     | Alias (_, [inner], _)
                         when typ = Type.not inner ->
