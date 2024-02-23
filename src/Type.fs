@@ -36,12 +36,19 @@ type Type =
 
 module Type =
 
+    /// Is the given type primitiv?
     let isPrimitive = function
         | Primitive _ -> true
         | _ -> false
 
+    /// A type with a single, well-known value. AKA "true",
+    /// "one", "unit", etc.
     let top = Primitive "top"
+
+    /// A type with no values. AKA "false", "zero", "absurd",
+    /// etc.
     let bottom = Primitive "bottom"
 
+    /// Not<T> = T → false.
     let not typ =
         Alias ("Not", [typ], Function (typ, bottom))
