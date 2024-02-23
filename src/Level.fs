@@ -3,8 +3,12 @@
 module Text =
 
     let andSymbol = "∧"
-    let orSymbol = "∨"
+    let orSymbol = "👈🏾👉🏾"
     let notSymbol = "¬"
+
+    let andHtml = andSymbol
+    let orHtml = "👈🏾<br />👉🏾"
+    let notHtml = notSymbol
 
 /// Action types available to the user. These have a mapping
 /// to tactics that is not 1:1.
@@ -185,7 +189,7 @@ module Level =
                 Goal = Sum [p; q]
                 Terms = terms [p]
                 ActionTypes = actionTypes
-                Instructions = $"Drag {left}/{right} onto a {Text.orSymbol} goal to simplify it"
+                Instructions = $"Drag {left} or {right} onto a {Text.orSymbol} goal to simplify it"
             }
 
         /// Introduces the right action.

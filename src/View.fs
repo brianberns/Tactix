@@ -74,18 +74,18 @@ module View =
                             |> prop.children
                     | Product types ->
                         prop.className "compound-type"
-                        between $"&nbsp;{Text.andSymbol}&nbsp;" loop types
+                        between $"&nbsp;{Text.andHtml}&nbsp;" loop types
                             |> prop.children
                     | Sum types ->
                         prop.className "compound-type"
-                        between $"&nbsp;{Text.orSymbol}&nbsp;" loop types
+                        between $"&nbsp;{Text.orHtml}&nbsp;" loop types
                             |> prop.children
                     | Alias (_, [inner], _)
                         when typ = Type.not inner ->
                         prop.className "compound-type"
                         prop.children [
                             Html.span [
-                                prop.innerHtml Text.notSymbol ]
+                                prop.innerHtml Text.notHtml ]
                             loop inner
                         ]
                     | _ -> failwith "Unexpected"
