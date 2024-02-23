@@ -49,6 +49,26 @@ module View =
                 ]
         ]
 
+    let private renderGoalActionTypes levelIdx draggable =
+        let actionTypes =
+            Level.levels[levelIdx].ActionTypes
+        Html.div [
+            prop.id "goal-actions"
+            prop.children [
+                for actionType in actionTypes do
+                    Html.div [
+                        prop.className "action"
+                        prop.text (ActionType.emoji actionType)
+                        prop.title (ActionType.instructions actionType)
+                        if draggable then
+                            prop.draggable true
+                            prop.onDragStart (
+                                DragData.setData
+                                    { ActionType = actionType })
+                    ]
+            ]
+        ]
+
     let private renderInnerType typ =
 
         let between content f types =
@@ -277,11 +297,11 @@ module View =
             ]
         ]
 
-    let private renderActionTypes levelIdx draggable =
+    let private renderTermActionTypes levelIdx draggable =
         let actionTypes =
             Level.levels[levelIdx].ActionTypes
         Html.div [
-            prop.id "actions"
+            prop.id "term-actions"
             prop.children [
                 for actionType in actionTypes do
                     Html.div [
@@ -324,8 +344,11 @@ module View =
             let levelIdx = model.Settings.LevelIndex
             prop.children [
                 renderHeader model.Proof levelIdx
+                renderGoalActionTypes
+                    levelIdx
+                    (not <| Proof.isComplete model.Proof)
                 renderProof model dispatch
-                renderActionTypes
+                renderTermActionTypes
                     levelIdx
                     (not <| Proof.isComplete model.Proof)
                 renderFooter
