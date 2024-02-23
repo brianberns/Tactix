@@ -1,5 +1,11 @@
 ﻿namespace Tactix
 
+module Text =
+
+    let andSymbol = "∧"
+    let orSymbol = "∨"
+    let notSymbol = "¬"
+
 /// Action types available to the user. These have a mapping
 /// to tactics that is not 1:1.
 [<RequireQualifiedAccess>]
@@ -44,12 +50,12 @@ module ActionType =
     let instructions = function
         | ActionType.Exact    -> "Drag onto a symbol that matches the goal"
         | ActionType.Intro    -> "Drag onto an arrow goal to simplify it"
-        | ActionType.Left     -> "Drag onto a ∨ goal to choose its left symbol"
-        | ActionType.Right    -> "Drag onto a ∨ goal to choose its right symbol"
-        | ActionType.Dissolve -> "Drag onto a ∧ symbol to dissolve it"
+        | ActionType.Left     -> $"Drag onto a {Text.orSymbol} goal to choose its left symbol"
+        | ActionType.Right    -> $"Drag onto a {Text.orSymbol} goal to choose its right symbol"
+        | ActionType.Dissolve -> $"Drag onto a {Text.andSymbol} symbol to dissolve it"
         | ActionType.Apply    -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
-        | ActionType.Cases    -> "Drag onto a ∧ goal or ∨ term to create separate cases"
-        | ActionType.Expand   -> "Drag anywhere to expand ¬ symbols"
+        | ActionType.Cases    -> $"Drag onto a {Text.andSymbol} goal or {Text.orSymbol} term to create separate cases"
+        | ActionType.Expand   -> $"Drag anywhere to expand {Text.notSymbol} symbols"
 
 /// A puzzle to be solved.
 type Level =
@@ -179,7 +185,7 @@ module Level =
                 Goal = Sum [p; q]
                 Terms = terms [p]
                 ActionTypes = actionTypes
-                Instructions = $"Drag {left}/{right} onto a ∨ goal to simplify it"
+                Instructions = $"Drag {left}/{right} onto a {Text.orSymbol} goal to simplify it"
             }
 
         /// Introduces the right action.
@@ -203,7 +209,7 @@ module Level =
                         ActionType.Exact
                         ActionType.Dissolve
                     ]
-                Instructions = $"Drag {dissolve} onto a ∧ symbol to dissolve it"
+                Instructions = $"Drag {dissolve} onto a {Text.andSymbol} symbol to dissolve it"
             }
 
     module private Apply =
@@ -267,7 +273,7 @@ module Level =
                         ActionType.Right
                         ActionType.Cases
                     ]
-                Instructions = $"Drag {cases} onto ∨ in the field to create separate cases"
+                Instructions = $"Drag {cases} onto {Text.orSymbol} in the field to create separate cases"
             }
 
         /// More practice with multiple cases.
@@ -300,7 +306,7 @@ module Level =
                         ActionType.Dissolve
                         ActionType.Cases
                     ]
-                Instructions = $"You can also drag {cases} onto a ∧ goal to create separate cases"
+                Instructions = $"You can also drag {cases} onto a ${Text.andSymbol} goal to create separate cases"
             }
 
         /// Exportation.
@@ -357,7 +363,7 @@ module Level =
                         ActionType.Apply
                         ActionType.Expand
                     ]
-                Instructions = $"Drag {expand} anywhere to expand ¬ symbols"
+                Instructions = $"Drag {expand} anywhere to expand {Text.notSymbol} symbols"
             }
 
         /// Modus tollens.
