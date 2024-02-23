@@ -7,7 +7,10 @@ type ProofCaseKey = int
 /// must be proved.
 type Proof =
     {
+        /// Key to be used for the next case in this proof.
         NextKey : ProofCaseKey
+
+        /// Cases in this proof, indexed by key.
         CaseMap : Map<ProofCaseKey, ProofCase>
     }
 
