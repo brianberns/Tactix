@@ -1,15 +1,15 @@
 ﻿namespace Tactix
 
-type AllowFunc<'t> = 't -> ActionType -> Option<Message>
+type AllowFunc<'t, 'action> = 't -> 'action -> Option<Message>
 
 module Allow =
 
-    module Type =
+    module Goal =
 
-        let intro (caseKey, case) : AllowFunc<_> =
+        let intro (caseKey, case) : AllowFunc<_, _> =
             fun goal actionType ->
                 option {
-                    if actionType = ActionType.Intro then
+                    if actionType = GoalAction.Intro then
                         match goal with
                             | Function (p, _) ->
                                 let tactic = Intro (Term.create p)
@@ -18,10 +18,10 @@ module Allow =
                             | _ -> ()
                 }
 
-        let left (caseKey, case) : AllowFunc<_> =
+        let left (caseKey, case) : AllowFunc<_, _> =
             fun goal actionType ->
                 option {
-                    if actionType = ActionType.Left then
+                    if actionType = GoalAction.Left then
                         match goal with
                             | Sum _ ->
                                 let tactic = Left
@@ -30,10 +30,10 @@ module Allow =
                             | _ -> ()
                 }
 
-        let right (caseKey, case) : AllowFunc<_> =
+        let right (caseKey, case) : AllowFunc<_, _> =
             fun goal actionType ->
                 option {
-                    if actionType = ActionType.Right then
+                    if actionType = GoalAction.Right then
                         match goal with
                             | Sum _ ->
                                 let tactic = Right
@@ -44,10 +44,10 @@ module Allow =
 
         /// A Cases action becomes a Split tactic when applied to a
         /// Product goal. Each sub-goal must be proved separately.
-        let cases (caseKey, case) : AllowFunc<_> =
+        let cases (caseKey, case) : AllowFunc<_, _> =
             fun goal actionType ->
                 option {
-                    if actionType = ActionType.Cases then
+                    if actionType = GoalAction.Cases then
                         match goal with
                             | Product _ ->
                                 let tactic = Split
@@ -58,10 +58,10 @@ module Allow =
 
     module Term =
 
-        let exact (caseKey, case) : AllowFunc<_> =
+        let exact (caseKey, case) : AllowFunc<_, _> =
             fun term actionType ->
                 option {
-                    if actionType = ActionType.Exact then
+                    if actionType = TermAction.Exact then
                         let tactic = Exact term
                         if ProofCase.canAdd tactic case then
                             return AddTactic (tactic, caseKey)
@@ -70,10 +70,10 @@ module Allow =
         /// A Dissolve action becomes a Cases tactic when applied to a
         /// Product term. Each sub-term becomes a separate term, but
         /// no new proof cases are created.
-        let dissolve (caseKey, case) : AllowFunc<_> =
+        let dissolve (caseKey, case) : AllowFunc<_, _> =
             fun term actionType ->
                 option {
-                    if actionType = ActionType.Dissolve then
+                    if actionType = TermAction.Dissolve then
                         match term.Type with
                             | Product _ ->
                                 let tactic = Cases term
@@ -82,19 +82,19 @@ module Allow =
                             | _ -> ()
                 }
 
-        let apply (caseKey, case) : AllowFunc<_> =
+        let apply (caseKey, case) : AllowFunc<_, _> =
             fun term actionType ->
                 option {
-                    if actionType = ActionType.Apply then
+                    if actionType = TermAction.Apply then
                         let tactic = Apply term
                         if ProofCase.canAdd tactic case then
                             return AddTactic (tactic, caseKey)
                 }
 
-        let cases (caseKey, case) : AllowFunc<_> =
+        let cases (caseKey, case) : AllowFunc<_, _> =
             fun term actionType ->
                 option {
-                    if actionType = ActionType.Cases then
+                    if actionType = TermAction.Cases then
                         match term.Type with
                             | Sum _ ->
                                 let tactic = Cases term
@@ -103,8 +103,8 @@ module Allow =
                             | _ -> ()
                 }
 
-    let any allowFuncs : AllowFunc<_> =
+    let any allowFuncs : AllowFunc<_, _> =
         fun arg actionType ->
             allowFuncs
-                |> Seq.tryPick (fun (allowFunc : AllowFunc<_>) ->
+                |> Seq.tryPick (fun (allowFunc : AllowFunc<_, _>) ->
                     allowFunc arg actionType)

@@ -3,27 +3,33 @@
 open Browser.Types
 open Feliz
 
-type private DragData =
+type private DragData<'action> =
     {
-        ActionType : ActionType
+        Action : 'action
     }
 
 // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
 // https://stackoverflow.com/questions/31915653/how-to-get-data-from-datatransfer-getdata-in-event-dragover-or-dragenter
-module private DragData =
+type private DragDataManager<'action> =
+    {
+        mutable Shared : Option<DragData<'action>>
+    }
 
-    let mutable shared : Option<DragData> = None
+module private DragDataManager =
 
-    let setData dragData (evt : DragEvent) =
-        shared <- Some dragData
+    let setData dragData (evt : DragEvent) mgr =
+        mgr.Shared <- Some dragData
 
-    let getData (evt : DragEvent) =
-        shared
+    let getData (evt : DragEvent) mgr =
+        mgr.Shared
 
-    let actionType evt =
-        match getData evt with
-            | Some dragData -> dragData.ActionType
+    let action evt mgr =
+        match getData evt mgr with
+            | Some dragData -> dragData.Action
             | None -> failwith "Unexpected"
+
+    let goal : DragDataManager<GoalAction> = { Shared = None }
+    let term : DragDataManager<TermAction> = { Shared = None }
 
 module View =
 
@@ -50,21 +56,23 @@ module View =
         ]
 
     let private renderGoalActionTypes levelIdx draggable =
-        let actionTypes =
-            Level.levels[levelIdx].ActionTypes
+        let actions =
+            Level.levels[levelIdx].GoalActions
         Html.div [
             prop.id "goal-actions"
             prop.children [
-                for actionType in actionTypes do
+                for action in actions do
                     Html.div [
                         prop.className "action"
-                        prop.text (ActionType.emoji actionType)
-                        prop.title (ActionType.instructions actionType)
+                        prop.text (GoalAction.emoji action)
+                        prop.title (GoalAction.instructions action)
                         if draggable then
                             prop.draggable true
-                            prop.onDragStart (
-                                DragData.setData
-                                    { ActionType = actionType })
+                            prop.onDragStart (fun evt ->
+                                DragDataManager.setData
+                                    { Action = action }
+                                    evt
+                                    DragDataManager.goal)
                     ]
             ]
         ]
@@ -187,13 +195,16 @@ module View =
         assert(model.Proof.CaseMap[caseKey] = case)
 
         let allowMulti goal evt =
-            let actionType = DragData.actionType evt
+            let action =
+                DragDataManager.action
+                    evt
+                    DragDataManager.goal
             Allow.any [
-                Allow.Type.intro casePair
-                Allow.Type.left casePair
-                Allow.Type.right casePair
-                Allow.Type.cases casePair
-            ] goal actionType
+                Allow.Goal.intro casePair
+                Allow.Goal.left casePair
+                Allow.Goal.right casePair
+                Allow.Goal.cases casePair
+            ] goal action
 
         Html.div [
             prop.className "goal"
@@ -246,13 +257,16 @@ module View =
         assert(model.Proof.CaseMap[caseKey] = case)
 
         let allowMulti term evt =
-            let actionType = DragData.actionType evt
+            let action =
+                DragDataManager.action
+                    evt
+                    DragDataManager.term
             Allow.any [
                 Allow.Term.exact casePair
                 Allow.Term.apply casePair
                 Allow.Term.cases casePair
                 Allow.Term.dissolve casePair
-            ] term actionType
+            ] term action
 
         Html.div [
             prop.className "terms"
@@ -271,7 +285,8 @@ module View =
 
         let allow evt =
             option {
-                if DragData.actionType evt = ActionType.Expand then
+                if DragDataManager.action evt DragDataManager.term
+                    = TermAction.Expand then
                     return ExpandAliases
             }
 
@@ -298,21 +313,23 @@ module View =
         ]
 
     let private renderTermActionTypes levelIdx draggable =
-        let actionTypes =
-            Level.levels[levelIdx].ActionTypes
+        let actions =
+            Level.levels[levelIdx].TermActions
         Html.div [
             prop.id "term-actions"
             prop.children [
-                for actionType in actionTypes do
+                for action in actions do
                     Html.div [
                         prop.className "action"
-                        prop.text (ActionType.emoji actionType)
-                        prop.title (ActionType.instructions actionType)
+                        prop.text (TermAction.emoji action)
+                        prop.title (TermAction.instructions action)
                         if draggable then
                             prop.draggable true
-                            prop.onDragStart (
-                                DragData.setData
-                                    { ActionType = actionType })
+                            prop.onDragStart (fun evt ->
+                                DragDataManager.setData
+                                    { Action = action }
+                                    evt
+                                    DragDataManager.term)
                     ]
             ]
         ]

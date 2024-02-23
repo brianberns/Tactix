@@ -9,7 +9,7 @@
 }
 
 #goal-actions {
-    position: absolute;
+    position: fixed;
     left: 0%;
     top: 00%;
     width: 100%;
@@ -22,7 +22,7 @@
 }
 
 #proof {
-    position: absolute;
+    position: fixed;
     left: 0%;
     top: 10%;
     width: 100%;
@@ -128,7 +128,7 @@
 }
 
 #term-actions {
-    position: absolute;
+    position: fixed;
     left: 0%;
     top: 90%;
     width: 100%;
@@ -164,7 +164,7 @@
 }
 
 #header {
-    position: absolute;
+    position: fixed;
     z-index: 10;
     width: 25%;
 }
@@ -180,7 +180,7 @@
 }
 
 #footer {
-    position: absolute;
+    position: fixed;
     top: 100%;
     transform: translateY(-100%);
 }
