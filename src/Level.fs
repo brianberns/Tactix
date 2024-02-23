@@ -328,40 +328,33 @@ module Level =
 
     module private Negation =
 
-        let actionTypes =
-            set [
-                ActionType.Exact
-                ActionType.Intro
-                ActionType.Apply
-                ActionType.Cases
-                ActionType.Left
-                ActionType.Right
-                ActionType.Split
-                ActionType.Expand
-            ]
-
         /// Double negative (but not the law of excluded middle).
         let level1 =
             {
                 Goal = Type.not (Type.not p)
                 Terms = terms [ p ]
-                ActionTypes = actionTypes
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Expand
+                    ]
                 Instructions = $"Drag {expand} anywhere to expand ¬ symbols"
             }
 
-        /// de Morgan's laws.
+        /// Modus tollens.
         let level2 =
             {
-                Goal =
-                    Product [
-                        Type.not p
-                        Type.not q
+                Goal = Function (Type.not q, Type.not p)
+                Terms = terms [ pq ]
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Expand
                     ]
-                Terms =
-                    terms [
-                        Type.not (Sum [p; q])
-                    ]
-                ActionTypes = actionTypes
                 Instructions = ""
             }
 
@@ -376,16 +369,40 @@ module Level =
                             Type.not q
                         ]
                     ]
-                ActionTypes = actionTypes
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Split
+                        ActionType.Apply
+                        ActionType.Cases
+                        ActionType.Expand
+                    ]
                 Instructions = ""
             }
 
-        /// Modus tollens.
+        /// de Morgan's laws.
         let level4 =
             {
-                Goal = Function (Type.not q, Type.not p)
-                Terms = terms [ pq ]
-                ActionTypes = actionTypes
+                Goal =
+                    Product [
+                        Type.not p
+                        Type.not q
+                    ]
+                Terms =
+                    terms [
+                        Type.not (Sum [p; q])
+                    ]
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Apply
+                        ActionType.Cases
+                        ActionType.Expand
+                    ]
                 Instructions = ""
             }
 
