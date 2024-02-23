@@ -191,19 +191,17 @@ module Level =
 
     module private Apply =
 
-        let private actionTypes =
-            set [
-                ActionType.Exact
-                ActionType.Intro
-                ActionType.Apply
-            ]
-
         /// Modus ponens.
         let level1 =
             {
                 Goal = q
                 Terms = terms [p; pq]
-                ActionTypes = actionTypes
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                    ]
                 Instructions = $"Drag {apply} onto ▢→■ when the goal is ■ to change the goal to ▢"
             }
 
@@ -216,7 +214,12 @@ module Level =
                         Function (p, q)
                         Function (q, r)
                     ]
-                ActionTypes = actionTypes
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                    ]
                 Instructions = ""
             }
 
@@ -225,8 +228,26 @@ module Level =
             {
                 Goal = r
                 Terms = terms [p_and_q; pqr]
-                ActionTypes = actionTypes
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Apply
+                    ]
                 Instructions = $"You can also use {apply} on nested ▢→■ symbols when the goal is ■"
+            }
+
+        /// Currying.
+        let level4 =
+            {
+                Goal = Function (p_and_q, r)
+                Terms = terms [pqr]
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                    ]
+                Instructions = ""
             }
 
     module private Cases =
@@ -292,21 +313,6 @@ module Level =
                 ActionType.Split
                 ActionType.Expand
             ]
-
-        /// Currying.
-        let level2 =
-            {
-                Goal = Function (p_and_q, r)
-                Terms = terms [pqr]
-                ActionTypes =
-                    set [
-                        ActionType.Exact
-                        ActionType.Intro
-                        ActionType.Apply
-                        ActionType.Split
-                    ]
-                Instructions = ""
-            }
 
         /// Exportation.
         let level5 =
@@ -414,12 +420,12 @@ module Level =
             Apply.level1
             Apply.level2
             Apply.level3
+            Apply.level4
 
             Cases.level1
             Cases.level2
             Cases.level3
 
-            Other.level2
             Other.level5
             Other.level6
 
