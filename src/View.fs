@@ -3,6 +3,111 @@
 open Browser.Types
 open Feliz
 
+type AllowFunc<'t> = 't -> ActionType -> Option<Message>
+
+module Allow =
+
+    module Type =
+
+        let intro (caseKey, case) : AllowFunc<_> =
+            fun goal actionType ->
+                option {
+                    if actionType = ActionType.Intro then
+                        let! p =
+                            match goal with
+                                | Function (p, _) -> Some p
+                                | _ -> None
+                        let tactic = Intro (Term.create p)
+                        if ProofCase.canAdd tactic case then
+                            return AddTactic (tactic, caseKey)
+                }
+
+        let left (caseKey, case) : AllowFunc<_> =
+            fun goal actionType ->
+                option {
+                    if actionType = ActionType.Left then
+                        match goal with
+                            | Sum _ ->
+                                let tactic = Left
+                                if ProofCase.canAdd tactic case then
+                                    return AddTactic (tactic, caseKey)
+                            | _ -> ()
+                }
+
+        let right (caseKey, case) : AllowFunc<_> =
+            fun goal actionType ->
+                option {
+                    if actionType = ActionType.Right then
+                        match goal with
+                            | Sum _ ->
+                                let tactic = Right
+                                if ProofCase.canAdd tactic case then
+                                    return AddTactic (tactic, caseKey)
+                            | _ -> ()
+                }
+
+        let cases (caseKey, case) : AllowFunc<_> =
+            fun goal actionType ->
+                option {
+                    if actionType = ActionType.Cases then
+                        match goal with
+                            | Product _ ->
+                                let tactic = Split
+                                if ProofCase.canAdd tactic case then
+                                    return AddTactic (tactic, caseKey)
+                            | _ -> ()
+                }
+
+    module Term =
+
+        let exact (caseKey, case) : AllowFunc<_> =
+            fun term actionType ->
+                option {
+                    if actionType = ActionType.Exact then
+                        let tactic = Exact term
+                        if ProofCase.canAdd tactic case then
+                            return AddTactic (tactic, caseKey)
+                }
+
+        let split (caseKey, case) : AllowFunc<_> =
+            fun term actionType ->
+                option {
+                    if actionType = ActionType.Split then
+                        match term.Type with
+                            | Product _ ->
+                                let tactic = Cases term
+                                if ProofCase.canAdd tactic case then
+                                    return AddTactic (tactic, caseKey)
+                            | _ -> ()
+                }
+
+        let apply (caseKey, case) : AllowFunc<_> =
+            fun term actionType ->
+                option {
+                    if actionType = ActionType.Apply then
+                        let tactic = Apply term
+                        if ProofCase.canAdd tactic case then
+                            return AddTactic (tactic, caseKey)
+                }
+
+        let cases (caseKey, case) : AllowFunc<_> =
+            fun term actionType ->
+                option {
+                    if actionType = ActionType.Cases then
+                        match term.Type with
+                            | Sum _ ->
+                                let tactic = Cases term
+                                if ProofCase.canAdd tactic case then
+                                    return AddTactic (tactic, caseKey)
+                            | _ -> ()
+                }
+
+    let any allowFuncs : AllowFunc<_> =
+        fun arg actionType ->
+            allowFuncs
+                |> Seq.tryPick (fun (allowFunc : AllowFunc<_>) ->
+                    allowFunc arg actionType)
+
 type private DragData =
     {
         ActionType : ActionType
@@ -160,54 +265,20 @@ module View =
             yield! dragDrop
         ]
 
-    let private allowAny allowActions arg (evt : DragEvent) =
-        allowActions
-            |> Seq.tryPick (fun allowAction ->
-                allowAction arg evt : Option<Message>)
-
-    let private renderGoal (caseKey, case) model dispatch =
+    let private renderGoal
+        ((caseKey, case) as casePair)
+        model
+        dispatch =
         assert(model.Proof.CaseMap[caseKey] = case)
 
-        let allowIntro goal evt =
-            option {
-                if DragData.actionType evt = ActionType.Intro then
-                    let! p =
-                        match goal with
-                            | Function (p, _) -> Some p
-                            | _ -> None
-                    let tactic = Intro (Term.create p)
-                    if ProofCase.canAdd tactic case then
-                        return AddTactic (tactic, caseKey)
-            }
-
-        let allowLeftRight actionType tactic goal evt =
-            option {
-                if DragData.actionType evt = actionType then
-                    match goal with
-                        | Sum _ ->
-                            if ProofCase.canAdd tactic case then
-                                return AddTactic (tactic, caseKey)
-                        | _ -> ()
-            }
-
-        let allowCases goal evt =
-            option {
-                if DragData.actionType evt = ActionType.Cases then
-                    match goal with
-                        | Product _ ->
-                            let tactic = Split
-                            if ProofCase.canAdd tactic case then
-                                return AddTactic (tactic, caseKey)
-                        | _ -> ()
-            }
-
-        let allowMulti =
-            allowAny [
-                allowIntro
-                allowLeftRight ActionType.Left Left
-                allowLeftRight ActionType.Right Right
-                allowCases
-            ]
+        let allowMulti goal evt =
+            let actionType = DragData.actionType evt
+            Allow.any [
+                Allow.Type.intro casePair
+                Allow.Type.left casePair
+                Allow.Type.right casePair
+                Allow.Type.cases casePair
+            ] goal actionType
 
         Html.div [
             prop.className "goal"
@@ -257,49 +328,16 @@ module View =
         ((caseKey, case) as casePair)
         model
         dispatch =
+        assert(model.Proof.CaseMap[caseKey] = case)
 
-        let allowSimple actionType tactic evt =
-            option {
-                if DragData.actionType evt = actionType then
-                    if ProofCase.canAdd tactic case then
-                        return AddTactic (tactic, caseKey)
-            }
-
-        let allowExact term =
-            allowSimple ActionType.Exact (Exact term)
-
-        let allowApply term =
-            allowSimple ActionType.Apply (Apply term)
-
-        let allowCases term evt =
-            option {
-                if DragData.actionType evt = ActionType.Cases then
-                    match term.Type with
-                        | Sum _ ->
-                            let tactic = Cases term
-                            if ProofCase.canAdd tactic case then
-                                return AddTactic (tactic, caseKey)
-                        | _ -> ()
-            }
-
-        let allowSplit term evt =
-            option {
-                if DragData.actionType evt = ActionType.Split then
-                    match term.Type with
-                        | Product _ ->
-                            let tactic = Cases term
-                            if ProofCase.canAdd tactic case then
-                                return AddTactic (tactic, caseKey)
-                        | _ -> ()
-            }
-
-        let allowMulti =
-            allowAny [
-                allowExact
-                allowApply
-                allowCases
-                allowSplit
-            ]
+        let allowMulti term evt =
+            let actionType = DragData.actionType evt
+            Allow.any [
+                Allow.Term.exact casePair
+                Allow.Term.apply casePair
+                Allow.Term.cases casePair
+                Allow.Term.split casePair
+            ] term actionType
 
         Html.div [
             prop.className "terms"
