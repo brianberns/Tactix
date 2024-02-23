@@ -174,6 +174,21 @@ module Level =
                 Instructions = ""
             }
 
+    module private Split =
+
+        /// Introduces the split action.
+        let level1 =
+            {
+                Goal = p
+                Terms = terms [ p_and_q ]
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Split
+                    ]
+                Instructions = $"Drag {split} onto a ∧ symbol to dissolve it"
+            }
+
     module private Apply =
 
         let private actionTypes =
@@ -205,19 +220,13 @@ module Level =
                 Instructions = ""
             }
 
-    module Split =
-
-        /// Introduces the split action.
-        let level1 =
+        /// Applying a function with two inputs.
+        let level3 =
             {
-                Goal = p
-                Terms = terms [ p_and_q ]
-                ActionTypes =
-                    set [
-                        ActionType.Exact
-                        ActionType.Split
-                    ]
-                Instructions = $"Drag {split} onto a ∧ symbol to dissolve it"
+                Goal = r
+                Terms = terms [p_and_q; pqr]
+                ActionTypes = actionTypes
+                Instructions = $"You can also use {apply} on nested ▢→■ symbols when the goal is ■"
             }
 
     module private Cases =
@@ -260,14 +269,14 @@ module Level =
         let level3 =
             {
                 Goal = Product [q; p]
-                Terms = terms [ p_and_q ]
+                Terms = terms [p_and_q]
                 ActionTypes =
                     set [
                         ActionType.Exact
                         ActionType.Split
                         ActionType.Cases
                     ]
-                Instructions = $"You can also drag {cases} onto a ∧ symbol to create separate cases"
+                Instructions = $"You can also drag {cases} onto a ∧ goal to create separate cases"
             }
 
     module private Other =
@@ -283,15 +292,6 @@ module Level =
                 ActionType.Split
                 ActionType.Expand
             ]
-
-        /// Applying a function with two inputs.
-        let level1 =
-            {
-                Goal = r
-                Terms = terms [p; q; pqr]
-                ActionTypes = actionTypes
-                Instructions = $"Use {apply} on nested ▢→■ symbols when the goal is ■"
-            }
 
         /// Currying.
         let level2 =
@@ -409,14 +409,19 @@ module Level =
             LeftRight.level1
             LeftRight.level2
 
+            Split.level1
+
             Apply.level1
             Apply.level2
-
-            Split.level1
+            Apply.level3
 
             Cases.level1
             Cases.level2
             Cases.level3
+
+            Other.level2
+            Other.level5
+            Other.level6
 
             Negation.level1
             Negation.level2
