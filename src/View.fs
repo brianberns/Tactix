@@ -13,13 +13,12 @@ module Allow =
             fun goal actionType ->
                 option {
                     if actionType = ActionType.Intro then
-                        let! p =
-                            match goal with
-                                | Function (p, _) -> Some p
-                                | _ -> None
-                        let tactic = Intro (Term.create p)
-                        if ProofCase.canAdd tactic case then
-                            return AddTactic (tactic, caseKey)
+                        match goal with
+                            | Function (p, _) ->
+                                let tactic = Intro (Term.create p)
+                                if ProofCase.canAdd tactic case then
+                                    return AddTactic (tactic, caseKey)
+                            | _ -> ()
                 }
 
         let left (caseKey, case) : AllowFunc<_> =
