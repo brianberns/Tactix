@@ -199,7 +199,6 @@ module Level =
                 ActionTypes =
                     set [
                         ActionType.Exact
-                        ActionType.Intro
                         ActionType.Apply
                     ]
                 Instructions = $"Drag {apply} onto ▢→■ when the goal is ■ to change the goal to ▢"
@@ -223,21 +222,8 @@ module Level =
                 Instructions = ""
             }
 
-        /// Applying a function with two inputs.
-        let level3 =
-            {
-                Goal = r
-                Terms = terms [p_and_q; pqr]
-                ActionTypes =
-                    set [
-                        ActionType.Exact
-                        ActionType.Apply
-                    ]
-                Instructions = $"You can also use {apply} on nested ▢→■ symbols when the goal is ■"
-            }
-
         /// Currying.
-        let level4 =
+        let level3 =
             {
                 Goal = Function (p_and_q, r)
                 Terms = terms [pqr]
@@ -247,7 +233,7 @@ module Level =
                         ActionType.Intro
                         ActionType.Apply
                     ]
-                Instructions = ""
+                Instructions = $"You can also use {apply} on nested ▢→■ symbols when the goal is ■"
             }
 
     module private Cases =
@@ -420,7 +406,6 @@ module Level =
             Apply.level1
             Apply.level2
             Apply.level3
-            Apply.level4
 
             Cases.level1
             Cases.level2
