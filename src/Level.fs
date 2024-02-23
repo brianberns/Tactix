@@ -7,9 +7,9 @@ type ActionType =
     | Intro
     | Left
     | Right
+    | Split
     | Apply
     | Cases
-    | Split
     | Expand
 
 module ActionType =
@@ -19,9 +19,9 @@ module ActionType =
         | ActionType.Intro  -> "🚀"
         | ActionType.Left   -> "👈🏾"
         | ActionType.Right  -> "👉🏾"
+        | ActionType.Split  -> "🌈"
         | ActionType.Apply  -> "👣"
         | ActionType.Cases  -> "🔪"
-        | ActionType.Split  -> "🌈"
         | ActionType.Expand -> "🧣"
 
     let instructions = function
@@ -29,8 +29,8 @@ module ActionType =
         | ActionType.Intro  -> "Drag onto an arrow goal to simplify it"
         | ActionType.Left   -> "Drag onto a ∨ goal to choose its left symbol"
         | ActionType.Right  -> "Drag onto a ∨ goal to choose its right symbol"
-        | ActionType.Apply  -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
         | ActionType.Split  -> "Drag onto a ∧ symbol to dissolve it"
+        | ActionType.Apply  -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
         | ActionType.Cases  -> "Drag onto a ∧ goal or ∨ term to create separate cases"
         | ActionType.Expand -> "Drag anywhere to expand ¬ symbols"
 
@@ -286,31 +286,23 @@ module Level =
                 Instructions = $"You can also drag {cases} onto a ∧ goal to create separate cases"
             }
 
-    module private Other =
-
-        let private actionTypes =
-            set [
-                ActionType.Exact
-                ActionType.Intro
-                ActionType.Apply
-                ActionType.Cases
-                ActionType.Left
-                ActionType.Right
-                ActionType.Split
-                ActionType.Expand
-            ]
-
         /// Exportation.
-        let level5 =
+        let level4 =
             {
                 Goal = pqr
                 Terms = terms [ Function (p_and_q, r) ]
-                ActionTypes = actionTypes
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Apply
+                        ActionType.Cases
+                    ]
                 Instructions = ""
             }
 
         /// Distributive property.
-        let level6 =
+        let level5 =
             {
                 Goal =
                     Sum [
@@ -321,7 +313,16 @@ module Level =
                     terms [
                         Product [Sum [p; q]; r]
                     ]
-                ActionTypes = actionTypes
+                ActionTypes =
+                    set [
+                        ActionType.Exact
+                        ActionType.Intro
+                        ActionType.Left
+                        ActionType.Right
+                        ActionType.Split
+                        ActionType.Apply
+                        ActionType.Cases
+                    ]
                 Instructions = ""
             }
 
@@ -410,9 +411,8 @@ module Level =
             Cases.level1
             Cases.level2
             Cases.level3
-
-            Other.level5
-            Other.level6
+            Cases.level4
+            Cases.level5
 
             Negation.level1
             Negation.level2
