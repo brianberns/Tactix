@@ -55,7 +55,7 @@ module View =
                 ]
         ]
 
-    let private renderGoalActionTypes levelIdx draggable =
+    let private renderGoalActions levelIdx draggable =
         let actions =
             Level.levels[levelIdx].GoalActions
         Html.div [
@@ -283,24 +283,12 @@ module View =
 
     let private renderProofCase casePair model dispatch =
 
-        let allow evt =
-            option {
-                if DragDataManager.action evt DragDataManager.term
-                    = TermAction.Expand then
-                    return ExpandAliases
-            }
-
         Html.div [
             prop.className "proof-case"
             prop.children [
                 renderGoal casePair model dispatch
                 renderTerms casePair model dispatch
             ]
-            yield! renderDragDrop   // ugly
-                Message.noHighlight
-                allow
-                model.Settings.AudioEnabled
-                dispatch
         ]
 
     let private renderProof model dispatch =
@@ -312,7 +300,7 @@ module View =
             ]
         ]
 
-    let private renderTermActionTypes levelIdx draggable =
+    let private renderTermActions levelIdx draggable =
         let actions =
             Level.levels[levelIdx].TermActions
         Html.div [
@@ -359,15 +347,13 @@ module View =
         Html.div [
 
             let levelIdx = model.Settings.LevelIndex
+            let isActive =
+                not <| Proof.isComplete model.Proof
             prop.children [
                 renderHeader model.Proof levelIdx
-                renderGoalActionTypes
-                    levelIdx
-                    (not <| Proof.isComplete model.Proof)
+                renderGoalActions levelIdx isActive
                 renderProof model dispatch
-                renderTermActionTypes
-                    levelIdx
-                    (not <| Proof.isComplete model.Proof)
+                renderTermActions levelIdx isActive
                 renderFooter
                     model.Settings
                     dispatch

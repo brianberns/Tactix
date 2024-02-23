@@ -43,7 +43,7 @@ module GoalAction =
         | GoalAction.Intro    -> "Drag onto an arrow goal to simplify it"
         | GoalAction.Left     -> $"Drag onto a {Text.orSymbol} goal to choose its left symbol"
         | GoalAction.Right    -> $"Drag onto a {Text.orSymbol} goal to choose its right symbol"
-        | GoalAction.Cases    -> $"Drag onto a {Text.andSymbol} goal or {Text.orSymbol} term to create separate cases"
+        | GoalAction.Cases    -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
         | GoalAction.Expand   -> $"Drag anywhere to expand {Text.notSymbol} symbols"
 
 /// Term actions available to the user. These have a mapping
@@ -79,7 +79,7 @@ module TermAction =
         | TermAction.Exact    -> "Drag onto a symbol that matches the goal"
         | TermAction.Dissolve -> $"Drag onto a {Text.andSymbol} symbol to dissolve it"
         | TermAction.Apply    -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
-        | TermAction.Cases    -> $"Drag onto a {Text.andSymbol} goal or {Text.orSymbol} term to create separate cases"
+        | TermAction.Cases    -> $"Drag onto a {Text.orSymbol} term to create separate cases"
         | TermAction.Expand   -> $"Drag anywhere to expand {Text.notSymbol} symbols"
 
 /// A puzzle to be solved.
@@ -306,7 +306,6 @@ module Level =
                 Terms = terms [p_or_q]
                 GoalActions =
                     set [
-                        GoalAction.Intro
                         GoalAction.Left
                         GoalAction.Right
                     ]
@@ -367,7 +366,6 @@ module Level =
                     set [
                         TermAction.Exact
                         TermAction.Apply
-                        TermAction.Cases
                     ]
                 Instructions = ""
             }
