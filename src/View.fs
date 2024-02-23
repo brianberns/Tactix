@@ -231,7 +231,7 @@ module View =
                 Allow.Term.exact casePair
                 Allow.Term.apply casePair
                 Allow.Term.cases casePair
-                Allow.Term.split casePair
+                Allow.Term.dissolve casePair
             ] term actionType
 
         Html.div [

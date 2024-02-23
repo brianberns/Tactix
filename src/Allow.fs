@@ -50,7 +50,7 @@ module Allow =
                     if actionType = ActionType.Cases then
                         match goal with
                             | Product _ ->
-                                let tactic = Split   // Cases action -> Split tactic
+                                let tactic = Split
                                 if ProofCase.canAdd tactic case then
                                     return AddTactic (tactic, caseKey)
                             | _ -> ()
@@ -67,16 +67,16 @@ module Allow =
                             return AddTactic (tactic, caseKey)
                 }
 
-        /// A Split action becomes a Cases tactic when applied to a
+        /// A Dissolve action becomes a Cases tactic when applied to a
         /// Product term. Each sub-term becomes a separate term, but
         /// no new proof cases are created.
-        let split (caseKey, case) : AllowFunc<_> =
+        let dissolve (caseKey, case) : AllowFunc<_> =
             fun term actionType ->
                 option {
-                    if actionType = ActionType.Split then
+                    if actionType = ActionType.Dissolve then
                         match term.Type with
                             | Product _ ->
-                                let tactic = Cases term   // Split action -> Cases tactic
+                                let tactic = Cases term
                                 if ProofCase.canAdd tactic case then
                                     return AddTactic (tactic, caseKey)
                             | _ -> ()

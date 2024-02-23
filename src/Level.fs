@@ -1,38 +1,55 @@
 ﻿namespace Tactix
 
-/// Action type.
+/// Action types available to the user. These have a mapping
+/// to tactics that is not 1:1.
 [<RequireQualifiedAccess>]
 type ActionType =
+
+    /// Eliminates a goal.
     | Exact
+
+    /// Introduces a term.
     | Intro
+
+    /// Chooses the left sub-goal.
     | Left
+
+    /// Chooses the right sub-goal.
     | Right
-    | Split
+
+    /// Dissolves a term.
+    | Dissolve
+
+    /// Applies a function.
     | Apply
+
+    /// Splits a case into multiple sub-cases.
     | Cases
+
+    /// Expands a negation.
     | Expand
 
 module ActionType =
 
     let emoji = function
-        | ActionType.Exact  -> "❤️"
-        | ActionType.Intro  -> "🚀"
-        | ActionType.Left   -> "👈🏾"
-        | ActionType.Right  -> "👉🏾"
-        | ActionType.Split  -> "🌈"
-        | ActionType.Apply  -> "👣"
-        | ActionType.Cases  -> "🔪"
-        | ActionType.Expand -> "🧣"
+        | ActionType.Exact    -> "❤️"
+        | ActionType.Intro    -> "🚀"
+        | ActionType.Left     -> "👈🏾"
+        | ActionType.Right    -> "👉🏾"
+        | ActionType.Dissolve -> "🌈"
+        | ActionType.Apply    -> "👣"
+        | ActionType.Cases    -> "🔪"
+        | ActionType.Expand   -> "🧣"
 
     let instructions = function
-        | ActionType.Exact  -> "Drag onto a symbol that matches the goal"
-        | ActionType.Intro  -> "Drag onto an arrow goal to simplify it"
-        | ActionType.Left   -> "Drag onto a ∨ goal to choose its left symbol"
-        | ActionType.Right  -> "Drag onto a ∨ goal to choose its right symbol"
-        | ActionType.Split  -> "Drag onto a ∧ symbol to dissolve it"
-        | ActionType.Apply  -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
-        | ActionType.Cases  -> "Drag onto a ∧ goal or ∨ term to create separate cases"
-        | ActionType.Expand -> "Drag anywhere to expand ¬ symbols"
+        | ActionType.Exact    -> "Drag onto a symbol that matches the goal"
+        | ActionType.Intro    -> "Drag onto an arrow goal to simplify it"
+        | ActionType.Left     -> "Drag onto a ∨ goal to choose its left symbol"
+        | ActionType.Right    -> "Drag onto a ∨ goal to choose its right symbol"
+        | ActionType.Dissolve -> "Drag onto a ∧ symbol to dissolve it"
+        | ActionType.Apply    -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
+        | ActionType.Cases    -> "Drag onto a ∧ goal or ∨ term to create separate cases"
+        | ActionType.Expand   -> "Drag anywhere to expand ¬ symbols"
 
 /// A puzzle to be solved.
 type Level =
@@ -64,14 +81,14 @@ module Level =
     let private p_and_q = Product [p; q]
     let private p_or_q = Sum [p; q]
 
-    let private exact  = ActionType.emoji ActionType.Exact
-    let private intro  = ActionType.emoji ActionType.Intro
-    let private apply  = ActionType.emoji ActionType.Apply
-    let private cases  = ActionType.emoji ActionType.Cases
-    let private left   = ActionType.emoji ActionType.Left
-    let private right  = ActionType.emoji ActionType.Right
-    let private split  = ActionType.emoji ActionType.Split
-    let private expand = ActionType.emoji ActionType.Expand
+    let private exact    = ActionType.emoji ActionType.Exact
+    let private intro    = ActionType.emoji ActionType.Intro
+    let private apply    = ActionType.emoji ActionType.Apply
+    let private cases    = ActionType.emoji ActionType.Cases
+    let private left     = ActionType.emoji ActionType.Left
+    let private right    = ActionType.emoji ActionType.Right
+    let private dissolve = ActionType.emoji ActionType.Dissolve
+    let private expand   = ActionType.emoji ActionType.Expand
 
     /// Builds terms from types.
     let private terms types =
@@ -174,9 +191,9 @@ module Level =
                 Instructions = ""
             }
 
-    module private Split =
+    module private Dissolve =
 
-        /// Introduces the split action.
+        /// Introduces the dissolve action.
         let level1 =
             {
                 Goal = p
@@ -184,9 +201,9 @@ module Level =
                 ActionTypes =
                     set [
                         ActionType.Exact
-                        ActionType.Split
+                        ActionType.Dissolve
                     ]
-                Instructions = $"Drag {split} onto a ∧ symbol to dissolve it"
+                Instructions = $"Drag {dissolve} onto a ∧ symbol to dissolve it"
             }
 
     module private Apply =
@@ -280,7 +297,7 @@ module Level =
                 ActionTypes =
                     set [
                         ActionType.Exact
-                        ActionType.Split
+                        ActionType.Dissolve
                         ActionType.Cases
                     ]
                 Instructions = $"You can also drag {cases} onto a ∧ goal to create separate cases"
@@ -319,7 +336,7 @@ module Level =
                         ActionType.Intro
                         ActionType.Left
                         ActionType.Right
-                        ActionType.Split
+                        ActionType.Dissolve
                         ActionType.Apply
                         ActionType.Cases
                     ]
@@ -373,7 +390,7 @@ module Level =
                     set [
                         ActionType.Exact
                         ActionType.Intro
-                        ActionType.Split
+                        ActionType.Dissolve
                         ActionType.Apply
                         ActionType.Cases
                         ActionType.Expand
@@ -419,7 +436,7 @@ module Level =
             LeftRight.level1
             LeftRight.level2
 
-            Split.level1
+            Dissolve.level1
 
             Apply.level1
             Apply.level2
