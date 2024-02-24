@@ -44,7 +44,7 @@ module GoalAction =
         | GoalAction.Left     -> $"Drag onto a {Text.orSymbol} goal to choose its left symbol"
         | GoalAction.Right    -> $"Drag onto a {Text.orSymbol} goal to choose its right symbol"
         | GoalAction.Cases    -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
-        | GoalAction.Expand   -> $"Drag anywhere to expand {Text.notSymbol} symbols"
+        | GoalAction.Expand   -> $"Drag onto a {Text.notSymbol} goal to expand it"
 
 /// Term actions available to the user. These have a mapping
 /// to tactics that is not 1:1.
@@ -80,7 +80,7 @@ module TermAction =
         | TermAction.Dissolve -> $"Drag onto a {Text.andSymbol} symbol to dissolve it"
         | TermAction.Apply    -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
         | TermAction.Cases    -> $"Drag onto a {Text.orSymbol} term to create separate cases"
-        | TermAction.Expand   -> $"Drag anywhere to expand {Text.notSymbol} symbols"
+        | TermAction.Expand   -> $"Drag onto a {Text.notSymbol} term to expand it"
 
 /// A puzzle to be solved.
 type Level =
@@ -416,7 +416,7 @@ module Level =
                         TermAction.Exact
                         TermAction.Apply
                     ]
-                Instructions = $"Drag {expandTerm} anywhere to expand {Text.notSymbol} symbols"
+                Instructions = $"Drag onto a {Text.notSymbol} to expand it"
             }
 
         /// Modus tollens.
@@ -481,6 +481,8 @@ module Level =
                         GoalAction.Intro
                         GoalAction.Left
                         GoalAction.Right
+                        GoalAction.Cases
+                        GoalAction.Expand
                     ]
                 TermActions =
                     set [

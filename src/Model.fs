@@ -27,6 +27,9 @@ type Model =
     member model.IsHighlighted(typ, caseKey) =
         model.Highlight = Highlight.Type (typ, caseKey)
 
+[<RequireQualifiedAccess>]
+type ObjectType = Type | Term
+
 /// Message to change the current state of the game.
 type Message =
 
@@ -42,8 +45,8 @@ type Message =
     /// Starts the given 0-based level.
     | StartLevel of int
 
-    /// Expands the all type aliases.
-    | ExpandAliases
+    /// Expands type aliases.
+    | ExpandAliases of ObjectType * ProofCaseKey
 
 module Model =
 
@@ -110,7 +113,7 @@ module Model =
             Highlight = Highlight.None
         }
 
-    let private expandAliases model =
+    let private expandAliases objType caseKey model =
 
         let rec loop = function
             | Primitive name -> Primitive name
@@ -119,22 +122,24 @@ module Model =
             | Sum types -> List.map loop types |> Sum
             | Alias (_, _, rhs) -> rhs   // one level only
 
-        let caseMap =
-            model.Proof.CaseMap
-                |> Map.map (fun _ case ->
-                    {
-                        GoalOpt = Option.map loop case.GoalOpt
+        let case =
+            let case = model.Proof.CaseMap[caseKey]
+            match objType with
+                | ObjectType.Type ->
+                    { case with
+                        GoalOpt = Option.map loop case.GoalOpt }
+                | ObjectType.Term ->
+                    { case with
                         Terms =
                             set [
                                 for term in case.Terms do
                                     loop term.Type |> Term.create
-                            ]
-                    })
+                            ] }
+        let caseMap = model.Proof.CaseMap.Add(caseKey, case)
 
         { model with
             Proof =
-                { model.Proof with
-                    CaseMap = caseMap } }
+                { model.Proof with CaseMap = caseMap } }
 
     /// Updates the model based on the given message.
     let update msg model =
@@ -142,14 +147,14 @@ module Model =
             match msg with
                 | Highlight highlight ->
                     setHighlight highlight model
-                | AddTactic (tactic, case) ->
-                    addTactic tactic case model
+                | AddTactic (tactic, caseKey) ->
+                    addTactic tactic caseKey model
                 | EnableAudio enable ->
                     enableAudio enable model
                 | StartLevel levelIdx ->
                     startLevel levelIdx model
-                | ExpandAliases ->
-                    expandAliases model
+                | ExpandAliases (objType, caseKey) ->
+                    expandAliases objType caseKey model
         let cmd =
             if Proof.isComplete model'.Proof then
                 Cmd.OfAsync.perform

@@ -65,12 +65,12 @@ module Allow =
                             | _ -> ()
                 }
 
-        let expand _ : AllowFunc<_, _> =
+        let expand (caseKey, _) : AllowFunc<_, _> =
             fun goal action ->
                 option {
                     if action = GoalAction.Expand then
                         if containsAlias goal then
-                            return ExpandAliases
+                            return ExpandAliases (ObjectType.Type, caseKey)
                 }
 
     module Term =
@@ -120,12 +120,12 @@ module Allow =
                             | _ -> ()
                 }
 
-        let expand _ : AllowFunc<_, _> =
+        let expand (caseKey, _) : AllowFunc<_, _> =
             fun term action ->
                 option {
                     if action = TermAction.Expand then
                         if containsAlias term.Type then
-                            return ExpandAliases
+                            return ExpandAliases (ObjectType.Term, caseKey)
                 }
 
     let any allowFuncs : AllowFunc<_, _> =
