@@ -79,8 +79,8 @@ module TermAction =
         | TermAction.Exact    -> "Drag onto a symbol that matches the goal"
         | TermAction.Dissolve -> $"Drag onto a {Text.andSymbol} symbol to free it"
         | TermAction.Apply    -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
-        | TermAction.Cases    -> $"Drag onto a {Text.orSymbol} term to create separate cases"
-        | TermAction.Expand   -> $"Drag onto a {Text.notSymbol} term to expand it"
+        | TermAction.Cases    -> $"Drag onto a given {Text.orSymbol} to create separate cases"
+        | TermAction.Expand   -> $"Drag onto a given {Text.notSymbol} to expand it"
 
 /// A puzzle to be solved.
 type Level =
@@ -314,7 +314,7 @@ module Level =
                         TermAction.Apply
                         TermAction.Cases
                     ]
-                Instructions = $"Drag {casesTerm} onto {Text.orSymbol} in the field to create separate cases"
+                Instructions = $"Drag {casesTerm} onto a given {Text.orSymbol} to create separate cases"
             }
 
         /// More practice with multiple cases.
