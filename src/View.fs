@@ -24,9 +24,9 @@ module private DragDataManager =
         mgr.Shared
 
     let action evt mgr =
-        match getData evt mgr with
-            | Some dragData -> dragData.Action
-            | None -> failwith "Unexpected"
+        getData evt mgr
+            |> Option.map (fun dragData ->
+                dragData.Action)
 
     let goal : DragDataManager<GoalAction> = { Shared = None }
     let term : DragDataManager<TermAction> = { Shared = None }
@@ -195,16 +195,18 @@ module View =
         assert(model.Proof.CaseMap[caseKey] = case)
 
         let allowMulti goal evt =
-            let action =
-                DragDataManager.action
-                    evt
-                    DragDataManager.goal
-            Allow.any [
-                Allow.Goal.intro casePair
-                Allow.Goal.left casePair
-                Allow.Goal.right casePair
-                Allow.Goal.cases casePair
-            ] goal action
+            option {
+                let! action =
+                    DragDataManager.action
+                        evt
+                        DragDataManager.goal
+                return! Allow.any [
+                    Allow.Goal.intro casePair
+                    Allow.Goal.left casePair
+                    Allow.Goal.right casePair
+                    Allow.Goal.cases casePair
+                ] goal action
+            }
 
         Html.div [
             prop.className "goal"
@@ -257,16 +259,18 @@ module View =
         assert(model.Proof.CaseMap[caseKey] = case)
 
         let allowMulti term evt =
-            let action =
-                DragDataManager.action
-                    evt
-                    DragDataManager.term
-            Allow.any [
-                Allow.Term.exact casePair
-                Allow.Term.apply casePair
-                Allow.Term.cases casePair
-                Allow.Term.dissolve casePair
-            ] term action
+            option {
+                let! action =
+                    DragDataManager.action
+                        evt
+                        DragDataManager.term
+                return! Allow.any [
+                    Allow.Term.exact casePair
+                    Allow.Term.apply casePair
+                    Allow.Term.cases casePair
+                    Allow.Term.dissolve casePair
+                ] term action
+            }
 
         Html.div [
             prop.className "terms"
