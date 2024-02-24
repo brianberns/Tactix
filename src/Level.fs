@@ -4,7 +4,7 @@ module Text =
 
     let andSymbol = "🐛"
     let orSymbol = "👈🏾👉🏾"
-    let notSymbol = "¬"
+    let notSymbol = "⛔"
 
     let andHtml = andSymbol
     let orHtml = "👈🏾<br />👉🏾"
@@ -37,7 +37,7 @@ module GoalAction =
         | GoalAction.Left     -> "👈🏾"
         | GoalAction.Right    -> "👉🏾"
         | GoalAction.Cases    -> "🐞"
-        | GoalAction.Expand   -> "🧣"
+        | GoalAction.Expand   -> "💡"
 
     let instructions = function
         | GoalAction.Intro    -> "Drag onto an arrow goal to simplify it"
@@ -73,7 +73,7 @@ module TermAction =
         | TermAction.Dissolve -> "🦋"
         | TermAction.Apply    -> "👣"
         | TermAction.Cases    -> "👊🏾"
-        | TermAction.Expand   -> "🧣"
+        | TermAction.Expand   -> "💡"
 
     let instructions = function
         | TermAction.Exact    -> "Drag onto a symbol that matches the goal"
@@ -415,7 +415,7 @@ module Level =
                         TermAction.Exact
                         TermAction.Apply
                     ]
-                Instructions = $"Drag onto a {Text.notSymbol} to expand it"
+                Instructions = $"Drag {expandGoal} onto a {Text.notSymbol} to expand it"
             }
 
         /// Modus tollens.
