@@ -2,7 +2,7 @@
 
 module Text =
 
-    let andSymbol = "☔️"
+    let andSymbol = "🐛"
     let orSymbol = "👈🏾👉🏾"
     let notSymbol = "¬"
 
@@ -36,7 +36,7 @@ module GoalAction =
         | GoalAction.Intro    -> "🚀"
         | GoalAction.Left     -> "👈🏾"
         | GoalAction.Right    -> "👉🏾"
-        | GoalAction.Cases    -> "⚔️"
+        | GoalAction.Cases    -> "🐞"
         | GoalAction.Expand   -> "🧣"
 
     let instructions = function
@@ -70,14 +70,14 @@ module TermAction =
 
     let emoji = function
         | TermAction.Exact    -> "❤️"
-        | TermAction.Dissolve -> "🌈"
+        | TermAction.Dissolve -> "🦋"
         | TermAction.Apply    -> "👣"
         | TermAction.Cases    -> "👊🏾"
         | TermAction.Expand   -> "🧣"
 
     let instructions = function
         | TermAction.Exact    -> "Drag onto a symbol that matches the goal"
-        | TermAction.Dissolve -> $"Drag onto a {Text.andSymbol} symbol to dissolve it"
+        | TermAction.Dissolve -> $"Drag onto a {Text.andSymbol} symbol to free it"
         | TermAction.Apply    -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
         | TermAction.Cases    -> $"Drag onto a {Text.orSymbol} term to create separate cases"
         | TermAction.Expand   -> $"Drag onto a {Text.notSymbol} term to expand it"
@@ -348,7 +348,7 @@ module Level =
                         TermAction.Exact
                         TermAction.Dissolve
                     ]
-                Instructions = $"You can also drag {casesGoal} onto a {Text.andSymbol} goal to create separate cases"
+                Instructions = $"You can drag {casesGoal} onto a {Text.andSymbol} goal to create separate cases"
             }
 
         /// Exportation.
@@ -432,6 +432,7 @@ module Level =
                     set [
                         TermAction.Exact
                         TermAction.Apply
+                        TermAction.Expand
                     ]
                 Instructions = ""
             }
