@@ -409,12 +409,12 @@ module Level =
                 GoalActions =
                     set [
                         GoalAction.Intro
+                        GoalAction.Expand
                     ]
                 TermActions =
                     set [
                         TermAction.Exact
                         TermAction.Apply
-                        TermAction.Expand
                     ]
                 Instructions = $"Drag {expandTerm} anywhere to expand {Text.notSymbol} symbols"
             }
@@ -427,12 +427,12 @@ module Level =
                 GoalActions =
                     set [
                         GoalAction.Intro
+                        GoalAction.Expand
                     ]
                 TermActions =
                     set [
                         TermAction.Exact
                         TermAction.Apply
-                        TermAction.Expand
                     ]
                 Instructions = ""
             }
@@ -451,6 +451,7 @@ module Level =
                 GoalActions =
                     set [
                         GoalAction.Intro
+                        GoalAction.Expand
                     ]
                 TermActions =
                     set [

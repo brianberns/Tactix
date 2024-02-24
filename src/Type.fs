@@ -31,8 +31,8 @@ type Type =
             | Function (P, Q) -> $"({P}→{Q})"
             | Product types -> $"({toString '∧' types})"
             | Sum types -> $"({toString '∨' types})"
-            | Alias (name, parms, rhs) ->
-                $"({name}<{toString parms}> = {rhs})"
+            | Alias (name, parms, _rhs) ->
+                $"({name}<{toString ',' parms}>)"
 
 module Type =
 

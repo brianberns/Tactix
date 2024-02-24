@@ -10,26 +10,26 @@ type private DragData<'action> =
 
 // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
 // https://stackoverflow.com/questions/31915653/how-to-get-data-from-datatransfer-getdata-in-event-dragover-or-dragenter
-type private DragDataManager<'action> =
-    {
-        mutable Shared : Option<DragData<'action>>
-    }
+module private DragData =
 
-module private DragDataManager =
+    let mutable shared =
+        Choice1Of3 () : Choice<unit, DragData<GoalAction>, DragData<TermAction>>
 
-    let setData dragData (evt : DragEvent) mgr =
-        mgr.Shared <- Some dragData
+    let setGoalData dragData (evt : DragEvent) =
+        shared <- Choice2Of3 dragData
 
-    let getData (evt : DragEvent) mgr =
-        mgr.Shared
+    let goalAction evt =
+        match shared with
+            | Choice2Of3 dragData -> Some dragData.Action
+            | _ -> None
 
-    let action evt mgr =
-        getData evt mgr
-            |> Option.map (fun dragData ->
-                dragData.Action)
+    let setTermData dragData (evt : DragEvent) =
+        shared <- Choice3Of3 dragData
 
-    let goal : DragDataManager<GoalAction> = { Shared = None }
-    let term : DragDataManager<TermAction> = { Shared = None }
+    let termAction evt =
+        match shared with
+            | Choice3Of3 dragData -> Some dragData.Action
+            | _ -> None
 
 module View =
 
@@ -68,11 +68,9 @@ module View =
                         prop.title (GoalAction.instructions action)
                         if draggable then
                             prop.draggable true
-                            prop.onDragStart (fun evt ->
-                                DragDataManager.setData
-                                    { Action = action }
-                                    evt
-                                    DragDataManager.goal)
+                            prop.onDragStart (
+                                DragData.setGoalData
+                                    { Action = action })
                     ]
             ]
         ]
@@ -196,15 +194,13 @@ module View =
 
         let allowMulti goal evt =
             option {
-                let! action =
-                    DragDataManager.action
-                        evt
-                        DragDataManager.goal
+                let! action = DragData.goalAction evt
                 return! Allow.any [
                     Allow.Goal.intro casePair
                     Allow.Goal.left casePair
                     Allow.Goal.right casePair
                     Allow.Goal.cases casePair
+                    Allow.Goal.expand casePair
                 ] goal action
             }
 
@@ -260,15 +256,13 @@ module View =
 
         let allowMulti term evt =
             option {
-                let! action =
-                    DragDataManager.action
-                        evt
-                        DragDataManager.term
+                let! action = DragData.termAction evt
                 return! Allow.any [
                     Allow.Term.exact casePair
                     Allow.Term.apply casePair
                     Allow.Term.cases casePair
                     Allow.Term.dissolve casePair
+                    Allow.Term.expand casePair
                 ] term action
             }
 
@@ -317,11 +311,9 @@ module View =
                         prop.title (TermAction.instructions action)
                         if draggable then
                             prop.draggable true
-                            prop.onDragStart (fun evt ->
-                                DragDataManager.setData
-                                    { Action = action }
-                                    evt
-                                    DragDataManager.term)
+                            prop.onDragStart (
+                                DragData.setTermData
+                                    { Action = action })
                     ]
             ]
         ]
