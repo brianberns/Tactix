@@ -72,7 +72,7 @@ module TermAction =
         | TermAction.Exact    -> "❤️"
         | TermAction.Dissolve -> "🌈"
         | TermAction.Apply    -> "👣"
-        | TermAction.Cases    -> "⚔️"
+        | TermAction.Cases    -> "👊🏾"
         | TermAction.Expand   -> "🧣"
 
     let instructions = function
@@ -207,7 +207,6 @@ module Level =
 
         let private goalActions =
             set [
-                GoalAction.Intro
                 GoalAction.Left
                 GoalAction.Right
             ]
