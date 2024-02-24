@@ -311,7 +311,6 @@ module Level =
                 TermActions =
                     set [
                         TermAction.Exact
-                        TermAction.Apply
                         TermAction.Cases
                     ]
                 Instructions = $"Drag {casesTerm} onto a given {Text.orSymbol} to create separate cases"
