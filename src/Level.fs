@@ -5,10 +5,12 @@ module Text =
     let andSymbol = "🐛"
     let orSymbol = "👈🏾👉🏾"
     let notSymbol = "⛔"
+    let implies = "➡"
 
     let andHtml = andSymbol
     let orHtml = "👈🏾<br />👉🏾"
     let notHtml = notSymbol
+    let impliesHtml = implies
 
 /// Goal actions available to the user. These have a mapping
 /// to tactics that is not 1:1.

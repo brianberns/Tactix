@@ -96,7 +96,7 @@ module View =
                         ]
                     | Function (p, q) ->
                         prop.className "compound-type"
-                        between "→" loop [p; q]
+                        between Text.impliesHtml loop [p; q]
                             |> prop.children
                     | Product types ->
                         prop.className "compound-type"
