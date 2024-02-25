@@ -5,7 +5,7 @@ module Text =
     let andSymbol = "🐛"
     let orSymbol = "👈🏾👉🏾"
     let notSymbol = "⛔"
-    let implies = "⭢"
+    let implies = "➡️"
 
     let andHtml = andSymbol
     let orHtml = "👈🏾<br />👉🏾"
@@ -80,7 +80,7 @@ module TermAction =
     let instructions = function
         | TermAction.Exact    -> "Drag onto a symbol that matches the goal"
         | TermAction.Dissolve -> $"Drag onto a {Text.andSymbol} symbol to free it"
-        | TermAction.Apply    -> "Drag onto ▢→■ when the goal is ■ to change the goal to ▢"
+        | TermAction.Apply    -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
         | TermAction.Cases    -> $"Drag onto a given {Text.orSymbol} to create separate cases"
         | TermAction.Expand   -> $"Drag onto a given {Text.notSymbol} to expand it"
 
@@ -263,7 +263,7 @@ module Level =
                         TermAction.Exact
                         TermAction.Apply
                     ]
-                Instructions = $"Drag {apply} onto ▢→■ when the goal is ■ to change the goal to ▢"
+                Instructions = $"Drag {apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
             }
 
         /// Implication is transitive.
@@ -295,7 +295,7 @@ module Level =
                         TermAction.Exact
                         TermAction.Apply
                     ]
-                Instructions = $"You can also use {apply} on nested ▢→■ symbols when the goal is ■"
+                Instructions = $"You can also use {apply} on nested ▢{Text.implies}■ symbols when the goal is ■"
             }
 
     module private Cases =
