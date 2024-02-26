@@ -27,7 +27,7 @@ type GoalAction =
     | Right
 
     /// Splits a case into multiple sub-cases.
-    | Cases
+    | Split
 
     /// Expands a negation.
     | Expand
@@ -38,14 +38,14 @@ module GoalAction =
         | GoalAction.Intro    -> "🚀"
         | GoalAction.Left     -> "👈🏾"
         | GoalAction.Right    -> "👉🏾"
-        | GoalAction.Cases    -> "🐞"
+        | GoalAction.Split    -> "🐞"
         | GoalAction.Expand   -> "💡"
 
     let instructions = function
         | GoalAction.Intro    -> "Drag onto an arrow goal to simplify it"
         | GoalAction.Left     -> $"Drag onto a {Text.orSymbol} goal to choose its left symbol"
         | GoalAction.Right    -> $"Drag onto a {Text.orSymbol} goal to choose its right symbol"
-        | GoalAction.Cases    -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
+        | GoalAction.Split    -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
         | GoalAction.Expand   -> $"Drag onto a {Text.notSymbol} goal to expand it"
 
 /// Term actions available to the user. These have a mapping
@@ -120,7 +120,7 @@ module Level =
     let private exact      = TermAction.emoji TermAction.Exact
     let private intro      = GoalAction.emoji GoalAction.Intro
     let private apply      = TermAction.emoji TermAction.Apply
-    let private casesGoal  = GoalAction.emoji GoalAction.Cases
+    let private casesGoal  = GoalAction.emoji GoalAction.Split
     let private casesTerm  = TermAction.emoji TermAction.Cases
     let private left       = GoalAction.emoji GoalAction.Left
     let private right      = GoalAction.emoji GoalAction.Right
@@ -343,7 +343,7 @@ module Level =
             {
                 Goal = Product [q; p]
                 Terms = terms [p_and_q]
-                GoalActions = set [ GoalAction.Cases ]
+                GoalActions = set [ GoalAction.Split ]
                 TermActions =
                     set [
                         TermAction.Exact
@@ -360,7 +360,7 @@ module Level =
                 GoalActions =
                     set [
                         GoalAction.Intro
-                        GoalAction.Cases
+                        GoalAction.Split
                     ]
                 TermActions =
                     set [
@@ -387,7 +387,7 @@ module Level =
                         GoalAction.Intro
                         GoalAction.Left
                         GoalAction.Right
-                        GoalAction.Cases
+                        GoalAction.Split
                     ]
                 TermActions =
                     set [
@@ -482,7 +482,7 @@ module Level =
                         GoalAction.Intro
                         GoalAction.Left
                         GoalAction.Right
-                        GoalAction.Cases
+                        GoalAction.Split
                         GoalAction.Expand
                     ]
                 TermActions =

@@ -199,7 +199,7 @@ module View =
                     Allow.Goal.intro casePair
                     Allow.Goal.left casePair
                     Allow.Goal.right casePair
-                    Allow.Goal.cases casePair
+                    Allow.Goal.split casePair
                     Allow.Goal.expand casePair
                 ] goal action
             }

@@ -1,10 +1,11 @@
 ﻿namespace Tactix
 
-/// A tactic used in a proof, from the Lean language.
+/// A tactic used in a proof. Some of these are from the Lean
+/// language.
 // https://www.ma.imperial.ac.uk/~buzzard/lean_together/source/contents.html
 type Tactic =
 
-    /// Term (HP : P) eliminates goal P.
+    /// Term (HP : P) completes goal P.
     | Exact of Term
 
     /// Introduces term (HP : P) when goal is P -> Q, changing
@@ -17,8 +18,11 @@ type Tactic =
     /// replaces the goal with N separate goals, P1 through PN.)
     | Apply of Term
 
-    /// Breaks up an hypothesis (HP : P) into its component
-    /// parts, creating goals for each constructor of P.
+    /// Dissolves term (HPQ : P ∧ Q) into (HP : P) and (HQ : Q).
+    | Dissolve of Term
+
+    /// Breaks up term (HPQ : P ∨ Q) into separate cases for
+    /// (HP : P) and (HQ : Q).
     | Cases of Term
 
     /// Changes goal (P ∨ Q) to just P.
@@ -27,7 +31,7 @@ type Tactic =
     /// Changes goal (P ∨ Q) to just Q.
     | Right
 
-    /// Splits goal (P ∧ Q) into two cases.
+    /// Splits goal (P ∧ Q) into two cases, P and Q.
     | Split
 
 /// One case in a proof.
@@ -36,7 +40,7 @@ type ProofCase =
         /// Proposition to be proved.
         GoalOpt : Option<Type>
 
-        /// Hypotheses.
+        /// Given hypotheses.
         Terms : Set<Term>
     }
 
@@ -85,7 +89,7 @@ module ProofCase =
                         { case with GoalOpt = Some goal' })
                     |> Option.toList
 
-            | Cases (Term.Product types as hp), _ ->
+            | Dissolve (Term.Product types as hp), _ ->
                 let terms =
                     let newTerms =
                         types

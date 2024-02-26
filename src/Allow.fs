@@ -51,12 +51,10 @@ module Allow =
                             | _ -> ()
                 }
 
-        /// A Cases action becomes a Split tactic when applied to a
-        /// Product goal. Each sub-goal must be proved separately.
-        let cases (caseKey, case) : AllowFunc<_, _> =
+        let split (caseKey, case) : AllowFunc<_, _> =
             fun goal action ->
                 option {
-                    if action = GoalAction.Cases then
+                    if action = GoalAction.Split then
                         match goal with
                             | Product _ ->
                                 let tactic = Split
@@ -84,16 +82,13 @@ module Allow =
                             return AddTactic (tactic, caseKey)
                 }
 
-        /// A Dissolve action becomes a Cases tactic when applied to a
-        /// Product term. Each sub-term becomes a separate term, but
-        /// no new proof cases are created.
         let dissolve (caseKey, case) : AllowFunc<_, _> =
             fun term action ->
                 option {
                     if action = TermAction.Dissolve then
                         match term.Type with
                             | Product _ ->
-                                let tactic = Cases term
+                                let tactic = Dissolve term
                                 if ProofCase.canAdd tactic case then
                                     return AddTactic (tactic, caseKey)
                             | _ -> ()
