@@ -2,8 +2,8 @@
 
 module Text =
 
-    let andSymbol = "🐛"
-    let orSymbol = "☯️"
+    let andSymbol = "🍓"
+    let orSymbol = "🍒"
     let notSymbol = "⛔"
     let implies = "➡️"
 
@@ -18,21 +18,21 @@ module TacticType =
 
     let emoji = function
         | TacticType.Intro        -> "🚀"
-        | TacticType.Split        -> "🐞"
+        | TacticType.Split        -> "💥"
         | TacticType.Exact        -> "❤️"
         | TacticType.DissolveGoal -> "🦋"
         | TacticType.DissolveTerm -> "🦋"
         | TacticType.Apply        -> "👣"
-        | TacticType.Cases        -> "👊🏾"
+        | TacticType.Cases        -> "💥"
 
     let instructions = function
         | TacticType.Intro        -> "Drag onto an arrow goal to simplify it"
         | TacticType.Split        -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
         | TacticType.Exact        -> "Drag onto a symbol that matches the goal"
-        | TacticType.DissolveGoal -> $"Drag onto a {Text.orSymbol} symbol to free it"
-        | TacticType.DissolveTerm -> $"Drag onto a {Text.andSymbol} symbol to free it"
+        | TacticType.DissolveGoal -> $"Drag onto a {Text.orSymbol} goal to simplify it"
+        | TacticType.DissolveTerm -> $"Drag onto a {Text.andSymbol} symbol from below to simplify it"
         | TacticType.Apply        -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
-        | TacticType.Cases        -> $"Drag onto a given {Text.orSymbol} to create separate cases"
+        | TacticType.Cases        -> $"Drag onto a {Text.orSymbol} symbol from below to create separate cases"
 
 /// A puzzle to be solved.
 type Level =
@@ -175,7 +175,7 @@ module Level =
                         TacticType.Exact
                         TacticType.DissolveTerm
                     ]
-                Instructions = $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol to dissolve it"
+                Instructions = $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol from below to simplify it"
             }
 
     module private Apply =
@@ -228,8 +228,22 @@ module Level =
 
     module private Cases =
 
-        /// Commutivity of ∨.
+        /// Commutivity of ∧.
         let level1 =
+            {
+                Goal = Product [q; p]
+                Terms = terms [p_and_q]
+                GoalTactics = set [ TacticType.Split ]
+                TermTactics =
+                    set [
+                        TacticType.Exact
+                        TacticType.DissolveTerm
+                    ]
+                Instructions = $"You can drag {casesGoal} onto a {Text.andSymbol} goal to create separate cases"
+            }
+
+        /// Commutivity of ∨.
+        let level2 =
             {
                 Goal = Sum [q; p]
                 Terms = terms [p_or_q]
@@ -239,11 +253,11 @@ module Level =
                         TacticType.Exact
                         TacticType.Cases
                     ]
-                Instructions = $"Drag {casesTerm} onto a given {Text.orSymbol} to create separate cases"
+                Instructions = $"Drag {casesTerm} onto a {Text.orSymbol} symbol from below to create separate cases"
             }
 
         /// More practice with multiple cases.
-        let level2 =
+        let level3 =
             {
                 Goal = r
                 Terms =
@@ -260,20 +274,6 @@ module Level =
                         TacticType.Cases
                     ]
                 Instructions = ""
-            }
-
-        /// Commutivity of ∧.
-        let level3 =
-            {
-                Goal = Product [q; p]
-                Terms = terms [p_and_q]
-                GoalTactics = set [ TacticType.Split ]
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.DissolveTerm
-                    ]
-                Instructions = $"You can drag {casesGoal} onto a {Text.andSymbol} goal to create separate cases"
             }
 
         /// Exportation.

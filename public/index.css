@@ -158,6 +158,10 @@
     cursor: grabbing;
 }
 
+.complete {
+    font-size: 8vh;
+}
+
 .settings-button {
     width: 24px;
     margin: 2px;

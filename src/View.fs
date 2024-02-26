@@ -200,7 +200,10 @@ module View =
             prop.className "goals"
             prop.children [
                 if case.IsComplete then
-                    renderTacticType TacticType.Exact false
+                    Html.div [
+                        prop.className "complete"
+                        prop.text (TacticType.emoji TacticType.Exact)
+                    ]
                 else
                     for goal in case.Goals do
                         renderGoal
