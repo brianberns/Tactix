@@ -1,14 +1,14 @@
 ﻿namespace Tactix
 
 /// Unique identifier of a case within a proof.
-type ProofCaseKey = int
+type ProofCaseKey = List<int>
 
 /// A proof consists of multiple cases, each of which
 /// must be proved.
 type Proof =
     {
-        /// Key to be used for the next case in this proof.
-        NextKey : ProofCaseKey
+        /// Total number of cases seen so far.
+        NumCases : int
 
         /// Cases in this proof, indexed by key.
         CaseMap : Map<ProofCaseKey, ProofCase>
@@ -19,24 +19,28 @@ module Proof =
     /// Proof with no cases.
     let empty =
         {
-            NextKey = 0
+            NumCases = 0
             CaseMap = Map.empty
         }
 
     /// Adds the given case to the proof.
-    let add case proof =
+    let add parentKeyOpt case proof =
+        let numCases = proof.NumCases + 1
+        let key : ProofCaseKey =
+            parentKeyOpt
+                |> Option.map (fun (parentKey : ProofCaseKey) ->
+                    parentKey @ [numCases])
+                |> Option.defaultValue [numCases]
         {
-            NextKey = proof.NextKey + 1
-            CaseMap =
-                proof.CaseMap
-                    |> Map.add proof.NextKey case
+            NumCases = numCases
+            CaseMap = Map.add key case proof.CaseMap
         }
 
     /// Adds the given cases to the proof.
-    let addMany cases proof =
+    let addMany parentKeyOpt cases proof =
         (proof, cases)
             ||> Seq.fold (fun acc case ->
-                add case acc)
+                add parentKeyOpt case acc)
 
     /// Removes the case with the given key from the proof.
     let remove caseKey proof =

@@ -76,15 +76,9 @@ module Model =
         assert(not cases.IsEmpty)
 
         let proof =
-            cases
-                |> List.tryExactlyOne
-                |> Option.map (fun case' ->
-                    model.Proof
-                        |> Proof.update caseKey case')
-                |> Option.defaultWith (fun () ->
-                    model.Proof
-                        |> Proof.remove caseKey
-                        |> Proof.addMany cases)
+            model.Proof
+                |> Proof.remove caseKey
+                |> Proof.addMany (Some caseKey) cases
         { model with
             Proof = proof
             Highlight = Highlight.None }

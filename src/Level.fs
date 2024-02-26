@@ -489,4 +489,4 @@ module Level =
                 IsComplete = false
             }
         Proof.empty
-            |> Proof.add case
+            |> Proof.add None case
