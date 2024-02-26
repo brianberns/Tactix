@@ -3,12 +3,12 @@
 module Text =
 
     let andSymbol = "🐛"
-    let orSymbol = "👈🏾👉🏾"
+    let orSymbol = "☯️"
     let notSymbol = "⛔"
     let implies = "➡️"
 
     let andHtml = andSymbol
-    let orHtml = "👈🏾<br />👉🏾"
+    let orHtml = orSymbol
     let notHtml = notSymbol
     let impliesHtml = implies
 
@@ -17,24 +17,22 @@ module Text =
 module TacticType =
 
     let emoji = function
-        | TacticType.Intro    -> "🚀"
-        | TacticType.Left     -> "👈🏾"
-        | TacticType.Right    -> "👉🏾"
-        | TacticType.Split    -> "🐞"
-        | TacticType.Exact    -> "❤️"
-        | TacticType.Dissolve -> "🦋"
-        | TacticType.Apply    -> "👣"
-        | TacticType.Cases    -> "👊🏾"
+        | TacticType.Intro        -> "🚀"
+        | TacticType.Split        -> "🐞"
+        | TacticType.Exact        -> "❤️"
+        | TacticType.DissolveGoal -> "🦋"
+        | TacticType.DissolveTerm -> "🦋"
+        | TacticType.Apply        -> "👣"
+        | TacticType.Cases        -> "👊🏾"
 
     let instructions = function
-        | TacticType.Intro    -> "Drag onto an arrow goal to simplify it"
-        | TacticType.Left     -> $"Drag onto a {Text.orSymbol} goal to choose its left symbol"
-        | TacticType.Right    -> $"Drag onto a {Text.orSymbol} goal to choose its right symbol"
-        | TacticType.Split    -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
-        | TacticType.Exact    -> "Drag onto a symbol that matches the goal"
-        | TacticType.Dissolve -> $"Drag onto a {Text.andSymbol} symbol to free it"
-        | TacticType.Apply    -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
-        | TacticType.Cases    -> $"Drag onto a given {Text.orSymbol} to create separate cases"
+        | TacticType.Intro        -> "Drag onto an arrow goal to simplify it"
+        | TacticType.Split        -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
+        | TacticType.Exact        -> "Drag onto a symbol that matches the goal"
+        | TacticType.DissolveGoal -> $"Drag onto a {Text.orSymbol} symbol to free it"
+        | TacticType.DissolveTerm -> $"Drag onto a {Text.andSymbol} symbol to free it"
+        | TacticType.Apply        -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
+        | TacticType.Cases        -> $"Drag onto a given {Text.orSymbol} to create separate cases"
 
 /// A puzzle to be solved.
 type Level =
@@ -57,14 +55,13 @@ type Level =
 
 module Level =
 
-    let private exact      = TacticType.emoji TacticType.Exact
-    let private intro      = TacticType.emoji TacticType.Intro
-    let private apply      = TacticType.emoji TacticType.Apply
-    let private casesGoal  = TacticType.emoji TacticType.Split
-    let private casesTerm  = TacticType.emoji TacticType.Cases
-    let private left       = TacticType.emoji TacticType.Left
-    let private right      = TacticType.emoji TacticType.Right
-    let private dissolve   = TacticType.emoji TacticType.Dissolve
+    let private exact        = TacticType.emoji TacticType.Exact
+    let private intro        = TacticType.emoji TacticType.Intro
+    let private apply        = TacticType.emoji TacticType.Apply
+    let private casesGoal    = TacticType.emoji TacticType.Split
+    let private casesTerm    = TacticType.emoji TacticType.Cases
+    let private dissolveGoal = TacticType.emoji TacticType.DissolveGoal
+    let private dissolveTerm = TacticType.emoji TacticType.DissolveTerm
 
     let private p = Primitive "P"
     let private q = Primitive "Q"
@@ -155,39 +152,20 @@ module Level =
                 Instructions = ""
             }
 
-    module private LeftRight =
+    module private Dissolve =
 
-        let private goalTactics =
-            set [
-                TacticType.Left
-                TacticType.Right
-            ]
-        let private termTactics = set [ TacticType.Exact ]
-
-        /// Introduces the left tactic.
+        /// Introduces the dissolve goal tactic.
         let level1 =
             {
                 Goal = Sum [p; q]
                 Terms = terms [p]
-                GoalTactics = goalTactics
-                TermTactics = termTactics
-                Instructions = $"Drag {left} or {right} onto a {Text.orSymbol} goal to simplify it"
+                GoalTactics = set [ TacticType.DissolveGoal ]
+                TermTactics = set [ TacticType.Exact ]
+                Instructions = $"Drag {dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
             }
 
-        /// Introduces the right tactic.
+        /// Introduces the dissolve term tactic.
         let level2 =
-            {
-                Goal = Sum [p; qr]
-                Terms = terms [qr]
-                GoalTactics = goalTactics
-                TermTactics = termTactics
-                Instructions = ""
-            }
-
-    module private Dissolve =
-
-        /// Introduces the dissolve tactic.
-        let level1 =
             {
                 Goal = p
                 Terms = terms [ p_and_q ]
@@ -195,9 +173,9 @@ module Level =
                 TermTactics =
                     set [
                         TacticType.Exact
-                        TacticType.Dissolve
+                        TacticType.DissolveTerm
                     ]
-                Instructions = $"Drag {dissolve} onto a {Text.andSymbol} symbol to dissolve it"
+                Instructions = $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol to dissolve it"
             }
 
     module private Apply =
@@ -255,11 +233,7 @@ module Level =
             {
                 Goal = Sum [q; p]
                 Terms = terms [p_or_q]
-                GoalTactics =
-                    set [
-                        TacticType.Left
-                        TacticType.Right
-                    ]
+                GoalTactics = set [ TacticType.DissolveGoal ]
                 TermTactics =
                     set [
                         TacticType.Exact
@@ -297,7 +271,7 @@ module Level =
                 TermTactics =
                     set [
                         TacticType.Exact
-                        TacticType.Dissolve
+                        TacticType.DissolveTerm
                     ]
                 Instructions = $"You can drag {casesGoal} onto a {Text.andSymbol} goal to create separate cases"
             }
@@ -335,15 +309,14 @@ module Level =
                 GoalTactics =
                     set [
                         TacticType.Intro
-                        TacticType.Left
-                        TacticType.Right
+                        TacticType.DissolveGoal
                         TacticType.Split
                     ]
                 TermTactics =
                     set [
                         TacticType.Exact
                         TacticType.Apply
-                        TacticType.Dissolve
+                        TacticType.DissolveTerm
                         TacticType.Cases
                     ]
                 Instructions = ""
@@ -458,10 +431,8 @@ module Level =
             Intro.level2
             Intro.level3
 
-            LeftRight.level1
-            LeftRight.level2
-
             Dissolve.level1
+            Dissolve.level2
 
             Apply.level1
             Apply.level2

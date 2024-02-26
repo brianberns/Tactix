@@ -192,8 +192,7 @@ module View =
             let tacticType = DragData.tacticType evt
             Allow.any [
                 Allow.allow Intro casePair
-                Allow.allow Left casePair
-                Allow.allow Right casePair
+                Allow.allow DissolveGoal casePair
                 Allow.allow Split casePair
             ] goal tacticType
 
@@ -254,7 +253,7 @@ module View =
                 Allow.allow Exact casePair
                 Allow.allow Apply casePair
                 Allow.allow Cases casePair
-                Allow.allow Dissolve casePair
+                Allow.allow DissolveTerm casePair
             ] term tacticType
 
         Html.div [

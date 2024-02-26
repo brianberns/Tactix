@@ -6,10 +6,9 @@ type TacticType =
     | Exact
     | Intro
     | Apply
-    | Dissolve
+    | DissolveGoal
+    | DissolveTerm
     | Cases
-    | Left
-    | Right
     | Split
 
 /// A tactic used in a proof. Some of these are from the Lean
@@ -30,18 +29,15 @@ type Tactic =
     /// replaces the goal with N separate goals, P1 through PN.)
     | Apply of Term
 
+    /// Dissolves goal (P ∨ Q) into separate goals P and Q.
+    | DissolveGoal of goal : Type
+
     /// Dissolves term (HPQ : P ∧ Q) into (HP : P) and (HQ : Q).
-    | Dissolve of Term
+    | DissolveTerm of Term
 
     /// Breaks up term (HPQ : P ∨ Q) into separate cases for
     /// (HP : P) and (HQ : Q).
     | Cases of Term
-
-    /// Changes goal (P ∨ Q) to just P.
-    | Left of goal : Type
-
-    /// Changes goal (P ∨ Q) to just Q.
-    | Right of goal : Type
 
     /// Splits goal (P ∧ Q) into two cases, P and Q.
     | Split of goal : Type
@@ -52,8 +48,7 @@ type Tactic =
             | Exact _    -> TacticType.Exact
             | Intro _    -> TacticType.Intro
             | Apply _    -> TacticType.Apply
-            | Dissolve _ -> TacticType.Dissolve
+            | DissolveGoal _ -> TacticType.DissolveGoal
+            | DissolveTerm _ -> TacticType.DissolveTerm
             | Cases _    -> TacticType.Cases
-            | Left _     -> TacticType.Left
-            | Right _    -> TacticType.Right
             | Split _    -> TacticType.Split

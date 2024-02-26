@@ -78,7 +78,19 @@ module ProofCase =
                                     .Add(newGoal) })
                     |> Option.toList
 
-            | Dissolve (Term.Product types as hp) ->
+            | DissolveGoal (Sum types as oldGoal) ->
+                let newGoals = set types
+                [
+                    {
+                        case with
+                            Goals =
+                                case.Goals
+                                    |> Set.remove oldGoal
+                                    |> Set.union newGoals
+                    }
+                ]
+
+            | DissolveTerm (Term.Product types as hp) ->
                 let terms =
                     let newTerms =
                         types
@@ -96,28 +108,6 @@ module ProofCase =
                         { case with
                             Terms =
                                 Set.add (Term.create typ) terms })
-
-            | Left (Sum (P :: _) as oldGoal) ->
-                [
-                    {
-                        case with
-                            Goals =
-                                case.Goals
-                                    .Remove(oldGoal)
-                                    .Add(P)
-                    }
-                ]
-
-            | Right (Sum (_ :: Q :: []) as oldGoal) ->
-                [
-                    {
-                        case with
-                            Goals =
-                                case.Goals
-                                    .Remove(oldGoal)
-                                    .Add(Q)
-                    }
-                ]
 
             | Split ((Product types) as oldGoal) ->
                 let goals = case.Goals.Remove(oldGoal)
