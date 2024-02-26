@@ -50,6 +50,18 @@ module View =
                 ]
         ]
 
+    let private renderTacticType tacticType draggable =
+        Html.div [
+            prop.className "tactic"
+            prop.text (TacticType.emoji tacticType)
+            prop.title (TacticType.instructions tacticType)
+            if draggable then
+                prop.draggable true
+                prop.onDragStart (
+                    DragData.setData
+                        { TacticType = tacticType })
+        ]
+
     let private renderGoalTactics levelIdx draggable =
         let tacticTypes =
             Level.levels[levelIdx].GoalTactics
@@ -57,16 +69,7 @@ module View =
             prop.id "goal-tactics"
             prop.children [
                 for tacticType in tacticTypes do
-                    Html.div [
-                        prop.className "tactic"
-                        prop.text (TacticType.emoji tacticType)
-                        prop.title (TacticType.instructions tacticType)
-                        if draggable then
-                            prop.draggable true
-                            prop.onDragStart (
-                                DragData.setData
-                                    { TacticType = tacticType })
-                    ]
+                    renderTacticType tacticType draggable
             ]
         ]
 
@@ -197,13 +200,16 @@ module View =
         Html.div [
             prop.className "goals"
             prop.children [
-                for goal in case.Goals do
-                    renderGoal
-                        goal
-                        caseKey
-                        (allowMulti goal)
-                        model
-                        dispatch
+                if case.IsComplete then
+                    renderTacticType TacticType.Exact false
+                else
+                    for goal in case.Goals do
+                        renderGoal
+                            goal
+                            caseKey
+                            (allowMulti goal)
+                            model
+                            dispatch
             ]
         ]
 
@@ -290,16 +296,7 @@ module View =
             prop.id "term-tactics"
             prop.children [
                 for tacticType in tacticTypes do
-                    Html.div [
-                        prop.className "tactic"
-                        prop.text (TacticType.emoji tacticType)
-                        prop.title (TacticType.instructions tacticType)
-                        if draggable then
-                            prop.draggable true
-                            prop.onDragStart (
-                                DragData.setData
-                                    { TacticType = tacticType })
-                    ]
+                    renderTacticType tacticType draggable
             ]
         ]
 
