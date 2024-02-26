@@ -45,9 +45,6 @@ type Message =
     /// Starts the given 0-based level.
     | StartLevel of int
 
-    /// Expands type aliases.
-    | ExpandAliases of ObjectType * ProofCaseKey
-
 module Model =
 
     let init () =
@@ -113,34 +110,6 @@ module Model =
             Highlight = Highlight.None
         }
 
-    let private expandAliases objType caseKey model =
-
-        let rec loop = function
-            | Primitive name -> Primitive name
-            | Function (P, Q) -> Function (loop P, loop Q)
-            | Product types -> List.map loop types |> Product
-            | Sum types -> List.map loop types |> Sum
-            | Alias (_, _, rhs) -> rhs   // one level only
-
-        let case =
-            let case = model.Proof.CaseMap[caseKey]
-            match objType with
-                | ObjectType.Type ->
-                    { case with
-                        GoalOpt = Option.map loop case.GoalOpt }
-                | ObjectType.Term ->
-                    { case with
-                        Terms =
-                            set [
-                                for term in case.Terms do
-                                    loop term.Type |> Term.create
-                            ] }
-        let caseMap = model.Proof.CaseMap.Add(caseKey, case)
-
-        { model with
-            Proof =
-                { model.Proof with CaseMap = caseMap } }
-
     /// Updates the model based on the given message.
     let update msg model =
         let model' =
@@ -153,8 +122,6 @@ module Model =
                     enableAudio enable model
                 | StartLevel levelIdx ->
                     startLevel levelIdx model
-                | ExpandAliases (objType, caseKey) ->
-                    expandAliases objType caseKey model
         let cmd =
             if Proof.isComplete model'.Proof then
                 Cmd.OfAsync.perform

@@ -4,15 +4,6 @@ type AllowFunc<'t> = 't -> TacticType -> Option<Message>
 
 module Allow =
 
-    let rec private containsAlias = function
-        | Primitive _ -> false
-        | Function (P, Q) ->
-            List.exists containsAlias [P; Q]
-        | Product types
-        | Sum types ->
-            List.exists containsAlias types
-        | Alias _ -> true
-
     module Goal =
 
         let intro (caseKey, case) : AllowFunc<_> =
