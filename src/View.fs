@@ -195,7 +195,7 @@ module View =
             ] goal tacticType
 
         Html.div [
-            prop.className "goal"
+            prop.className "goals"
             prop.children [
                 for goal in case.Goals do
                     renderGoal

@@ -38,7 +38,7 @@
     border-right: 1px solid black;
 }
 
-.goal {
+.goals {
     height: 20vh;
     background-color: var(--sunset);
     display: flex;
