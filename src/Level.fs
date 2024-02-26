@@ -12,77 +12,29 @@ module Text =
     let notHtml = notSymbol
     let impliesHtml = implies
 
-/// Goal actions available to the user. These have a mapping
-/// to tactics that is not 1:1.
-[<RequireQualifiedAccess>]
-type GoalAction =
-
-    /// Introduces a term.
-    | Intro
-
-    /// Chooses the left sub-goal.
-    | Left
-
-    /// Chooses the right sub-goal.
-    | Right
-
-    /// Splits a case into multiple sub-cases.
-    | Split
-
-    /// Expands a negation.
-    | Expand
-
-module GoalAction =
+// https://stackoverflow.com/questions/64929689/avoiding-the-error-where-a-module-and-a-type-definition-occur-in-two-parts-of-an
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module TacticType =
 
     let emoji = function
-        | GoalAction.Intro    -> "🚀"
-        | GoalAction.Left     -> "👈🏾"
-        | GoalAction.Right    -> "👉🏾"
-        | GoalAction.Split    -> "🐞"
-        | GoalAction.Expand   -> "💡"
+        | TacticType.Intro    -> "🚀"
+        | TacticType.Left     -> "👈🏾"
+        | TacticType.Right    -> "👉🏾"
+        | TacticType.Split    -> "🐞"
+        | TacticType.Exact    -> "❤️"
+        | TacticType.Dissolve -> "🦋"
+        | TacticType.Apply    -> "👣"
+        | TacticType.Cases    -> "👊🏾"
 
     let instructions = function
-        | GoalAction.Intro    -> "Drag onto an arrow goal to simplify it"
-        | GoalAction.Left     -> $"Drag onto a {Text.orSymbol} goal to choose its left symbol"
-        | GoalAction.Right    -> $"Drag onto a {Text.orSymbol} goal to choose its right symbol"
-        | GoalAction.Split    -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
-        | GoalAction.Expand   -> $"Drag onto a {Text.notSymbol} goal to expand it"
-
-/// Term actions available to the user. These have a mapping
-/// to tactics that is not 1:1.
-[<RequireQualifiedAccess>]
-type TermAction =
-
-    /// Eliminates a goal.
-    | Exact
-
-    /// Dissolves a term.
-    | Dissolve
-
-    /// Applies a function.
-    | Apply
-
-    /// Splits a case into multiple sub-cases.
-    | Cases
-
-    /// Expands a negation.
-    | Expand
-
-module TermAction =
-
-    let emoji = function
-        | TermAction.Exact    -> "❤️"
-        | TermAction.Dissolve -> "🦋"
-        | TermAction.Apply    -> "👣"
-        | TermAction.Cases    -> "👊🏾"
-        | TermAction.Expand   -> "💡"
-
-    let instructions = function
-        | TermAction.Exact    -> "Drag onto a symbol that matches the goal"
-        | TermAction.Dissolve -> $"Drag onto a {Text.andSymbol} symbol to free it"
-        | TermAction.Apply    -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
-        | TermAction.Cases    -> $"Drag onto a given {Text.orSymbol} to create separate cases"
-        | TermAction.Expand   -> $"Drag onto a given {Text.notSymbol} to expand it"
+        | TacticType.Intro    -> "Drag onto an arrow goal to simplify it"
+        | TacticType.Left     -> $"Drag onto a {Text.orSymbol} goal to choose its left symbol"
+        | TacticType.Right    -> $"Drag onto a {Text.orSymbol} goal to choose its right symbol"
+        | TacticType.Split    -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
+        | TacticType.Exact    -> "Drag onto a symbol that matches the goal"
+        | TacticType.Dissolve -> $"Drag onto a {Text.andSymbol} symbol to free it"
+        | TacticType.Apply    -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
+        | TacticType.Cases    -> $"Drag onto a given {Text.orSymbol} to create separate cases"
 
 /// A puzzle to be solved.
 type Level =
@@ -93,17 +45,26 @@ type Level =
         /// Hypotheses.
         Terms : Set<Term>
 
-        /// Available goal-level actions.
-        GoalActions : Set<GoalAction>
+        /// Available goal-level tactics.
+        GoalTactics : Set<TacticType>
 
-        /// Available term-level actions.
-        TermActions : Set<TermAction>
+        /// Available term-level tactics.
+        TermTactics : Set<TacticType>
 
         /// Hint for the user.
         Instructions : string
     }
 
 module Level =
+
+    let private exact      = TacticType.emoji TacticType.Exact
+    let private intro      = TacticType.emoji TacticType.Intro
+    let private apply      = TacticType.emoji TacticType.Apply
+    let private casesGoal  = TacticType.emoji TacticType.Split
+    let private casesTerm  = TacticType.emoji TacticType.Cases
+    let private left       = TacticType.emoji TacticType.Left
+    let private right      = TacticType.emoji TacticType.Right
+    let private dissolve   = TacticType.emoji TacticType.Dissolve
 
     let private p = Primitive "P"
     let private q = Primitive "Q"
@@ -117,17 +78,6 @@ module Level =
     let private p_and_q = Product [p; q]
     let private p_or_q = Sum [p; q]
 
-    let private exact      = TermAction.emoji TermAction.Exact
-    let private intro      = GoalAction.emoji GoalAction.Intro
-    let private apply      = TermAction.emoji TermAction.Apply
-    let private casesGoal  = GoalAction.emoji GoalAction.Split
-    let private casesTerm  = TermAction.emoji TermAction.Cases
-    let private left       = GoalAction.emoji GoalAction.Left
-    let private right      = GoalAction.emoji GoalAction.Right
-    let private dissolve   = TermAction.emoji TermAction.Dissolve
-    let private expandGoal = GoalAction.emoji GoalAction.Expand
-    let private expandTerm = TermAction.emoji TermAction.Expand
-
     /// Builds terms from types.
     let private terms types =
         types
@@ -136,16 +86,16 @@ module Level =
 
     module private Exact =
 
-        let private goalActions = set []
-        let private termActions = set [ TermAction.Exact ]
+        let private goalTactics = set []
+        let private termTactics = set [ TacticType.Exact ]
 
         /// Introduces the "exact" action.
         let level1 =
             {
                 Goal = p
                 Terms = terms [p; q]
-                GoalActions = goalActions
-                TermActions = termActions
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions =
                     $"Drag {exact} onto the symbol that matches the top goal"
             }
@@ -155,8 +105,8 @@ module Level =
             {
                 Goal = r
                 Terms = terms [p; q; r]
-                GoalActions = goalActions
-                TermActions = termActions
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = ""
             }
 
@@ -165,23 +115,23 @@ module Level =
             {
                 Goal = pq
                 Terms = terms [p; q; pq]
-                GoalActions = goalActions
-                TermActions = termActions
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = $"You can also use {exact} on more complex symbols"
             }
 
     module private Intro =
 
-        let private goalActions = set [ GoalAction.Intro ]
-        let private termActions = set [ TermAction.Exact ]
+        let private goalTactics = set [ TacticType.Intro ]
+        let private termTactics = set [ TacticType.Exact ]
 
         /// Introduces the "intro" action with Q ⊢ P → Q.
         let level1 =
             {
                 Goal = pq
                 Terms = terms [q]
-                GoalActions = goalActions
-                TermActions = termActions
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = $"Drag {intro} onto an arrow goal to simplify it"
             }
 
@@ -190,8 +140,8 @@ module Level =
             {
                 Goal = Function (p, p)
                 Terms = terms []
-                GoalActions = goalActions
-                TermActions = termActions
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = ""
             }
 
@@ -200,27 +150,27 @@ module Level =
             {
                 Goal = pqr
                 Terms = terms [r]
-                GoalActions = goalActions
-                TermActions = termActions
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = ""
             }
 
     module private LeftRight =
 
-        let private goalActions =
+        let private goalTactics =
             set [
-                GoalAction.Left
-                GoalAction.Right
+                TacticType.Left
+                TacticType.Right
             ]
-        let private termActions = set [ TermAction.Exact ]
+        let private termTactics = set [ TacticType.Exact ]
 
         /// Introduces the left action.
         let level1 =
             {
                 Goal = Sum [p; q]
                 Terms = terms [p]
-                GoalActions = goalActions
-                TermActions = termActions
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = $"Drag {left} or {right} onto a {Text.orSymbol} goal to simplify it"
             }
 
@@ -229,8 +179,8 @@ module Level =
             {
                 Goal = Sum [p; qr]
                 Terms = terms [qr]
-                GoalActions = goalActions
-                TermActions = termActions
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = ""
             }
 
@@ -241,11 +191,11 @@ module Level =
             {
                 Goal = p
                 Terms = terms [ p_and_q ]
-                GoalActions = set []
-                TermActions =
+                GoalTactics = set []
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Dissolve
+                        TacticType.Exact
+                        TacticType.Dissolve
                     ]
                 Instructions = $"Drag {dissolve} onto a {Text.andSymbol} symbol to dissolve it"
             }
@@ -257,11 +207,11 @@ module Level =
             {
                 Goal = q
                 Terms = terms [p; pq]
-                GoalActions = set []
-                TermActions =
+                GoalTactics = set []
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Apply
+                        TacticType.Exact
+                        TacticType.Apply
                     ]
                 Instructions = $"Drag {apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
             }
@@ -275,11 +225,11 @@ module Level =
                         Function (p, q)
                         Function (q, r)
                     ]
-                GoalActions = set [ GoalAction.Intro ]
-                TermActions =
+                GoalTactics = set [ TacticType.Intro ]
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Apply
+                        TacticType.Exact
+                        TacticType.Apply
                     ]
                 Instructions = ""
             }
@@ -289,11 +239,11 @@ module Level =
             {
                 Goal = Function (p_and_q, r)
                 Terms = terms [pqr]
-                GoalActions = set [ GoalAction.Intro ]
-                TermActions =
+                GoalTactics = set [ TacticType.Intro ]
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Apply
+                        TacticType.Exact
+                        TacticType.Apply
                     ]
                 Instructions = $"You can also use {apply} on nested ▢{Text.implies}■ symbols when the goal is ■"
             }
@@ -305,15 +255,15 @@ module Level =
             {
                 Goal = Sum [q; p]
                 Terms = terms [p_or_q]
-                GoalActions =
+                GoalTactics =
                     set [
-                        GoalAction.Left
-                        GoalAction.Right
+                        TacticType.Left
+                        TacticType.Right
                     ]
-                TermActions =
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Cases
+                        TacticType.Exact
+                        TacticType.Cases
                     ]
                 Instructions = $"Drag {casesTerm} onto a given {Text.orSymbol} to create separate cases"
             }
@@ -328,12 +278,12 @@ module Level =
                         pr
                         qr
                     ]
-                GoalActions = set []
-                TermActions =
+                GoalTactics = set []
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Apply
-                        TermAction.Cases
+                        TacticType.Exact
+                        TacticType.Apply
+                        TacticType.Cases
                     ]
                 Instructions = ""
             }
@@ -343,11 +293,11 @@ module Level =
             {
                 Goal = Product [q; p]
                 Terms = terms [p_and_q]
-                GoalActions = set [ GoalAction.Split ]
-                TermActions =
+                GoalTactics = set [ TacticType.Split ]
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Dissolve
+                        TacticType.Exact
+                        TacticType.Dissolve
                     ]
                 Instructions = $"You can drag {casesGoal} onto a {Text.andSymbol} goal to create separate cases"
             }
@@ -357,15 +307,15 @@ module Level =
             {
                 Goal = pqr
                 Terms = terms [ Function (p_and_q, r) ]
-                GoalActions =
+                GoalTactics =
                     set [
-                        GoalAction.Intro
-                        GoalAction.Split
+                        TacticType.Intro
+                        TacticType.Split
                     ]
-                TermActions =
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Apply
+                        TacticType.Exact
+                        TacticType.Apply
                     ]
                 Instructions = ""
             }
@@ -382,23 +332,24 @@ module Level =
                     terms [
                         Product [Sum [p; q]; r]
                     ]
-                GoalActions =
+                GoalTactics =
                     set [
-                        GoalAction.Intro
-                        GoalAction.Left
-                        GoalAction.Right
-                        GoalAction.Split
+                        TacticType.Intro
+                        TacticType.Left
+                        TacticType.Right
+                        TacticType.Split
                     ]
-                TermActions =
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Apply
-                        TermAction.Dissolve
-                        TermAction.Cases
+                        TacticType.Exact
+                        TacticType.Apply
+                        TacticType.Dissolve
+                        TacticType.Cases
                     ]
                 Instructions = ""
             }
 
+    (*
     module private Negation =
 
         /// Double negative (but not the law of excluded middle).
@@ -406,15 +357,15 @@ module Level =
             {
                 Goal = Type.not (Type.not p)
                 Terms = terms [ p ]
-                GoalActions =
+                GoalTactics =
                     set [
-                        GoalAction.Intro
-                        GoalAction.Expand
+                        TacticType.Intro
+                        TacticType.Expand
                     ]
-                TermActions =
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Apply
+                        TacticType.Exact
+                        TacticType.Apply
                     ]
                 Instructions = $"Drag {expandGoal} onto a {Text.notSymbol} to expand it"
             }
@@ -424,16 +375,16 @@ module Level =
             {
                 Goal = Function (Type.not q, Type.not p)
                 Terms = terms [ pq ]
-                GoalActions =
+                GoalTactics =
                     set [
-                        GoalAction.Intro
-                        GoalAction.Expand
+                        TacticType.Intro
+                        TacticType.Expand
                     ]
-                TermActions =
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Apply
-                        TermAction.Expand
+                        TacticType.Exact
+                        TacticType.Apply
+                        TacticType.Expand
                     ]
                 Instructions = ""
             }
@@ -449,18 +400,18 @@ module Level =
                             Type.not q
                         ]
                     ]
-                GoalActions =
+                GoalTactics =
                     set [
-                        GoalAction.Intro
-                        GoalAction.Expand
+                        TacticType.Intro
+                        TacticType.Expand
                     ]
-                TermActions =
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Dissolve
-                        TermAction.Apply
-                        TermAction.Cases
-                        TermAction.Expand
+                        TacticType.Exact
+                        TacticType.Dissolve
+                        TacticType.Apply
+                        TacticType.Cases
+                        TacticType.Expand
                     ]
                 Instructions = ""
             }
@@ -477,24 +428,25 @@ module Level =
                     terms [
                         Type.not (Sum [p; q])
                     ]
-                GoalActions =
+                GoalTactics =
                     set [
-                        GoalAction.Intro
-                        GoalAction.Left
-                        GoalAction.Right
-                        GoalAction.Split
-                        GoalAction.Expand
+                        TacticType.Intro
+                        TacticType.Left
+                        TacticType.Right
+                        TacticType.Split
+                        TacticType.Expand
                     ]
-                TermActions =
+                TermTactics =
                     set [
-                        TermAction.Exact
-                        TermAction.Dissolve
-                        TermAction.Apply
-                        TermAction.Cases
-                        TermAction.Expand
+                        TacticType.Exact
+                        TacticType.Dissolve
+                        TacticType.Apply
+                        TacticType.Cases
+                        TacticType.Expand
                     ]
                 Instructions = ""
             }
+    *)
 
     let levels =
         [|
@@ -521,10 +473,12 @@ module Level =
             Cases.level4
             Cases.level5
 
+            (*
             Negation.level1
             Negation.level2
             Negation.level3
             Negation.level4
+            *)
         |]
 
     let initializeProof level =

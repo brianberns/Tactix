@@ -1,35 +1,29 @@
 ﻿namespace Tactix
 
 open Browser.Types
+open Fable.SimpleJson
 open Feliz
 
-type private DragData<'action> =
+type private DragData =
     {
-        Action : 'action
+        TacticType : TacticType
     }
 
-// https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
-// https://stackoverflow.com/questions/31915653/how-to-get-data-from-datatransfer-getdata-in-event-dragover-or-dragenter
 module private DragData =
 
-    let mutable shared =
-        Choice1Of3 () : Choice<unit, DragData<GoalAction>, DragData<TermAction>>
+    let private format = "application/json"
 
-    let setGoalData dragData (evt : DragEvent) =
-        shared <- Choice2Of3 dragData
+    let setData dragData (evt : DragEvent) =
+        evt.dataTransfer.setData(
+            format, Json.serialize<DragData> dragData)
+            |> ignore
 
-    let goalAction evt =
-        match shared with
-            | Choice2Of3 dragData -> Some dragData.Action
-            | _ -> None
+    let getData (evt : DragEvent) =
+        evt.dataTransfer.getData(format)
+            |> Json.parseAs<DragData>
 
-    let setTermData dragData (evt : DragEvent) =
-        shared <- Choice3Of3 dragData
-
-    let termAction evt =
-        match shared with
-            | Choice3Of3 dragData -> Some dragData.Action
-            | _ -> None
+    let tacticType evt =
+        (getData evt).TacticType
 
 module View =
 
@@ -55,22 +49,22 @@ module View =
                 ]
         ]
 
-    let private renderGoalActions levelIdx draggable =
-        let actions =
-            Level.levels[levelIdx].GoalActions
+    let private renderGoalTactics levelIdx draggable =
+        let tacticTypes =
+            Level.levels[levelIdx].GoalTactics
         Html.div [
-            prop.id "goal-actions"
+            prop.id "goal-tactics"
             prop.children [
-                for action in actions do
+                for tacticType in tacticTypes do
                     Html.div [
-                        prop.className "action"
-                        prop.text (GoalAction.emoji action)
-                        prop.title (GoalAction.instructions action)
+                        prop.className "tactic"
+                        prop.text (TacticType.emoji tacticType)
+                        prop.title (TacticType.instructions tacticType)
                         if draggable then
                             prop.draggable true
                             prop.onDragStart (
-                                DragData.setGoalData
-                                    { Action = action })
+                                DragData.setData
+                                    { TacticType = tacticType })
                     ]
             ]
         ]
@@ -193,16 +187,13 @@ module View =
         assert(model.Proof.CaseMap[caseKey] = case)
 
         let allowMulti goal evt =
-            option {
-                let! action = DragData.goalAction evt
-                return! Allow.any [
-                    Allow.Goal.intro casePair
-                    Allow.Goal.left casePair
-                    Allow.Goal.right casePair
-                    Allow.Goal.split casePair
-                    Allow.Goal.expand casePair
-                ] goal action
-            }
+            let tacticType = DragData.tacticType evt
+            Allow.any [
+                Allow.Goal.intro casePair
+                Allow.Goal.left casePair
+                Allow.Goal.right casePair
+                Allow.Goal.split casePair
+            ] goal tacticType
 
         Html.div [
             prop.className "goal"
@@ -255,16 +246,13 @@ module View =
         assert(model.Proof.CaseMap[caseKey] = case)
 
         let allowMulti term evt =
-            option {
-                let! action = DragData.termAction evt
-                return! Allow.any [
-                    Allow.Term.exact casePair
-                    Allow.Term.apply casePair
-                    Allow.Term.cases casePair
-                    Allow.Term.dissolve casePair
-                    Allow.Term.expand casePair
-                ] term action
-            }
+            let tacticType = DragData.tacticType evt
+            Allow.any [
+                Allow.Term.exact casePair
+                Allow.Term.apply casePair
+                Allow.Term.cases casePair
+                Allow.Term.dissolve casePair
+            ] term tacticType
 
         Html.div [
             prop.className "terms"
@@ -298,22 +286,22 @@ module View =
             ]
         ]
 
-    let private renderTermActions levelIdx draggable =
-        let actions =
-            Level.levels[levelIdx].TermActions
+    let private renderTermTactics levelIdx draggable =
+        let tacticTypes =
+            Level.levels[levelIdx].TermTactics
         Html.div [
-            prop.id "term-actions"
+            prop.id "term-tactics"
             prop.children [
-                for action in actions do
+                for tacticType in tacticTypes do
                     Html.div [
-                        prop.className "action"
-                        prop.text (TermAction.emoji action)
-                        prop.title (TermAction.instructions action)
+                        prop.className "tactic"
+                        prop.text (TacticType.emoji tacticType)
+                        prop.title (TacticType.instructions tacticType)
                         if draggable then
                             prop.draggable true
                             prop.onDragStart (
-                                DragData.setTermData
-                                    { Action = action })
+                                DragData.setData
+                                    { TacticType = tacticType })
                     ]
             ]
         ]
@@ -347,9 +335,9 @@ module View =
                 not <| Proof.isComplete model.Proof
             prop.children [
                 renderHeader model.Proof levelIdx
-                renderGoalActions levelIdx isActive
+                renderGoalTactics levelIdx isActive
                 renderProof model dispatch
-                renderTermActions levelIdx isActive
+                renderTermTactics levelIdx isActive
                 renderFooter
                     model.Settings
                     dispatch

@@ -1,5 +1,16 @@
 ﻿namespace Tactix
 
+[<RequireQualifiedAccess>]
+type TacticType =
+    | Exact
+    | Intro
+    | Apply
+    | Dissolve
+    | Cases
+    | Left
+    | Right
+    | Split
+
 /// A tactic used in a proof. Some of these are from the Lean
 /// language.
 // https://www.ma.imperial.ac.uk/~buzzard/lean_together/source/contents.html
@@ -33,6 +44,17 @@ type Tactic =
 
     /// Splits goal (P ∧ Q) into two cases, P and Q.
     | Split
+
+    member tactic.Type =
+        match tactic with
+            | Exact _    -> TacticType.Exact
+            | Intro _    -> TacticType.Intro
+            | Apply _    -> TacticType.Apply
+            | Dissolve _ -> TacticType.Dissolve
+            | Cases _    -> TacticType.Cases
+            | Left       -> TacticType.Left
+            | Right      -> TacticType.Right
+            | Split      -> TacticType.Split
 
 /// One case in a proof.
 type ProofCase =
