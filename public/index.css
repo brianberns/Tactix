@@ -8,7 +8,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#goal-actions {
+#goal-tactics {
     position: fixed;
     left: 0%;
     top: 00%;
@@ -127,7 +127,7 @@
     border: 8px solid var(--highlight);
 }
 
-#term-actions {
+#term-tactics {
     position: fixed;
     left: 0%;
     top: 90%;
@@ -140,7 +140,7 @@
     align-items: center;
 }
 
-.action {
+.tactic {
     margin: 10px;
     padding: 0px;
     width: 8vh;
@@ -154,7 +154,7 @@
     user-select: none;
 }
 
-.action:active {
+.tactic:active {
     cursor: grabbing;
 }
 

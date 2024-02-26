@@ -484,8 +484,9 @@ module Level =
     let initializeProof level =
         let case =
             {
-                GoalOpt = Some level.Goal
+                Goals = Set.singleton level.Goal
                 Terms = level.Terms
+                IsComplete = false
             }
         Proof.empty
             |> Proof.add case

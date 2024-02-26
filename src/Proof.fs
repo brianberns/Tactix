@@ -59,4 +59,4 @@ module Proof =
     /// been met.
     let isComplete proof =
         Map.forall (fun _ case ->
-            case.GoalOpt.IsNone) proof.CaseMap
+            case.IsComplete) proof.CaseMap

@@ -20,9 +20,9 @@ type Tactic =
     /// Term (HP : P) completes goal P.
     | Exact of Term
 
-    /// Introduces term (HP : P) when goal is P -> Q, changing
+    /// Introduces a term (HP : P) for goal P -> Q, changing the
     /// goal to just Q.
-    | Intro of Term
+    | Intro of goal : Type
 
     /// Applies term (P1 -> P2 -> ... -> PN -> Q), where the
     /// goal is Q, replacing the goal with (P1 ∧ P2 ... ∧ PN).
@@ -38,13 +38,13 @@ type Tactic =
     | Cases of Term
 
     /// Changes goal (P ∨ Q) to just P.
-    | Left
+    | Left of goal : Type
 
     /// Changes goal (P ∨ Q) to just Q.
-    | Right
+    | Right of goal : Type
 
     /// Splits goal (P ∧ Q) into two cases, P and Q.
-    | Split
+    | Split of goal : Type
 
     /// Type of this tactic.
     member tactic.Type =
@@ -54,6 +54,6 @@ type Tactic =
             | Apply _    -> TacticType.Apply
             | Dissolve _ -> TacticType.Dissolve
             | Cases _    -> TacticType.Cases
-            | Left       -> TacticType.Left
-            | Right      -> TacticType.Right
-            | Split      -> TacticType.Split
+            | Left _     -> TacticType.Left
+            | Right _    -> TacticType.Right
+            | Split _    -> TacticType.Split

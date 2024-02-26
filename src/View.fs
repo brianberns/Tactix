@@ -9,21 +9,22 @@ type private DragData =
         TacticType : TacticType
     }
 
+// https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
+// https://stackoverflow.com/questions/31915653/how-to-get-data-from-datatransfer-getdata-in-event-dragover-or-dragenter
 module private DragData =
 
-    let private format = "application/json"
+    let mutable shared : Option<DragData> = None
 
     let setData dragData (evt : DragEvent) =
-        evt.dataTransfer.setData(
-            format, Json.serialize<DragData> dragData)
-            |> ignore
+        shared <- Some dragData
 
     let getData (evt : DragEvent) =
-        evt.dataTransfer.getData(format)
-            |> Json.parseAs<DragData>
+        shared
 
     let tacticType evt =
-        (getData evt).TacticType
+        match getData evt with
+            | Some dragData -> dragData.TacticType
+            | None -> failwith "Unexpected"
 
 module View =
 
@@ -196,15 +197,13 @@ module View =
         Html.div [
             prop.className "goal"
             prop.children [
-                match case.GoalOpt with
-                    | Some goal ->
-                        renderType
-                            goal
-                            caseKey
-                            (allowMulti goal)
-                            model
-                            dispatch
-                    | None -> ()
+                for goal in case.Goals do
+                    renderType
+                        goal
+                        caseKey
+                        (allowMulti goal)
+                        model
+                        dispatch
             ]
         ]
 

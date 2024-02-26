@@ -3,27 +3,31 @@
 /// One case in a proof.
 type ProofCase =
     {
-        /// Proposition to be proved.
-        GoalOpt : Option<Type>
+        /// Propositions to be proved. These are implicitly or-ed.
+        Goals : Set<Type>
 
-        /// Given hypotheses.
+        /// Given hypotheses. These are implicitly and-ed.
         Terms : Set<Term>
+
+        /// Has one of the goals been proved?
+        IsComplete : bool
     }
 
 module ProofCase =
 
-    /// Applies p -> q with the given goal, if possible.
-    let private apply p q goal =
+    /// Applies p -> q with the given goals, if possible.
+    let private apply p q (goals : Set<Type>) =
 
         let rec loop p q =
-            if q = goal then [p]
+            if goals.Contains(q) then Some ([p], q)
             else
                 match q with
                     | Function (qIn, qOut) ->
-                        let goals = loop qIn qOut
-                        if goals = [] then []
-                        else p :: goals
-                    | _ -> []
+                        option {
+                            let! newGoals, oldGoal = loop qIn qOut
+                            return p :: newGoals, oldGoal
+                        }
+                    | _ -> None
 
         loop p q
 
@@ -31,31 +35,50 @@ module ProofCase =
     /// successful, one or more resulting cases are answered.
     let add tactic case =
 
-        match tactic, case.GoalOpt with
+        match tactic with
 
-            | Exact hp, Some p
-                when case.Terms.Contains(hp) && hp.Type = p ->
-                [ { case with GoalOpt = None } ]
-
-            | Intro hp, Some (Function (p, q))
-                when hp.Type = p ->
+            | Exact hp
+                when case.Terms.Contains(hp)
+                    && case.Goals.Contains(hp.Type) ->
                 [
                     {
-                        GoalOpt = Some q
-                        Terms = case.Terms.Add(hp)
+                        case with
+                            Goals = case.Goals.Remove(hp.Type)
+                            IsComplete = true
                     }
                 ]
 
-            | Apply (Term.Function (p, q)), Some goal ->
-                match apply p q goal with
-                    | [] -> None
-                    | [typ] -> Some typ
-                    | types -> Some (Product types)
-                    |> Option.map (fun goal' ->
-                        { case with GoalOpt = Some goal' })
+            | Intro (Function (p, q) as goal)
+                when case.Goals.Contains(goal) ->
+                [
+                    {
+                        case with
+                            Goals =
+                                case.Goals
+                                    .Remove(goal)
+                                    .Add(q)
+                            Terms =
+                                { Type = p }
+                                    |> case.Terms.Add
+                    }
+                ]
+
+            | Apply (Term.Function (p, q)) ->
+                match apply p q case.Goals with
+                    | None -> None
+                    | Some ([newGoal], oldGoal) ->
+                        Some (newGoal, oldGoal)
+                    | Some (newGoals, oldGoal) ->
+                        Some (Product newGoals, oldGoal)
+                    |> Option.map (fun (newGoal, oldGoal) ->
+                        { case with
+                            Goals =
+                                case.Goals
+                                    .Remove(oldGoal)
+                                    .Add(newGoal) })
                     |> Option.toList
 
-            | Dissolve (Term.Product types as hp), _ ->
+            | Dissolve (Term.Product types as hp) ->
                 let terms =
                     let newTerms =
                         types
@@ -66,7 +89,7 @@ module ProofCase =
                         |> Set.union newTerms
                 [ { case with Terms = terms } ]
 
-            | Cases (Term.Sum types as hp), _ ->
+            | Cases (Term.Sum types as hp) ->
                 let terms = Set.remove hp case.Terms
                 types
                     |> List.map (fun typ ->
@@ -74,16 +97,34 @@ module ProofCase =
                             Terms =
                                 Set.add (Term.create typ) terms })
 
-            | Left, Some (Sum (P :: _)) ->
-                [ { case with GoalOpt = Some P }]
+            | Left (Sum (P :: _) as oldGoal) ->
+                [
+                    {
+                        case with
+                            Goals =
+                                case.Goals
+                                    .Remove(oldGoal)
+                                    .Add(P)
+                    }
+                ]
 
-            | Right, Some (Sum (_ :: Q :: [])) ->
-                [ { case with GoalOpt = Some Q }]
+            | Right (Sum (_ :: Q :: []) as oldGoal) ->
+                [
+                    {
+                        case with
+                            Goals =
+                                case.Goals
+                                    .Remove(oldGoal)
+                                    .Add(Q)
+                    }
+                ]
 
-            | Split, Some (Product types) ->
+            | Split ((Product types) as oldGoal) ->
+                let goals = case.Goals.Remove(oldGoal)
                 types
                     |> List.map (fun typ ->
-                        { case with GoalOpt = Some typ })
+                        { case with
+                            Goals = goals.Add(typ) })
 
             | _ -> []
 

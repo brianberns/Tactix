@@ -8,48 +8,36 @@ module Allow =
         fun goal tacticType ->
             option {
                 if tacticType = TacticType.Intro then
-                    match goal with
-                        | Function (p, _) ->
-                            let tactic = Intro (Term.create p)
-                            if ProofCase.canAdd tactic case then
-                                return AddTactic (tactic, caseKey)
-                        | _ -> ()
+                    let tactic = Intro goal
+                    if ProofCase.canAdd tactic case then
+                        return AddTactic (tactic, caseKey)
             }
 
     let left (caseKey, case) : AllowFunc<_> =
         fun goal tacticType ->
             option {
                 if tacticType = TacticType.Left then
-                    match goal with
-                        | Sum _ ->
-                            let tactic = Left
-                            if ProofCase.canAdd tactic case then
-                                return AddTactic (tactic, caseKey)
-                        | _ -> ()
+                    let tactic = Left goal
+                    if ProofCase.canAdd tactic case then
+                        return AddTactic (tactic, caseKey)
             }
 
     let right (caseKey, case) : AllowFunc<_> =
         fun goal tacticType ->
             option {
                 if tacticType = TacticType.Right then
-                    match goal with
-                        | Sum _ ->
-                            let tactic = Right
-                            if ProofCase.canAdd tactic case then
-                                return AddTactic (tactic, caseKey)
-                        | _ -> ()
+                    let tactic = Right goal
+                    if ProofCase.canAdd tactic case then
+                        return AddTactic (tactic, caseKey)
             }
 
     let split (caseKey, case) : AllowFunc<_> =
         fun goal tacticType ->
             option {
                 if tacticType = TacticType.Split then
-                    match goal with
-                        | Product _ ->
-                            let tactic = Split
-                            if ProofCase.canAdd tactic case then
-                                return AddTactic (tactic, caseKey)
-                        | _ -> ()
+                    let tactic = Split goal
+                    if ProofCase.canAdd tactic case then
+                        return AddTactic (tactic, caseKey)
             }
 
     let exact (caseKey, case) : AllowFunc<_> =
@@ -65,12 +53,9 @@ module Allow =
         fun term tacticType ->
             option {
                 if tacticType = TacticType.Dissolve then
-                    match term.Type with
-                        | Product _ ->
-                            let tactic = Dissolve term
-                            if ProofCase.canAdd tactic case then
-                                return AddTactic (tactic, caseKey)
-                        | _ -> ()
+                    let tactic = Dissolve term
+                    if ProofCase.canAdd tactic case then
+                        return AddTactic (tactic, caseKey)
             }
 
     let apply (caseKey, case) : AllowFunc<_> =
@@ -86,12 +71,9 @@ module Allow =
         fun term tacticType ->
             option {
                 if tacticType = TacticType.Cases then
-                    match term.Type with
-                        | Sum _ ->
-                            let tactic = Cases term
-                            if ProofCase.canAdd tactic case then
-                                return AddTactic (tactic, caseKey)
-                        | _ -> ()
+                    let tactic = Cases term
+                    if ProofCase.canAdd tactic case then
+                        return AddTactic (tactic, caseKey)
             }
 
     let any allowFuncs : AllowFunc<_> =
