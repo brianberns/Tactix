@@ -70,7 +70,7 @@ module View =
             ]
         ]
 
-    let private renderInnerType typ =
+    let private renderType typ =
 
         let between content f types =
             [
@@ -150,25 +150,25 @@ module View =
                     |> dispatch)
         ]
 
-    let private renderType
-        (typ : Type)
+    let private renderGoal
+        (goal : Type)
         caseKey
         allow
         (model : Model)
         dispatch =
 
-        let children = renderInnerType typ
+        let children = renderType goal
         let dragDrop =
             let highlightMsg =
-                Message.highlightType typ caseKey
+                Message.highlightType goal caseKey
             renderDragDrop
                 highlightMsg
                 allow
                 model.Settings.AudioEnabled
                 dispatch
         let isHighlighted =
-            model.IsHighlighted(typ, caseKey)
-        let isPrimitive = Type.isPrimitive typ
+            model.IsHighlighted(goal, caseKey)
+        let isPrimitive = Type.isPrimitive goal
         Html.div [
             match isHighlighted, isPrimitive with
                 | true, true -> "primitive-type-highlight"
@@ -198,7 +198,7 @@ module View =
             prop.className "goal"
             prop.children [
                 for goal in case.Goals do
-                    renderType
+                    renderGoal
                         goal
                         caseKey
                         (allowMulti goal)
@@ -214,7 +214,7 @@ module View =
         (model : Model)
         dispatch =
 
-        let children = renderInnerType term.Type
+        let children = renderType term.Type
         let dragDrop =
             let highlightMsg =
                 Message.highlightTerm term caseKey
