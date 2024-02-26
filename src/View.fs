@@ -179,7 +179,7 @@ module View =
             yield! dragDrop
         ]
 
-    let private renderGoal
+    let private renderGoals
         ((caseKey, case) as casePair)
         model
         dispatch =
@@ -269,7 +269,7 @@ module View =
         Html.div [
             prop.className "proof-case"
             prop.children [
-                renderGoal casePair model dispatch
+                renderGoals casePair model dispatch
                 renderTerms casePair model dispatch
             ]
         ]
