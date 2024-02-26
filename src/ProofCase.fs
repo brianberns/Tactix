@@ -1,5 +1,6 @@
 ﻿namespace Tactix
 
+/// Tactic types.
 [<RequireQualifiedAccess>]
 type TacticType =
     | Exact
@@ -45,6 +46,7 @@ type Tactic =
     /// Splits goal (P ∧ Q) into two cases, P and Q.
     | Split
 
+    /// Type of this tactic.
     member tactic.Type =
         match tactic with
             | Exact _    -> TacticType.Exact

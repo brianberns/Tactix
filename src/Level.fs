@@ -89,7 +89,7 @@ module Level =
         let private goalTactics = set []
         let private termTactics = set [ TacticType.Exact ]
 
-        /// Introduces the "exact" action.
+        /// Introduces the "exact" tactic.
         let level1 =
             {
                 Goal = p
@@ -125,7 +125,7 @@ module Level =
         let private goalTactics = set [ TacticType.Intro ]
         let private termTactics = set [ TacticType.Exact ]
 
-        /// Introduces the "intro" action with Q ⊢ P → Q.
+        /// Introduces the "intro" tactic with Q ⊢ P → Q.
         let level1 =
             {
                 Goal = pq
@@ -164,7 +164,7 @@ module Level =
             ]
         let private termTactics = set [ TacticType.Exact ]
 
-        /// Introduces the left action.
+        /// Introduces the left tactic.
         let level1 =
             {
                 Goal = Sum [p; q]
@@ -174,7 +174,7 @@ module Level =
                 Instructions = $"Drag {left} or {right} onto a {Text.orSymbol} goal to simplify it"
             }
 
-        /// Introduces the right action.
+        /// Introduces the right tactic.
         let level2 =
             {
                 Goal = Sum [p; qr]
@@ -186,7 +186,7 @@ module Level =
 
     module private Dissolve =
 
-        /// Introduces the dissolve action.
+        /// Introduces the dissolve tactic.
         let level1 =
             {
                 Goal = p
