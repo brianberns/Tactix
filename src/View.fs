@@ -163,7 +163,7 @@ module View =
         let children = renderType goal
         let dragDrop =
             let highlightMsg =
-                Message.highlightType goal caseKey
+                Message.highlightGoal goal caseKey
             renderDragDrop
                 highlightMsg
                 allow

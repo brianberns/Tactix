@@ -2,11 +2,12 @@
 
 open Elmish
 
+/// Highlighted object.
 [<RequireQualifiedAccess>]
 type Highlight =
     | None
     | Term of Term * ProofCaseKey
-    | Type of Type * ProofCaseKey
+    | Goal of Type * ProofCaseKey
 
 /// Current state of the game.
 type Model =
@@ -21,14 +22,13 @@ type Model =
         Highlight : Highlight
     }
 
+    /// Is the given term highlighted?
     member model.IsHighlighted(term, caseKey) =
         model.Highlight = Highlight.Term (term, caseKey)
 
-    member model.IsHighlighted(typ, caseKey) =
-        model.Highlight = Highlight.Type (typ, caseKey)
-
-[<RequireQualifiedAccess>]
-type ObjectType = Type | Term
+    /// Is the given goal highlighted?
+    member model.IsHighlighted(goal, caseKey) =
+        model.Highlight = Highlight.Goal (goal, caseKey)
 
 /// Message to change the current state of the game.
 type Message =
@@ -47,7 +47,10 @@ type Message =
 
 module Model =
 
+    /// Initializes a model at the user's current level.
     let init () =
+
+            // get user's current setting
         let settings =
             let settings = Settings.get ()
             let levelIdx =
@@ -55,9 +58,12 @@ module Model =
                     settings.LevelIndex
                     (Level.levels.Length - 1)
             { settings with LevelIndex = levelIdx }
+
+            // create proof at current level
         let proof =
             Level.levels[settings.LevelIndex]
                 |> Level.initializeProof
+
         let model =
             {
                 Settings = settings
@@ -66,16 +72,16 @@ module Model =
             }
         model, Cmd.none
 
+    /// Sets the current highlighted object.
     let private setHighlight highlight model =
         { model with Highlight = highlight }
 
+    /// Adds a tactic to the model's proof.
     let private addTactic tactic caseKey model =
-
-        let case = model.Proof.CaseMap[caseKey]
-        let cases = ProofCase.add tactic case
-        assert(not cases.IsEmpty)
-
         let proof =
+            let cases =
+                model.Proof.CaseMap[caseKey]
+                    |> ProofCase.add tactic
             model.Proof
                 |> Proof.remove caseKey
                 |> Proof.addMany (Some caseKey) cases
@@ -83,21 +89,25 @@ module Model =
             Proof = proof
             Highlight = Highlight.None }
 
+    /// Enables/disables audio.
     let private enableAudio enable model =
         let settings =
             { model.Settings with AudioEnabled = enable }
         Settings.save settings   // side-effect
         { model with Settings = settings }
 
+    /// Starts a level.
     let private startLevel levelIdx model =
 
+            // ensure we have a valid level index
         let levelIdx = levelIdx % Level.levels.Length
         let settings =
             { model.Settings with LevelIndex = levelIdx }
         Settings.save settings   // side-effect
 
-        let proof = Level.initializeProof Level.levels[levelIdx]
-
+            // start proof for this level
+        let proof =
+            Level.initializeProof Level.levels[levelIdx]
         {
             Settings = settings
             Proof = proof
@@ -131,10 +141,13 @@ module Model =
 
 module Message =
 
+    /// Clears highlighting.
     let noHighlight = Highlight Highlight.None
 
+    /// Highlights the given term.
     let highlightTerm term caseKey =
         Highlight (Highlight.Term (term, caseKey))
 
-    let highlightType typ caseKey =
-        Highlight (Highlight.Type (typ, caseKey))
+    /// Highlights the given goal.
+    let highlightGoal goal caseKey =
+        Highlight (Highlight.Goal (goal, caseKey))
