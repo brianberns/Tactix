@@ -3,14 +3,9 @@
 module Text =
 
     let andSymbol = "🍓"
-    let orSymbol = "🍒"
+    let orSymbol  = "🍒"
     let notSymbol = "☂️"
-    let implies = "👉🏾"
-
-    let andHtml = andSymbol
-    let orHtml = orSymbol
-    let notHtml = notSymbol
-    let impliesHtml = implies
+    let implies   = "👉🏾"
 
 // https://stackoverflow.com/questions/64929689/avoiding-the-error-where-a-module-and-a-type-definition-occur-in-two-parts-of-an
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]

@@ -94,21 +94,21 @@ module View =
                         ]
                     | Function (p, q) ->
                         prop.className "compound-type"
-                        between Text.impliesHtml loop [p; q]
+                        between Text.implies loop [p; q]
                             |> prop.children
                     | Product types ->
                         prop.className "compound-type"
-                        between Text.andHtml loop types
+                        between Text.andSymbol loop types
                             |> prop.children
                     | Sum types ->
                         prop.className "compound-type"
-                        between Text.orHtml loop types
+                        between Text.orSymbol loop types
                             |> prop.children
                     | Not inner ->
                         prop.className "compound-type"
                         prop.children [
                             Html.span [
-                                prop.innerHtml Text.notHtml ]
+                                prop.innerHtml Text.notSymbol ]
                             loop inner
                         ]
             ]
