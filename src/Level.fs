@@ -2,8 +2,8 @@
 
 module Text =
 
-    let andSymbol = "🍓"
-    let orSymbol  = "🍒"
+    let andSymbol = "🐛"
+    let orSymbol  = "🎀"
     let notSymbol = "☂️"
     let implies   = "👉🏾"
 
@@ -15,9 +15,9 @@ module TacticType =
         | TacticType.Intro        -> "🚀"
         | TacticType.Exact        -> "❤️"
         | TacticType.Apply        -> "👣"
-        | TacticType.DissolveGoal -> "🦋"
+        | TacticType.DissolveGoal -> "🎈"
         | TacticType.DissolveTerm -> "🦋"
-        | TacticType.SplitGoal    -> "💥"
+        | TacticType.SplitGoal    -> "🐉"
         | TacticType.SplitTerm    -> "💥"
         | TacticType.AffirmGoal   -> "🌈"
         | TacticType.AffirmTerm   -> "🌈"
