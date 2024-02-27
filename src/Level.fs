@@ -27,11 +27,11 @@ module TacticType =
         | TacticType.Split        -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
         | TacticType.Exact        -> "Drag onto a symbol that matches the goal"
         | TacticType.DissolveGoal -> $"Drag onto a {Text.orSymbol} goal to simplify it"
-        | TacticType.DissolveTerm -> $"Drag onto a {Text.andSymbol} symbol from below to simplify it"
+        | TacticType.DissolveTerm -> $"Drag onto a {Text.andSymbol} symbol to simplify it"
         | TacticType.Apply        -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
-        | TacticType.Cases        -> $"Drag onto a {Text.orSymbol} symbol from below to create separate cases"
+        | TacticType.Cases        -> $"Drag onto a {Text.orSymbol} symbol to create separate cases"
         | TacticType.AffirmGoal   -> $"Drag onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
-        | TacticType.AffirmTerm   -> $"Drag onto a {Text.notSymbol} symbol from below to remove {Text.notSymbol}"
+        | TacticType.AffirmTerm   -> $"Drag onto a {Text.notSymbol} symbol to remove {Text.notSymbol}"
 
 /// A puzzle to be solved.
 type Level =
