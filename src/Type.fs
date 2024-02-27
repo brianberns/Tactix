@@ -9,7 +9,7 @@ type Type =
     /// Implication, such as P → Q.
     | Function of Type * Type
 
-    /// Conjuction (and), such as P ∧ Q.
+    /// Conjunction (and), such as P ∧ Q.
     | Product of List<Type>
 
     /// Disjuction (or), such as P ∨ Q.
