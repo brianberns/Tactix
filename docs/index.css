@@ -8,7 +8,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#goal-actions {
+#goal-tactics {
     position: fixed;
     left: 0%;
     top: 00%;
@@ -38,7 +38,7 @@
     border-right: 1px solid black;
 }
 
-.goal {
+.goals {
     height: 20vh;
     background-color: var(--sunset);
     display: flex;
@@ -56,7 +56,7 @@
 
 .compound-type {
     border: 2px solid black;
-    font-size: x-large;
+    font-size: xx-large;
     display: inline-flex;
     padding: 3px;
     justify-content: center;
@@ -65,18 +65,21 @@
 }
 
 .type {
+    margin: 12px;
     user-select: none;
     border: 8px solid transparent;
     border-radius: 16px;
 }
 
 .primitive-type-highlight {
+    margin: 12px;
     user-select: none;
     border: 8px solid var(--highlight);
     border-radius: 16px;
 }
 
 .compound-type-highlight {
+    margin: 12px;
     user-select: none;
     border: 8px solid var(--highlight);
 }
@@ -127,7 +130,7 @@
     border: 8px solid var(--highlight);
 }
 
-#term-actions {
+#term-tactics {
     position: fixed;
     left: 0%;
     top: 90%;
@@ -140,7 +143,7 @@
     align-items: center;
 }
 
-.action {
+.tactic {
     margin: 10px;
     padding: 0px;
     width: 8vh;
@@ -154,8 +157,12 @@
     user-select: none;
 }
 
-.action:active {
+.tactic:active {
     cursor: grabbing;
+}
+
+.complete {
+    font-size: 8vh;
 }
 
 .settings-button {
