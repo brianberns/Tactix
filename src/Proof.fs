@@ -1,6 +1,8 @@
 ﻿namespace Tactix
 
 /// Unique identifier of a case within a proof.
+/// A list of ensures that cases maintain their
+/// order within a proof as sub-cases are created.
 type ProofCaseKey = List<int>
 
 /// A proof consists of multiple cases, each of which
