@@ -84,8 +84,8 @@ module Level =
 
     module private Exact =
 
-        let private goalTactics = set []
-        let private termTactics = set [ TacticType.Exact ]
+        let goalTactics = set []
+        let termTactics = set [ TacticType.Exact ]
 
         /// Introduces the "exact" tactic.
         let level1 =
@@ -120,8 +120,9 @@ module Level =
 
     module private Intro =
 
-        let private goalTactics = set [ TacticType.Intro ]
-        let private termTactics = set [ TacticType.Exact ]
+        let goalTactics =
+            Exact.goalTactics + set [ TacticType.Intro ]
+        let termTactics = Exact.termTactics
 
         /// Introduces the "intro" tactic with Q ⊢ P → Q.
         let level1 =
@@ -155,13 +156,18 @@ module Level =
 
     module private Dissolve =
 
+        let goalTactics =
+            Intro.goalTactics + set [ TacticType.DissolveGoal ]
+        let termTactics =
+            Intro.termTactics + set [ TacticType.DissolveTerm ]
+
         /// Introduces the dissolve goal tactic.
         let level1 =
             {
                 Goal = Sum [p; q]
                 Terms = terms [p]
-                GoalTactics = set [ TacticType.DissolveGoal ]
-                TermTactics = set [ TacticType.Exact ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = $"Drag {dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
             }
 
@@ -170,28 +176,24 @@ module Level =
             {
                 Goal = p
                 Terms = terms [ p_and_q ]
-                GoalTactics = set []
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.DissolveTerm
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
             }
 
     module private Apply =
+
+        let goalTactics = Dissolve.goalTactics
+        let termTactics =
+            Dissolve.termTactics + set [ TacticType.Apply ]
 
         /// Modus ponens.
         let level1 =
             {
                 Goal = q
                 Terms = terms [p; pq]
-                GoalTactics = set []
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.Apply
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = $"Drag {apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
             }
 
@@ -204,12 +206,8 @@ module Level =
                         Function (p, q)
                         Function (q, r)
                     ]
-                GoalTactics = set [ TacticType.Intro ]
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.Apply
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = ""
             }
 
@@ -218,29 +216,26 @@ module Level =
             {
                 Goal = Function (p_and_q, r)
                 Terms = terms [pqr]
-                GoalTactics = set [ TacticType.Intro ]
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.Apply
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = $"You can also use {apply} on nested ▢{Text.implies}■ symbols when the goal is ■"
             }
 
     module private Cases =
+
+        let goalTactics =
+            Apply.goalTactics + set [ TacticType.Split ]
+        let termTactics =
+            Apply.termTactics + set [ TacticType.Cases ]
 
         /// Commutivity of ∧.
         let level1 =
             {
                 Goal = Product [q; p]
                 Terms = terms [p_and_q]
-                GoalTactics = set [ TacticType.Split ]
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.DissolveTerm
-                    ]
-                Instructions = $"You can drag {casesGoal} onto a {Text.andSymbol} goal to create separate cases"
+                GoalTactics = goalTactics
+                TermTactics = termTactics
+                Instructions = $"Drag {casesGoal} onto a {Text.andSymbol} goal to create separate cases"
             }
 
         /// Commutivity of ∨.
@@ -248,12 +243,8 @@ module Level =
             {
                 Goal = Sum [q; p]
                 Terms = terms [p_or_q]
-                GoalTactics = set [ TacticType.DissolveGoal ]
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.Cases
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = $"Drag {casesTerm} onto a {Text.orSymbol} symbol to create separate cases"
             }
 
@@ -267,13 +258,8 @@ module Level =
                         pr
                         qr
                     ]
-                GoalTactics = set []
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.Apply
-                        TacticType.Cases
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = ""
             }
 
@@ -282,16 +268,8 @@ module Level =
             {
                 Goal = pqr
                 Terms = terms [ Function (p_and_q, r) ]
-                GoalTactics =
-                    set [
-                        TacticType.Intro
-                        TacticType.Split
-                    ]
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.Apply
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = ""
             }
 
@@ -325,22 +303,18 @@ module Level =
 
     module private Negation =
 
+        let goalTactics =
+            Cases.goalTactics + set [ TacticType.AffirmGoal ]
+        let termTactics =
+            Cases.termTactics + set [ TacticType.AffirmTerm ]
+
         /// Double negative (but not the law of excluded middle).
         let level1 =
             {
                 Goal = Not (Not p)
                 Terms = terms [p]
-                GoalTactics =
-                    set [
-                        TacticType.Intro
-                        TacticType.AffirmGoal
-                    ]
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.Apply
-                        TacticType.AffirmTerm
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = $"Drag {affirmGoal} onto a {Text.notSymbol} to remove it"
             }
 
@@ -349,17 +323,8 @@ module Level =
             {
                 Goal = Function (Not q, Not p)
                 Terms = terms [ pq ]
-                GoalTactics =
-                    set [
-                        TacticType.Intro
-                        TacticType.AffirmGoal
-                    ]
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.Apply
-                        TacticType.AffirmTerm
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = ""
             }
 
@@ -374,19 +339,8 @@ module Level =
                             Not q
                         ]
                     ]
-                GoalTactics =
-                    set [
-                        TacticType.Intro
-                        TacticType.AffirmGoal
-                    ]
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.DissolveTerm
-                        TacticType.Apply
-                        TacticType.Cases
-                        TacticType.AffirmTerm
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = ""
             }
 
@@ -402,21 +356,8 @@ module Level =
                     terms [
                         Not (Sum [p; q])
                     ]
-                GoalTactics =
-                    set [
-                        TacticType.Intro
-                        TacticType.DissolveGoal
-                        TacticType.Split
-                        TacticType.AffirmGoal
-                    ]
-                TermTactics =
-                    set [
-                        TacticType.Exact
-                        TacticType.DissolveTerm
-                        TacticType.Apply
-                        TacticType.Cases
-                        TacticType.AffirmTerm
-                    ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
                 Instructions = ""
             }
 
