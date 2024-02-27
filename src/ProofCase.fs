@@ -37,13 +37,14 @@ module ProofCase =
 
         match tactic with
 
-            | Exact hp
-                when case.Terms.Contains(hp)
-                    && case.Goals.Contains(hp.Type) ->
+            | Exact term
+                when case.Terms.Contains(term)
+                    && case.Goals.Contains(term.Type) ->
                 [
                     {
                         case with
-                            Goals = case.Goals.Remove(hp.Type)
+                            Goals =
+                                case.Goals.Remove(term.Type)
                             IsComplete = true
                     }
                 ]
