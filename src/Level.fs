@@ -28,7 +28,7 @@ module TacticType =
         | TacticType.AffirmTerm   -> "🌈"
 
     let instructions = function
-        | TacticType.Intro        -> "Drag onto an arrow goal to simplify it"
+        | TacticType.Intro        -> $"Drag onto a {Text.implies} goal to simplify it"
         | TacticType.Split        -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
         | TacticType.Exact        -> "Drag onto a symbol that matches the goal"
         | TacticType.DissolveGoal -> $"Drag onto a {Text.orSymbol} goal to simplify it"
@@ -135,7 +135,7 @@ module Level =
                 Terms = terms [q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {intro} onto an arrow goal to simplify it"
+                Instructions = $"Drag {intro} onto an {Text.implies} goal to simplify it"
             }
 
         /// P → P.
