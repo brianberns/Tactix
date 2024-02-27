@@ -35,3 +35,9 @@ module Term =
         match term.Type with
             | Sum types -> Some types
             | _ -> None
+
+    /// Matches a not term.
+    let (|Not|_|) term =
+        match term.Type with
+            | Not typ -> Some typ
+            | _ -> None

@@ -10,6 +10,8 @@ type TacticType =
     | DissolveTerm
     | Cases
     | Split
+    | AffirmGoal
+    | AffirmTerm
 
 /// A tactic used in a proof. Some of these are from the Lean
 /// language.
@@ -42,13 +44,21 @@ type Tactic =
     /// Splits goal (P ∧ Q) into two cases, P and Q.
     | Split of goal : Type
 
+    /// Converts goal ¬P to term (HP : P).
+    | AffirmGoal of goal : Type
+
+    /// Converts term (HNP : ¬P) to goal P.
+    | AffirmTerm of Term
+
     /// Type of this tactic.
     member tactic.Type =
         match tactic with
-            | Exact _    -> TacticType.Exact
-            | Intro _    -> TacticType.Intro
-            | Apply _    -> TacticType.Apply
+            | Exact _        -> TacticType.Exact
+            | Intro _        -> TacticType.Intro
+            | Apply _        -> TacticType.Apply
             | DissolveGoal _ -> TacticType.DissolveGoal
             | DissolveTerm _ -> TacticType.DissolveTerm
-            | Cases _    -> TacticType.Cases
-            | Split _    -> TacticType.Split
+            | Cases _        -> TacticType.Cases
+            | Split _        -> TacticType.Split
+            | AffirmGoal _   -> TacticType.AffirmGoal
+            | AffirmTerm _   -> TacticType.AffirmTerm

@@ -63,7 +63,8 @@ module ProofCase =
                     }
                 ]
 
-            | Apply (Term.Function (p, q)) ->
+            | Apply (Term.Function (p, q) as term)
+                when case.Terms.Contains(term) ->
                 match apply p q case.Goals with
                     | None -> None
                     | Some ([newGoal], oldGoal) ->
@@ -78,7 +79,8 @@ module ProofCase =
                                     .Add(newGoal) })
                     |> Option.toList
 
-            | DissolveGoal (Sum types as oldGoal) ->
+            | DissolveGoal (Sum types as oldGoal)
+                when case.Goals.Contains(oldGoal) ->
                 let newGoals = set types
                 [
                     {
@@ -90,31 +92,55 @@ module ProofCase =
                     }
                 ]
 
-            | DissolveTerm (Term.Product types as hp) ->
+            | DissolveTerm (Term.Product types as oldTerm)
+                when case.Terms.Contains(oldTerm) ->
                 let terms =
                     let newTerms =
                         types
                             |> Seq.map Term.create
                             |> set
                     case.Terms
-                        |> Set.remove hp
+                        |> Set.remove oldTerm
                         |> Set.union newTerms
                 [ { case with Terms = terms } ]
 
-            | Cases (Term.Sum types as hp) ->
-                let terms = Set.remove hp case.Terms
+            | Cases (Term.Sum types as oldTerm)
+                when case.Terms.Contains(oldTerm) ->
+                let terms = Set.remove oldTerm case.Terms
                 types
                     |> List.map (fun typ ->
                         { case with
                             Terms =
                                 Set.add (Term.create typ) terms })
 
-            | Split ((Product types) as oldGoal) ->
+            | Split ((Product types) as oldGoal)
+                when case.Goals.Contains(oldGoal) ->
                 let goals = case.Goals.Remove(oldGoal)
                 types
                     |> List.map (fun typ ->
                         { case with
                             Goals = goals.Add(typ) })
+
+            | AffirmGoal ((Not typ) as oldGoal)
+                when case.Goals.Contains(oldGoal) ->
+                let newTerm = { Type = typ }
+                [
+                    {
+                        case with
+                            Goals = case.Goals.Remove(oldGoal)
+                            Terms = case.Terms.Add(newTerm)
+                    }
+                ]
+
+            | AffirmTerm ((Term.Not typ) as oldTerm)
+                when case.Terms.Contains(oldTerm) ->
+                [
+                    {
+                        case with
+                            Goals = case.Goals.Add(typ)
+                            Terms = case.Terms.Remove(oldTerm)
+                    }
+                ]
 
             | _ -> []
 
