@@ -454,6 +454,7 @@ module Level =
             Negation.level4
         |]
 
+    /// Starts a proof for the given level.
     let initializeProof level =
         let case =
             {
