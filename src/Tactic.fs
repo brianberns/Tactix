@@ -25,10 +25,7 @@ type Tactic =
     /// goal to just Q.
     | Intro of goal : Type
 
-    /// Applies term (P1 -> P2 -> ... -> PN -> Q), where the
-    /// goal is Q, replacing the goal with (P1 ∧ P2 ... ∧ PN).
-    /// (This behavior is slightly different from Lean, which
-    /// replaces the goal with N separate goals, P1 through PN.)
+    /// Function application.
     | Apply of Term
 
     /// Dissolves goal (P ∨ Q) into separate goals P and Q.

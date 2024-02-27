@@ -22,7 +22,7 @@ module TacticType =
         | TacticType.Exact        -> "❤️"
         | TacticType.DissolveGoal -> "🦋"
         | TacticType.DissolveTerm -> "🦋"
-        | TacticType.Apply        -> "👣"
+        | TacticType.Apply        -> "🪜"
         | TacticType.Cases        -> "💥"
         | TacticType.AffirmGoal   -> "🌈"
         | TacticType.AffirmTerm   -> "🌈"
@@ -33,7 +33,7 @@ module TacticType =
         | TacticType.Exact        -> "Drag onto a symbol that matches the goal"
         | TacticType.DissolveGoal -> $"Drag onto a {Text.orSymbol} goal to simplify it"
         | TacticType.DissolveTerm -> $"Drag onto a {Text.andSymbol} symbol from below to simplify it"
-        | TacticType.Apply        -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
+        | TacticType.Apply        -> $"Drag onto {Text.implies} to create separate cases"
         | TacticType.Cases        -> $"Drag onto a {Text.orSymbol} symbol from below to create separate cases"
         | TacticType.AffirmGoal   -> $"Drag onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
         | TacticType.AffirmTerm   -> $"Drag onto a {Text.notSymbol} symbol from below to remove {Text.notSymbol}"
@@ -197,7 +197,7 @@ module Level =
                         TacticType.Exact
                         TacticType.Apply
                     ]
-                Instructions = $"Drag {apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
+                Instructions = $"Drag {apply} onto {Text.implies} to create separate cases"
             }
 
         /// Implication is transitive.
@@ -227,9 +227,10 @@ module Level =
                 TermTactics =
                     set [
                         TacticType.Exact
+                        TacticType.DissolveTerm
                         TacticType.Apply
                     ]
-                Instructions = $"You can also use {apply} on nested ▢{Text.implies}■ symbols when the goal is ■"
+                Instructions = ""
             }
 
     module private Cases =
@@ -321,7 +322,6 @@ module Level =
                 TermTactics =
                     set [
                         TacticType.Exact
-                        TacticType.Apply
                         TacticType.DissolveTerm
                         TacticType.Cases
                     ]
@@ -337,13 +337,11 @@ module Level =
                 Terms = terms [p]
                 GoalTactics =
                     set [
-                        TacticType.Intro
                         TacticType.AffirmGoal
                     ]
                 TermTactics =
                     set [
                         TacticType.Exact
-                        TacticType.Apply
                         TacticType.AffirmTerm
                     ]
                 Instructions = $"Drag {affirmGoal} onto a {Text.notSymbol} to remove it"

@@ -15,22 +15,6 @@ type ProofCase =
 
 module ProofCase =
 
-    /// Applies p -> q with the given goals, if possible.
-    let private apply p q (goals : Set<Type>) =
-
-        let rec loop p q =
-            if goals.Contains(q) then Some ([p], q)
-            else
-                match q with
-                    | Function (qIn, qOut) ->
-                        option {
-                            let! newGoals, oldGoal = loop qIn qOut
-                            return p :: newGoals, oldGoal
-                        }
-                    | _ -> None
-
-        loop p q
-
     /// Adds the given tactic to the given proof case. If
     /// successful, one or more resulting cases are answered.
     let add tactic case =
@@ -63,21 +47,21 @@ module ProofCase =
                     }
                 ]
 
-            | Apply (Term.Function (p, q) as term)
-                when case.Terms.Contains(term) ->
-                match apply p q case.Goals with
-                    | None -> None
-                    | Some ([newGoal], oldGoal) ->
-                        Some (newGoal, oldGoal)
-                    | Some (newGoals, oldGoal) ->
-                        Some (Product newGoals, oldGoal)
-                    |> Option.map (fun (newGoal, oldGoal) ->
-                        { case with
-                            Goals =
-                                case.Goals
-                                    .Remove(oldGoal)
-                                    .Add(newGoal) })
-                    |> Option.toList
+            | Apply (Term.Function (p, q) as oldTerm)
+                when case.Terms.Contains(oldTerm) ->
+                let terms = case.Terms.Remove(oldTerm)
+                let newTerm = { Type = q }
+                [
+                    {
+                        case with
+                            Terms = terms
+                            Goals = case.Goals.Add(p)
+                    }
+                    {
+                        case with
+                            Terms = terms.Add(newTerm)
+                    }
+                ]
 
             | DissolveGoal (Sum types as oldGoal)
                 when case.Goals.Contains(oldGoal) ->
