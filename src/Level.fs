@@ -130,7 +130,7 @@ module Level =
                 Terms = terms [q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {intro} onto an {Text.implies} goal to simplify it"
+                Instructions = $"Drag {intro} onto a {Text.implies} goal to simplify it"
             }
 
         /// P → P.
@@ -176,7 +176,7 @@ module Level =
                         TacticType.Exact
                         TacticType.DissolveTerm
                     ]
-                Instructions = $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol from below to simplify it"
+                Instructions = $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
             }
 
     module private Apply =
@@ -254,7 +254,7 @@ module Level =
                         TacticType.Exact
                         TacticType.Cases
                     ]
-                Instructions = $"Drag {casesTerm} onto a {Text.orSymbol} symbol from below to create separate cases"
+                Instructions = $"Drag {casesTerm} onto a {Text.orSymbol} symbol to create separate cases"
             }
 
         /// More practice with multiple cases.
