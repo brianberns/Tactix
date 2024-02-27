@@ -6,7 +6,8 @@ open Fable.Core
 // https://thesharperdev.com/snippets/fsharp-fable-play-audio/
 module Audio =
 
-    let [<Global("Audio")>] private factory : HTMLAudioElementType = jsNative
+    [<Global("Audio")>] 
+    let private factory : HTMLAudioElementType = jsNative
 
     /// Plays the given file.
     let private play src =
