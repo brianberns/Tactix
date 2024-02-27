@@ -249,14 +249,18 @@ module View =
             ]
         ]
 
+    /// Renders the given term.
     let private renderTerm
-        (term : Term)
+        term
         caseKey
         allow
-        (model : Model)
+        model
         dispatch =
 
+            // child HTML elements
         let children = renderType term.Type
+
+            // drag/drop properties
         let dragDrop =
             let highlightMsg =
                 Message.highlightTerm term caseKey
@@ -265,9 +269,14 @@ module View =
                 allow
                 model.Settings.AudioEnabled
                 dispatch
+
+            // term is highlighted?
         let isHighlighted =
             model.IsHighlighted(term, caseKey)
+
+            // term is primitive?
         let isPrimitive = Type.isPrimitive term.Type
+
         Html.div [
             match isHighlighted, isPrimitive with
                 | true, true -> "primitive-term-highlight"
@@ -278,12 +287,14 @@ module View =
             yield! dragDrop
         ]
 
+    /// Renders terms for the given proof case.
     let private renderTerms
         ((caseKey, case) as casePair)
         model
         dispatch =
         assert(model.Proof.CaseMap[caseKey] = case)
 
+            // enable term-level tactics
         let allowMulti term evt =
             let tacticType = DragData.getTacticType evt
             Allow.any [
@@ -294,6 +305,7 @@ module View =
                 Allow.allow AffirmTerm casePair
             ] term tacticType
 
+            // render each term
         Html.div [
             prop.className "terms"
             prop.children [
@@ -307,8 +319,8 @@ module View =
             ]
         ]
 
+    /// Renders the given proof case.
     let private renderProofCase casePair model dispatch =
-
         Html.div [
             prop.className "proof-case"
             prop.children [
@@ -317,6 +329,7 @@ module View =
             ]
         ]
 
+    /// Renders the given proof.
     let private renderProof model dispatch =
         Html.div [
             prop.id "proof"
@@ -326,6 +339,7 @@ module View =
             ]
         ]
 
+    /// Renders tactics that apply to terms.
     let private renderTermTactics levelIdx draggable =
         let tacticTypes =
             Level.levels[levelIdx].TermTactics
@@ -337,18 +351,23 @@ module View =
             ]
         ]
 
+    /// Renders footer information.
     let private renderFooter settings dispatch =
         Html.div [
             prop.id "footer"
             prop.children [
+
+                    // audio on/off
                 Html.img [
                     prop.className "settings-button"
                     if settings.AudioEnabled then "https://neal.fun/infinite-craft/sound.svg"
                     else "https://neal.fun/infinite-craft/mute.svg"
                     |> prop.src
                     prop.onClick (fun _ ->
-                        dispatch (EnableAudio (not settings.AudioEnabled)))
+                        dispatch (
+                            EnableAudio (not settings.AudioEnabled)))
                 ]
+                    // level restart
                 Html.img [
                     prop.className "settings-button"
                     prop.src "refresh.svg"
@@ -358,9 +377,11 @@ module View =
             ]
         ]
 
+    /// Renders the given model.
     let render model dispatch =
         Html.div [
 
+                // child HTML elements
             let levelIdx = model.Settings.LevelIndex
             let isActive =
                 not <| Proof.isComplete model.Proof
