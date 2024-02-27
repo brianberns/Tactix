@@ -191,3 +191,9 @@
     top: 100%;
     transform: translateY(-100%);
 }
+
+/* https://stackoverflow.com/a/61812377/344223 */
+[draggable="true"] {
+    position: relative;
+    z-index: 1;
+}
