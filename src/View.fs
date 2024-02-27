@@ -86,8 +86,11 @@ module View =
             ]
         ]
 
+    /// Renders the given type.
     let private renderType typ =
 
+        /// Renders the given types with the given separator
+        /// between them.
         let between content f types =
             [
                 for (i, typ) in Seq.indexed types do
@@ -128,6 +131,7 @@ module View =
 
         loop typ
 
+    /// Renders drag/drop properties.
     let private renderDragDrop
         highlightMsg
         allow
@@ -137,43 +141,48 @@ module View =
         [
             if highlightMsg <> Message.noHighlight then
 
-                    // start highlighting the target
+                    // start highlighting the target?
                 prop.onDragEnter (fun evt ->
                     if allow evt |> Option.isSome then
                         evt.preventDefault()
                         dispatch highlightMsg)
 
-                    // stop highlighting the target
+                    // stop highlighting the target?
                 prop.onDragLeave (fun evt ->
                     if allow evt |> Option.isSome then
                         evt.preventDefault()
                         dispatch Message.noHighlight)
 
-                // allow drop
+                // allow drop?
             prop.onDragOver (fun evt ->
                 if allow evt |> Option.isSome then
                     evt.preventDefault())
 
+                // drop has occurred
             prop.onDrop (fun evt ->
                 evt.preventDefault()
                 match allow evt with
                     | Some msg ->
                         if audioEnabled then Audio.playReward ()
                         msg
-                    | None ->
+                    | None ->   // should never actually happen
                         if audioEnabled then Audio.playError ()
                         Message.noHighlight
                     |> dispatch)
         ]
 
+    /// Renders the given goal.
     let private renderGoal
-        (goal : Type)
+        goal
         caseKey
         allow
-        (model : Model)
+        model
         dispatch =
 
+            // child HTML elements
         let children = renderType goal
+
+            // drag/drop properties
         let dragDrop =
             let highlightMsg =
                 Message.highlightGoal goal caseKey
@@ -182,9 +191,14 @@ module View =
                 allow
                 model.Settings.AudioEnabled
                 dispatch
+
+            // goal is highlighted?
         let isHighlighted =
             model.IsHighlighted(goal, caseKey)
+
+            // goal is primitive?
         let isPrimitive = Type.isPrimitive goal
+
         Html.div [
             match isHighlighted, isPrimitive with
                 | true, true -> "primitive-type-highlight"
@@ -195,12 +209,14 @@ module View =
             yield! dragDrop
         ]
 
+    /// Renders goals for the given proof case.
     let private renderGoals
         ((caseKey, case) as casePair)
         model
         dispatch =
         assert(model.Proof.CaseMap[caseKey] = case)
 
+            // enable goal-level tactics
         let allowMulti goal evt =
             let tacticType = DragData.getTacticType evt
             Allow.any [
@@ -213,11 +229,15 @@ module View =
         Html.div [
             prop.className "goals"
             prop.children [
+
+                    // complete case rendered specially
                 if case.IsComplete then
                     Html.div [
                         prop.className "complete"
                         prop.text (TacticType.emoji TacticType.Exact)
                     ]
+
+                    // render each goal
                 else
                     for goal in case.Goals do
                         renderGoal
