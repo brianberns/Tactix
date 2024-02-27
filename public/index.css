@@ -65,18 +65,21 @@
 }
 
 .type {
+    margin: 12px;
     user-select: none;
     border: 8px solid transparent;
     border-radius: 16px;
 }
 
 .primitive-type-highlight {
+    margin: 12px;
     user-select: none;
     border: 8px solid var(--highlight);
     border-radius: 16px;
 }
 
 .compound-type-highlight {
+    margin: 12px;
     user-select: none;
     border: 8px solid var(--highlight);
 }
