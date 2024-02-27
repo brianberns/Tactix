@@ -5,7 +5,7 @@ module Text =
     let andSymbol = "🍓"
     let orSymbol = "🍒"
     let notSymbol = "☂️"
-    let implies = "➡️"
+    let implies = "👉🏾"
 
     let andHtml = andSymbol
     let orHtml = orSymbol
