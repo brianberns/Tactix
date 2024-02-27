@@ -8,8 +8,8 @@ type TacticType =
     | Apply
     | DissolveGoal
     | DissolveTerm
-    | Cases
-    | Split
+    | SplitGoal
+    | SplitTerm
     | AffirmGoal
     | AffirmTerm
 
@@ -37,12 +37,12 @@ type Tactic =
     /// Dissolves term (HPQ : P ∧ Q) into (HP : P) and (HQ : Q).
     | DissolveTerm of Term
 
-    /// Breaks up term (HPQ : P ∨ Q) into separate cases for
-    /// (HP : P) and (HQ : Q).
-    | Cases of Term
+    /// Splits goal (P ∧ Q) into separate cases for P and Q.
+    | SplitGoal of goal : Type
 
-    /// Splits goal (P ∧ Q) into two cases, P and Q.
-    | Split of goal : Type
+    /// Splits term (HPQ : P ∨ Q) into separate cases for
+    /// (HP : P) and (HQ : Q).
+    | SplitTerm of Term
 
     /// Converts goal ¬P to term (HP : P).
     | AffirmGoal of goal : Type
@@ -58,7 +58,7 @@ type Tactic =
             | Apply _        -> TacticType.Apply
             | DissolveGoal _ -> TacticType.DissolveGoal
             | DissolveTerm _ -> TacticType.DissolveTerm
-            | Cases _        -> TacticType.Cases
-            | Split _        -> TacticType.Split
+            | SplitTerm _    -> TacticType.SplitTerm
+            | SplitGoal _    -> TacticType.SplitGoal
             | AffirmGoal _   -> TacticType.AffirmGoal
             | AffirmTerm _   -> TacticType.AffirmTerm

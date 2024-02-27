@@ -105,7 +105,7 @@ module ProofCase =
                         |> Set.union newTerms
                 [ { case with Terms = terms } ]
 
-            | Cases (Term.Sum types as oldTerm)
+            | SplitTerm (Term.Sum types as oldTerm)
                 when case.Terms.Contains(oldTerm) ->
                 let terms = Set.remove oldTerm case.Terms
                 types
@@ -114,7 +114,7 @@ module ProofCase =
                             Terms =
                                 Set.add (Term.create typ) terms })
 
-            | Split ((Product types) as oldGoal)
+            | SplitGoal ((Product types) as oldGoal)
                 when case.Goals.Contains(oldGoal) ->
                 let goals = case.Goals.Remove(oldGoal)
                 types

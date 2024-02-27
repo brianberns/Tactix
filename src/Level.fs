@@ -13,23 +13,23 @@ module TacticType =
 
     let emoji = function
         | TacticType.Intro        -> "🚀"
-        | TacticType.Split        -> "💥"
         | TacticType.Exact        -> "❤️"
+        | TacticType.Apply        -> "👣"
         | TacticType.DissolveGoal -> "🦋"
         | TacticType.DissolveTerm -> "🦋"
-        | TacticType.Apply        -> "👣"
-        | TacticType.Cases        -> "💥"
+        | TacticType.SplitGoal    -> "💥"
+        | TacticType.SplitTerm    -> "💥"
         | TacticType.AffirmGoal   -> "🌈"
         | TacticType.AffirmTerm   -> "🌈"
 
     let instructions = function
         | TacticType.Intro        -> $"Drag onto a {Text.implies} goal to simplify it"
-        | TacticType.Split        -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
         | TacticType.Exact        -> "Drag onto a symbol that matches the goal"
+        | TacticType.Apply        -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
         | TacticType.DissolveGoal -> $"Drag onto a {Text.orSymbol} goal to simplify it"
         | TacticType.DissolveTerm -> $"Drag onto a {Text.andSymbol} symbol to simplify it"
-        | TacticType.Apply        -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
-        | TacticType.Cases        -> $"Drag onto a {Text.orSymbol} symbol to create separate cases"
+        | TacticType.SplitGoal    -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
+        | TacticType.SplitTerm    -> $"Drag onto a {Text.orSymbol} symbol to create separate cases"
         | TacticType.AffirmGoal   -> $"Drag onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
         | TacticType.AffirmTerm   -> $"Drag onto a {Text.notSymbol} symbol to remove {Text.notSymbol}"
 
@@ -57,8 +57,8 @@ module Level =
     let private exact        = TacticType.emoji TacticType.Exact
     let private intro        = TacticType.emoji TacticType.Intro
     let private apply        = TacticType.emoji TacticType.Apply
-    let private casesGoal    = TacticType.emoji TacticType.Split
-    let private casesTerm    = TacticType.emoji TacticType.Cases
+    let private splitGoal    = TacticType.emoji TacticType.SplitGoal
+    let private splitTerm    = TacticType.emoji TacticType.SplitTerm
     let private dissolveGoal = TacticType.emoji TacticType.DissolveGoal
     let private dissolveTerm = TacticType.emoji TacticType.DissolveTerm
     let private affirmGoal   = TacticType.emoji TacticType.AffirmGoal
@@ -221,12 +221,12 @@ module Level =
                 Instructions = $"You can also use {apply} on nested ▢{Text.implies}■ symbols when the goal is ■"
             }
 
-    module private Cases =
+    module private Split =
 
         let goalTactics =
-            Apply.goalTactics + set [ TacticType.Split ]
+            Apply.goalTactics + set [ TacticType.SplitGoal ]
         let termTactics =
-            Apply.termTactics + set [ TacticType.Cases ]
+            Apply.termTactics + set [ TacticType.SplitTerm ]
 
         /// Commutivity of ∧.
         let level1 =
@@ -235,7 +235,7 @@ module Level =
                 Terms = terms [p_and_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {casesGoal} onto a {Text.andSymbol} goal to create separate cases"
+                Instructions = $"Drag {splitGoal} onto a {Text.andSymbol} goal to create separate cases"
             }
 
         /// Commutivity of ∨.
@@ -245,7 +245,7 @@ module Level =
                 Terms = terms [p_or_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {casesTerm} onto a {Text.orSymbol} symbol to create separate cases"
+                Instructions = $"Drag {splitTerm} onto a {Text.orSymbol} symbol to create separate cases"
             }
 
         /// More practice with multiple cases.
@@ -289,14 +289,14 @@ module Level =
                     set [
                         TacticType.Intro
                         TacticType.DissolveGoal
-                        TacticType.Split
+                        TacticType.SplitGoal
                     ]
                 TermTactics =
                     set [
                         TacticType.Exact
                         TacticType.Apply
                         TacticType.DissolveTerm
-                        TacticType.Cases
+                        TacticType.SplitTerm
                     ]
                 Instructions = ""
             }
@@ -304,9 +304,9 @@ module Level =
     module private Negation =
 
         let goalTactics =
-            Cases.goalTactics + set [ TacticType.AffirmGoal ]
+            Split.goalTactics + set [ TacticType.AffirmGoal ]
         let termTactics =
-            Cases.termTactics + set [ TacticType.AffirmTerm ]
+            Split.termTactics + set [ TacticType.AffirmTerm ]
 
         /// Double negative (but not the law of excluded middle).
         let level1 =
@@ -378,11 +378,11 @@ module Level =
             Apply.level2
             Apply.level3
 
-            Cases.level1
-            Cases.level2
-            Cases.level3
-            Cases.level4
-            Cases.level5
+            Split.level1
+            Split.level2
+            Split.level3
+            Split.level4
+            Split.level5
 
             Negation.level1
             Negation.level2

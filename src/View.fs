@@ -222,7 +222,7 @@ module View =
             Allow.any [
                 Allow.allow Intro casePair
                 Allow.allow DissolveGoal casePair
-                Allow.allow Split casePair
+                Allow.allow SplitGoal casePair
                 Allow.allow AffirmGoal casePair
             ] goal tacticType
 
@@ -300,7 +300,7 @@ module View =
             Allow.any [
                 Allow.allow Exact casePair
                 Allow.allow Apply casePair
-                Allow.allow Cases casePair
+                Allow.allow SplitTerm casePair
                 Allow.allow DissolveTerm casePair
                 Allow.allow AffirmTerm casePair
             ] term tacticType
