@@ -24,6 +24,8 @@ module TacticType =
         | TacticType.DissolveTerm -> "🦋"
         | TacticType.Apply        -> "👣"
         | TacticType.Cases        -> "💥"
+        | TacticType.AffirmGoal   -> "✅"
+        | TacticType.AffirmTerm   -> "✅"
 
     let instructions = function
         | TacticType.Intro        -> "Drag onto an arrow goal to simplify it"
@@ -33,6 +35,8 @@ module TacticType =
         | TacticType.DissolveTerm -> $"Drag onto a {Text.andSymbol} symbol from below to simplify it"
         | TacticType.Apply        -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
         | TacticType.Cases        -> $"Drag onto a {Text.orSymbol} symbol from below to create separate cases"
+        | TacticType.AffirmGoal   -> $"Drag onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
+        | TacticType.AffirmTerm   -> $"Drag onto a {Text.notSymbol} symbol from below to remove {Text.notSymbol}"
 
 /// A puzzle to be solved.
 type Level =
@@ -62,6 +66,8 @@ module Level =
     let private casesTerm    = TacticType.emoji TacticType.Cases
     let private dissolveGoal = TacticType.emoji TacticType.DissolveGoal
     let private dissolveTerm = TacticType.emoji TacticType.DissolveTerm
+    let private affirmGoal   = TacticType.emoji TacticType.AffirmGoal
+    let private affirmTerm   = TacticType.emoji TacticType.AffirmTerm
 
     let private p = Primitive "P"
     let private q = Primitive "Q"
@@ -322,27 +328,28 @@ module Level =
                 Instructions = ""
             }
 
-    (*
     module private Negation =
 
         /// Double negative (but not the law of excluded middle).
         let level1 =
             {
-                Goal = Type.not (Type.not p)
-                Terms = terms [ p ]
+                Goal = Not (Not p)
+                Terms = terms [p]
                 GoalTactics =
                     set [
                         TacticType.Intro
-                        TacticType.Expand
+                        TacticType.AffirmGoal
                     ]
                 TermTactics =
                     set [
                         TacticType.Exact
                         TacticType.Apply
+                        TacticType.AffirmTerm
                     ]
-                Instructions = $"Drag {expandGoal} onto a {Text.notSymbol} to expand it"
+                Instructions = $"Drag {affirmGoal} onto a {Text.notSymbol} to remove it"
             }
 
+        (*
         /// Modus tollens.
         let level2 =
             {
@@ -444,8 +451,8 @@ module Level =
             Cases.level4
             Cases.level5
 
-            (*
             Negation.level1
+            (*
             Negation.level2
             Negation.level3
             Negation.level4

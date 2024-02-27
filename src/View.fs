@@ -194,6 +194,7 @@ module View =
                 Allow.allow Intro casePair
                 Allow.allow DissolveGoal casePair
                 Allow.allow Split casePair
+                Allow.allow AffirmGoal casePair
             ] goal tacticType
 
         Html.div [
@@ -257,6 +258,7 @@ module View =
                 Allow.allow Apply casePair
                 Allow.allow Cases casePair
                 Allow.allow DissolveTerm casePair
+                Allow.allow AffirmTerm casePair
             ] term tacticType
 
         Html.div [
