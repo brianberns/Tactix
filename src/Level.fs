@@ -349,22 +349,21 @@ module Level =
                 Instructions = $"Drag {affirmGoal} onto a {Text.notSymbol} to remove it"
             }
 
-        (*
         /// Modus tollens.
         let level2 =
             {
-                Goal = Function (Type.not q, Type.not p)
+                Goal = Function (Not q, Not p)
                 Terms = terms [ pq ]
                 GoalTactics =
                     set [
                         TacticType.Intro
-                        TacticType.Expand
+                        TacticType.AffirmGoal
                     ]
                 TermTactics =
                     set [
                         TacticType.Exact
                         TacticType.Apply
-                        TacticType.Expand
+                        TacticType.AffirmTerm
                     ]
                 Instructions = ""
             }
@@ -372,26 +371,26 @@ module Level =
         /// de Morgan's laws.
         let level3 =
             {
-                Goal = Type.not p_and_q
+                Goal = Not p_and_q
                 Terms =
                     terms [
                         Sum [
-                            Type.not p
-                            Type.not q
+                            Not p
+                            Not q
                         ]
                     ]
                 GoalTactics =
                     set [
                         TacticType.Intro
-                        TacticType.Expand
+                        TacticType.AffirmGoal
                     ]
                 TermTactics =
                     set [
                         TacticType.Exact
-                        TacticType.Dissolve
+                        TacticType.DissolveTerm
                         TacticType.Apply
                         TacticType.Cases
-                        TacticType.Expand
+                        TacticType.AffirmTerm
                     ]
                 Instructions = ""
             }
@@ -401,32 +400,30 @@ module Level =
             {
                 Goal =
                     Product [
-                        Type.not p
-                        Type.not q
+                        Not p
+                        Not q
                     ]
                 Terms =
                     terms [
-                        Type.not (Sum [p; q])
+                        Not (Sum [p; q])
                     ]
                 GoalTactics =
                     set [
                         TacticType.Intro
-                        TacticType.Left
-                        TacticType.Right
+                        TacticType.DissolveGoal
                         TacticType.Split
-                        TacticType.Expand
+                        TacticType.AffirmGoal
                     ]
                 TermTactics =
                     set [
                         TacticType.Exact
-                        TacticType.Dissolve
+                        TacticType.DissolveTerm
                         TacticType.Apply
                         TacticType.Cases
-                        TacticType.Expand
+                        TacticType.AffirmTerm
                     ]
                 Instructions = ""
             }
-    *)
 
     let levels =
         [|
@@ -452,11 +449,9 @@ module Level =
             Cases.level5
 
             Negation.level1
-            (*
             Negation.level2
             Negation.level3
             Negation.level4
-            *)
         |]
 
     let initializeProof level =
