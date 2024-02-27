@@ -1,7 +1,6 @@
 ﻿namespace Tactix
 
 open Browser.Types
-open Fable.SimpleJson
 open Feliz
 
 type private DragData =

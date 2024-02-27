@@ -1,9 +1,13 @@
 ﻿namespace Tactix
 
+/// A function that determines whether the given argument
+/// (a goal or term) allows the given tactic type.
 type AllowFunc<'t> = 't -> TacticType -> Option<Message>
 
 module Allow =
 
+    /// Creates an allow function for the given tactic
+    /// maker and proof case.
     let allow makeTactic (caseKey, case) : AllowFunc<_> =
         fun arg tacticType ->
             option {
@@ -13,6 +17,7 @@ module Allow =
                         return AddTactic (tactic, caseKey)
             }
 
+    /// Composes the given allow functions.
     let any allowFuncs : AllowFunc<_> =
         fun arg tacticType ->
             allowFuncs
