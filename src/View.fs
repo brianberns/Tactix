@@ -3,40 +3,53 @@
 open Browser.Types
 open Feliz
 
+/// Data carried during an HTML drag/drop operation.
 type private DragData =
     {
+        /// Tactic type being dragged.
         TacticType : TacticType
     }
 
-// https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
-// https://stackoverflow.com/questions/31915653/how-to-get-data-from-datatransfer-getdata-in-event-dragover-or-dragenter
 module private DragData =
 
+    // https://stackoverflow.com/questions/40940288/drag-datatransfer-data-unavailable-in-ondragover-event
+    // https://stackoverflow.com/questions/31915653/how-to-get-data-from-datatransfer-getdata-in-event-dragover-or-dragenter
     let mutable shared : Option<DragData> = None
 
-    let setData dragData (evt : DragEvent) =
+    /// Sets drag data for the given event.
+    let private setData dragData (evt : DragEvent) =
+        // evt.dataTransfer.setData
         shared <- Some dragData
 
-    let getData (evt : DragEvent) =
+    /// Gets drag data for the given event.
+    let private getData (evt : DragEvent) =
+        // evt.dataTransfer.getData
         shared
 
-    let tacticType evt =
+    /// Sets the tactic type being dragged.
+    let setTacticType tacticType evt =
+        setData { TacticType = tacticType } evt
+
+    /// Gets the tactic type being dragged.
+    let getTacticType evt =
         match getData evt with
             | Some dragData -> dragData.TacticType
             | None -> failwith "Unexpected"
 
 module View =
 
+    /// Renders header information.
     let private renderHeader proof levelIdx =
         Html.div [
             prop.id "header"
             prop.children [
 
+                    // level number
                 Html.div [
                     prop.id "level-num"
                     prop.text $"Level {levelIdx + 1}"
                 ]
-
+                    // instructions for this level, if any
                 let level = Level.levels[levelIdx]
                 let instructions = level.Instructions
                 if instructions <> "" then
@@ -49,6 +62,7 @@ module View =
                 ]
         ]
 
+    /// Renders the given tactic type as an emoji.
     let private renderTacticType tacticType draggable =
         Html.div [
             prop.className "tactic"
@@ -57,10 +71,10 @@ module View =
             if draggable then
                 prop.draggable true
                 prop.onDragStart (
-                    DragData.setData
-                        { TacticType = tacticType })
+                    DragData.setTacticType tacticType)
         ]
 
+    /// Renders tactics that apply to goals.
     let private renderGoalTactics levelIdx draggable =
         let tacticTypes =
             Level.levels[levelIdx].GoalTactics
@@ -188,7 +202,7 @@ module View =
         assert(model.Proof.CaseMap[caseKey] = case)
 
         let allowMulti goal evt =
-            let tacticType = DragData.tacticType evt
+            let tacticType = DragData.getTacticType evt
             Allow.any [
                 Allow.allow Intro casePair
                 Allow.allow DissolveGoal casePair
@@ -251,7 +265,7 @@ module View =
         assert(model.Proof.CaseMap[caseKey] = case)
 
         let allowMulti term evt =
-            let tacticType = DragData.tacticType evt
+            let tacticType = DragData.getTacticType evt
             Allow.any [
                 Allow.allow Exact casePair
                 Allow.allow Apply casePair
