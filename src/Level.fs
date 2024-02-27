@@ -4,7 +4,7 @@ module Text =
 
     let andSymbol = "🍓"
     let orSymbol = "🍒"
-    let notSymbol = "⛔"
+    let notSymbol = "☂️"
     let implies = "➡️"
 
     let andHtml = andSymbol
@@ -24,8 +24,8 @@ module TacticType =
         | TacticType.DissolveTerm -> "🦋"
         | TacticType.Apply        -> "👣"
         | TacticType.Cases        -> "💥"
-        | TacticType.AffirmGoal   -> "✅"
-        | TacticType.AffirmTerm   -> "✅"
+        | TacticType.AffirmGoal   -> "🌈"
+        | TacticType.AffirmTerm   -> "🌈"
 
     let instructions = function
         | TacticType.Intro        -> "Drag onto an arrow goal to simplify it"
