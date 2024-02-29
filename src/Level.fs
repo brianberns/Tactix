@@ -7,8 +7,9 @@ module Text =
     let notSymbol = "☂️"
     let implies   = "👉🏾"
 
-    let successor = "S"
-    let addition = "+"
+    let zero = "🌱"
+    let successor = "🌠"
+    let addition = "➕"
 
 // https://stackoverflow.com/questions/64929689/avoiding-the-error-where-a-module-and-a-type-definition-occur-in-two-parts-of-an
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
@@ -84,7 +85,7 @@ module Level =
     let private p_or_q = Or [p; q]
 
     /// Builds terms from Booleans.
-    let private terms bools =
+    let private boolTerms bools =
         bools
             |> Seq.map (Boolean >> Term.create)
             |> set
@@ -98,7 +99,7 @@ module Level =
         let level1 =
             {
                 Goal = Boolean p
-                Terms = terms [p; q]
+                Terms = boolTerms [p; q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions =
@@ -109,7 +110,7 @@ module Level =
         let level2 =
             {
                 Goal = Boolean r
-                Terms = terms [p; q; r]
+                Terms = boolTerms [p; q; r]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = ""
@@ -119,7 +120,7 @@ module Level =
         let level3 =
             {
                 Goal = Boolean pq
-                Terms = terms [p; q; pq]
+                Terms = boolTerms [p; q; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $"You can also use {exact} on more complex symbols"
@@ -135,7 +136,7 @@ module Level =
         let level1 =
             {
                 Goal = Boolean pq
-                Terms = terms [q]
+                Terms = boolTerms [q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $"Drag {intro} onto a {Text.implies} goal to simplify it"
@@ -145,7 +146,7 @@ module Level =
         let level2 =
             {
                 Goal = Boolean (Implication (p, p))
-                Terms = terms []
+                Terms = boolTerms []
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = ""
@@ -155,7 +156,7 @@ module Level =
         let level3 =
             {
                 Goal = Boolean pqr
-                Terms = terms [r]
+                Terms = boolTerms [r]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = ""
@@ -172,7 +173,7 @@ module Level =
         let level1 =
             {
                 Goal = Boolean (Or [p; q])
-                Terms = terms [p]
+                Terms = boolTerms [p]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $"Drag {dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
@@ -182,7 +183,7 @@ module Level =
         let level2 =
             {
                 Goal = Boolean p
-                Terms = terms [ p_and_q ]
+                Terms = boolTerms [ p_and_q ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
@@ -198,7 +199,7 @@ module Level =
         let level1 =
             {
                 Goal = Boolean q
-                Terms = terms [p; pq]
+                Terms = boolTerms [p; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $"Drag {apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
@@ -209,7 +210,7 @@ module Level =
             {
                 Goal = Boolean (Implication (p, r))
                 Terms =
-                    terms [
+                    boolTerms [
                         Implication (p, q)
                         Implication (q, r)
                     ]
@@ -222,7 +223,7 @@ module Level =
         let level3 =
             {
                 Goal = Boolean (Implication (p_and_q, r))
-                Terms = terms [pqr]
+                Terms = boolTerms [pqr]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $"You can also use {apply} on nested ▢{Text.implies}■ symbols when the goal is ■"
@@ -239,7 +240,7 @@ module Level =
         let level1 =
             {
                 Goal = Boolean (And [q; p])
-                Terms = terms [p_and_q]
+                Terms = boolTerms [p_and_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $"Drag {splitGoal} onto a {Text.andSymbol} goal to create separate cases"
@@ -249,7 +250,7 @@ module Level =
         let level2 =
             {
                 Goal = Boolean (Or [q; p])
-                Terms = terms [p_or_q]
+                Terms = boolTerms [p_or_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $"Drag {splitTerm} onto a {Text.orSymbol} symbol to create separate cases"
@@ -260,7 +261,7 @@ module Level =
             {
                 Goal = Boolean r
                 Terms =
-                    terms [
+                    boolTerms [
                         p_or_q
                         pr
                         qr
@@ -274,7 +275,7 @@ module Level =
         let level4 =
             {
                 Goal = Boolean pqr
-                Terms = terms [ Implication (p_and_q, r) ]
+                Terms = boolTerms [ Implication (p_and_q, r) ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = ""
@@ -289,7 +290,7 @@ module Level =
                         And [q; r]
                     ])
                 Terms =
-                    terms [
+                    boolTerms [
                         And [Or [p; q]; r]
                     ]
                 GoalTactics =
@@ -319,7 +320,7 @@ module Level =
         let level1 =
             {
                 Goal = Boolean (Not (Not p))
-                Terms = terms [p]
+                Terms = boolTerms [p]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $"Drag {affirmGoal} onto a {Text.notSymbol} to remove it"
@@ -329,7 +330,7 @@ module Level =
         let level2 =
             {
                 Goal = Boolean (Implication (Not q, Not p))
-                Terms = terms [ pq ]
+                Terms = boolTerms [ pq ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = ""
@@ -340,7 +341,7 @@ module Level =
             {
                 Goal = Boolean (Not p_and_q)
                 Terms =
-                    terms [
+                    boolTerms [
                         Or [
                             Not p
                             Not q
@@ -360,7 +361,7 @@ module Level =
                         Not q
                     ])
                 Terms =
-                    terms [
+                    boolTerms [
                         Not (Or [p; q])
                     ]
                 GoalTactics = goalTactics
@@ -368,15 +369,35 @@ module Level =
                 Instructions = ""
             }
 
+    /// Builds terms from natural numbers.
+    let private natTerms nats =
+        nats
+            |> Seq.map (NaturalNumber >> Term.create)
+            |> set
+
     module private Addition =
 
         let goalTactics = set []
         let termTactics = set []
 
+        let zero = Zero
+        let one = Successor zero
+        let two = Successor one
+        let private a = NaturalNumber.Variable "a"
+
         let level1 =
             {
-                Goal = NaturalNumber (Successor (Successor Zero))
-                Terms = terms [p]
+                Goal = NaturalNumber two
+                Terms = natTerms [ Addition (one, one) ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
+                Instructions = $""
+            }
+
+        let level2 =
+            {
+                Goal = NaturalNumber a
+                Terms = natTerms [ Addition (a, Zero) ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $""

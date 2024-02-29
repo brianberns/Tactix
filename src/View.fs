@@ -103,10 +103,11 @@ module View =
         let rec loop bool =
             Html.div [
                 match bool with
-                    | True ->
-                        prop.classes [ "primitive-value"; "true" ]
-                    | False ->
-                        prop.classes [ "primitive-value"; "false" ]
+                    | True | False ->
+                        prop.classes [
+                            "primitive-value"
+                            (string bool).ToLower()
+                        ]
                     | Boolean.Variable name ->
                         prop.classes [
                             "primitive-value"
@@ -142,23 +143,23 @@ module View =
             Html.div [
                 match nat with
                     | Zero ->
-                        prop.classes [
-                            "primitive-value"
-                            "p"
+                        prop.className "primitive-value"
+                        prop.children [
+                            Html.span [
+                                prop.innerHtml Text.zero ]
                         ]
                     | NaturalNumber.Variable name ->
                         prop.classes [
                             "primitive-value"
                             name.ToLower()
                         ]
-                    | Successor n ->
+                    | Successor inner ->
                         prop.className "compound-value"
                         prop.children [
                             Html.span [
                                 prop.innerHtml Text.successor ]
-                            loop n
+                            loop inner
                         ]
-                        prop.children [ loop n ]
                     | Addition (a, b) ->
                         prop.className "compound-value"
                         renderBetween Text.addition loop [a; b]
