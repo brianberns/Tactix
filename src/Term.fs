@@ -42,3 +42,9 @@ module Term =
         match term.Value with
             | Boolean (Not bool) -> Some bool
             | _ -> None
+
+    /// Matches an addition term.
+    let (|Addition|_|) term =
+        match term.Value with
+            | NaturalNumber (Addition (a, b)) -> Some (a, b)
+            | _ -> None

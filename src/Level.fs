@@ -25,8 +25,8 @@ module TacticType =
         | TacticType.SplitTerm    -> "💥"
         | TacticType.AffirmGoal   -> "🌈"
         | TacticType.AffirmTerm   -> "🌈"
-        | TacticType.AddZero      -> "+0"
-        | TacticType.AddSucc      -> "+S"
+        | TacticType.AddZero      -> Text.zero
+        | TacticType.AddSucc      -> Text.successor
 
     let instructions = function
         | TacticType.Intro        -> $"Drag onto a {Text.implies} goal to simplify it"
@@ -378,14 +378,28 @@ module Level =
     module private Addition =
 
         let goalTactics = set []
-        let termTactics = set []
+        let termTactics =
+            set [
+                TacticType.Exact
+                TacticType.AddZero
+                TacticType.AddSucc
+            ]
 
-        let zero = Zero
-        let one = Successor zero
-        let two = Successor one
+        let private zero = Zero
+        let private one = Successor zero
+        let private two = Successor one
         let private a = NaturalNumber.Variable "a"
 
         let level1 =
+            {
+                Goal = NaturalNumber one
+                Terms = natTerms [ Addition (one, zero) ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
+                Instructions = $""
+            }
+
+        let level2 =
             {
                 Goal = NaturalNumber two
                 Terms = natTerms [ Addition (one, one) ]
@@ -394,7 +408,7 @@ module Level =
                 Instructions = $""
             }
 
-        let level2 =
+        let level3 =
             {
                 Goal = NaturalNumber a
                 Terms = natTerms [ Addition (a, Zero) ]
@@ -432,6 +446,8 @@ module Level =
             Negation.level4
 
             Addition.level1
+            Addition.level2
+            Addition.level3
         |]
 
     /// Starts a proof for the given level.

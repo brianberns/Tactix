@@ -349,6 +349,8 @@ module View =
                 Allow.allow SplitTerm casePair
                 Allow.allow DissolveTerm casePair
                 Allow.allow AffirmTerm casePair
+                Allow.allow AddZero casePair
+                Allow.allow AddSuccessor casePair
             ] term tacticType
 
             // render each term

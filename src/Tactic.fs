@@ -53,7 +53,7 @@ type Tactic =
     | AffirmTerm of Term
 
     | AddZero of Term
-    | AddSucc of Term
+    | AddSuccessor of Term
 
     /// Type of this tactic.
     member tactic.Type =
@@ -68,4 +68,4 @@ type Tactic =
             | AffirmGoal _   -> TacticType.AffirmGoal
             | AffirmTerm _   -> TacticType.AffirmTerm
             | AddZero _      -> TacticType.AddZero
-            | AddSucc _      -> TacticType.AddSucc
+            | AddSuccessor _ -> TacticType.AddSucc

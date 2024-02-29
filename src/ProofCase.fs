@@ -146,6 +146,35 @@ module ProofCase =
                     }
                 ]
 
+            | AddZero (Term.Addition (a, Zero) as oldTerm)
+                when case.Terms.Contains(oldTerm) ->
+                let newTerm = { Value = NaturalNumber a }
+                [
+                    {
+                        case with
+                            Terms =
+                                case.Terms
+                                    .Remove(oldTerm)
+                                    .Add(newTerm)
+                    }
+                ]
+
+            | AddSuccessor (Term.Addition (a, Successor b) as oldTerm)
+                when case.Terms.Contains(oldTerm) ->
+                let newTerm =
+                    { Value =
+                        NaturalNumber (
+                            Successor (Addition (a, b))) }
+                [
+                    {
+                        case with
+                            Terms =
+                                case.Terms
+                                    .Remove(oldTerm)
+                                    .Add(newTerm)
+                    }
+                ]
+
             | _ -> []
 
     /// Can the given tactic be added to the given case?
