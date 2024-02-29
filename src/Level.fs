@@ -392,8 +392,8 @@ module Level =
 
         let level1 =
             {
-                Goal = NaturalNumber one
-                Terms = natTerms [ Addition (one, zero) ]
+                Goal = NaturalNumber a
+                Terms = natTerms [ Addition (a, Zero) ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $""
@@ -401,8 +401,8 @@ module Level =
 
         let level2 =
             {
-                Goal = NaturalNumber two
-                Terms = natTerms [ Addition (one, one) ]
+                Goal = NaturalNumber (Successor a)
+                Terms = natTerms [ Addition (a, one) ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $""
@@ -410,8 +410,8 @@ module Level =
 
         let level3 =
             {
-                Goal = NaturalNumber a
-                Terms = natTerms [ Addition (a, Zero) ]
+                Goal = NaturalNumber two
+                Terms = natTerms [ Addition (one, one) ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $""

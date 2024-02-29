@@ -52,10 +52,7 @@
     height: 7vh;
     border-radius: 8px;
     pointer-events: none;
-    font-size: 6vh;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+    font-size: 5vh;
     background-color: lightyellow;
 }
 
@@ -99,6 +96,10 @@
 
 .r {
     background-color: var(--cambridge-blue);
+}
+
+.a {
+    background-color: darkorange;
 }
 
 .terms {
