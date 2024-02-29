@@ -7,6 +7,9 @@ module Text =
     let notSymbol = "☂️"
     let implies   = "👉🏾"
 
+    let successor = "S"
+    let addition = "+"
+
 // https://stackoverflow.com/questions/64929689/avoiding-the-error-where-a-module-and-a-type-definition-occur-in-two-parts-of-an
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module TacticType =

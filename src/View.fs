@@ -86,46 +86,46 @@ module View =
             ]
         ]
 
+    /// Renders the given items with the given separator between
+    /// them.
+    let private renderBetween content renderItem items =
+        [
+            for (i, item) in Seq.indexed items do
+                if i > 0 then
+                    yield Html.span [
+                        prop.innerHtml content ]
+                yield renderItem item
+        ]
+
     /// Renders the given Booleans.
     let private renderBoolean bool =
-
-        /// Renders the given propositions with the given separator
-        /// between them.
-        let between content f bools =
-            [
-                for (i, bool) in Seq.indexed bools do
-                    if i > 0 then
-                        yield Html.span [
-                            prop.innerHtml content ]
-                    yield f bool
-            ]
 
         let rec loop bool =
             Html.div [
                 match bool with
                     | True ->
-                        prop.classes [ "primitive-prop"; "true" ]
+                        prop.classes [ "primitive-value"; "true" ]
                     | False ->
-                        prop.classes [ "primitive-prop"; "false" ]
-                    | Variable name ->
+                        prop.classes [ "primitive-value"; "false" ]
+                    | Boolean.Variable name ->
                         prop.classes [
-                            "primitive-prop"
+                            "primitive-value"
                             name.ToLower()
                         ]
                     | Implication (p, q) ->
-                        prop.className "compound-prop"
-                        between Text.implies loop [p; q]
+                        prop.className "compound-value"
+                        renderBetween Text.implies loop [p; q]
                             |> prop.children
                     | And bools ->
-                        prop.className "compound-prop"
-                        between Text.andSymbol loop bools
+                        prop.className "compound-value"
+                        renderBetween Text.andSymbol loop bools
                             |> prop.children
                     | Or bools ->
-                        prop.className "compound-prop"
-                        between Text.orSymbol loop bools
+                        prop.className "compound-value"
+                        renderBetween Text.orSymbol loop bools
                             |> prop.children
                     | Not inner ->
-                        prop.className "compound-prop"
+                        prop.className "compound-value"
                         prop.children [
                             Html.span [
                                 prop.innerHtml Text.notSymbol ]
@@ -143,12 +143,26 @@ module View =
                 match nat with
                     | Zero ->
                         prop.classes [
-                            "primitive-prop"
+                            "primitive-value"
                             "p"
                         ]
+                    | NaturalNumber.Variable name ->
+                        prop.classes [
+                            "primitive-value"
+                            name.ToLower()
+                        ]
                     | Successor n ->
-                        prop.className "compound-prop"
+                        prop.className "compound-value"
+                        prop.children [
+                            Html.span [
+                                prop.innerHtml Text.successor ]
+                            loop n
+                        ]
                         prop.children [ loop n ]
+                    | Addition (a, b) ->
+                        prop.className "compound-value"
+                        renderBetween Text.addition loop [a; b]
+                            |> prop.children
             ]
 
         loop nat
@@ -228,9 +242,9 @@ module View =
 
         Html.div [
             match isHighlighted, isPrimitive with
-                | true, true -> "primitive-prop-highlight"
-                | true, false -> "compound-prop-highlight"
-                | false, _ -> "prop"
+                | true, true -> "primitive-value-highlight"
+                | true, false -> "compound-value-highlight"
+                | false, _ -> "value"
                 |> prop.className
             prop.children children
             yield! dragDrop

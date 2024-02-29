@@ -47,14 +47,14 @@
     align-items: center;
 }
 
-.primitive-prop {
+.primitive-value {
     width: 7vh;
     height: 7vh;
     border-radius: 8px;
     pointer-events: none;
 }
 
-.compound-prop {
+.compound-value {
     border: 2px solid black;
     font-size: xx-large;
     display: inline-flex;
@@ -64,21 +64,21 @@
     pointer-events: none;
 }
 
-.prop {
+.value {
     margin: 9px;
     user-select: none;
     border: 8px solid transparent;
     border-radius: 16px;
 }
 
-.primitive-prop-highlight {
+.primitive-value-highlight {
     margin: 9px;
     user-select: none;
     border: 8px solid var(--highlight);
     border-radius: 16px;
 }
 
-.compound-prop-highlight {
+.compound-value-highlight {
     margin: 9px;
     user-select: none;
     border: 8px solid var(--highlight);
