@@ -86,39 +86,43 @@ module View =
             ]
         ]
 
-    /// Renders the given proposition.
-    let private renderProp prp =
+    /// Renders the given Booleans.
+    let private renderBoolean bool =
 
         /// Renders the given propositions with the given separator
         /// between them.
-        let between content f props =
+        let between content f bools =
             [
-                for (i, prp) in Seq.indexed props do
+                for (i, bool) in Seq.indexed bools do
                     if i > 0 then
                         yield Html.span [
                             prop.innerHtml content ]
-                    yield f prp
+                    yield f bool
             ]
 
-        let rec loop prp =
+        let rec loop bool =
             Html.div [
-                match prp with
-                    | Primitive name ->
+                match bool with
+                    | True ->
+                        prop.classes [ "primitive-prop"; "true" ]
+                    | False ->
+                        prop.classes [ "primitive-prop"; "false" ]
+                    | Variable name ->
                         prop.classes [
                             "primitive-prop"
                             name.ToLower()
                         ]
-                    | Impliction (p, q) ->
+                    | Implication (p, q) ->
                         prop.className "compound-prop"
                         between Text.implies loop [p; q]
                             |> prop.children
-                    | Conjunction props ->
+                    | And bools ->
                         prop.className "compound-prop"
-                        between Text.andSymbol loop props
+                        between Text.andSymbol loop bools
                             |> prop.children
-                    | Disjunction props ->
+                    | Or bools ->
                         prop.className "compound-prop"
-                        between Text.orSymbol loop props
+                        between Text.orSymbol loop bools
                             |> prop.children
                     | Not inner ->
                         prop.className "compound-prop"
@@ -129,14 +133,14 @@ module View =
                         ]
             ]
 
-        loop prp
+        loop bool
 
     /// Renders the given natural number.
-    let private renderNum num =
+    let private renderNaturalNumber nat =
 
-        let rec loop num =
+        let rec loop nat =
             Html.div [
-                match num with
+                match nat with
                     | Zero ->
                         prop.classes [
                             "primitive-prop"
@@ -147,12 +151,12 @@ module View =
                         prop.children [ loop n ]
             ]
 
-        loop num
+        loop nat
 
     /// Renders the given type.
     let private renderType = function
-        | Proposition prop -> renderProp prop
-        | NaturalNumber num -> renderNum num
+        | Boolean bool -> renderBoolean bool
+        | NaturalNumber nat -> renderNaturalNumber nat
 
     /// Renders drag/drop properties.
     let private renderDragDrop
@@ -220,7 +224,7 @@ module View =
             model.IsHighlighted(goal, caseKey)
 
             // goal is primitive?
-        let isPrimitive = Type.isPrimitive goal
+        let isPrimitive = Value.isPrimitive goal
 
         Html.div [
             match isHighlighted, isPrimitive with
@@ -240,17 +244,17 @@ module View =
         assert(model.Proof.CaseMap[caseKey] = case)
 
             // enable goal-level tactics
-        let allowMulti (goal : Type) evt =
+        let allowMulti (goal : Value) evt =
             let tacticType = DragData.getTacticType evt
             match goal with
-                | Proposition prp ->
+                | Boolean bool ->
                     Allow.any [
                         Allow.allow Intro casePair
                         Allow.allow DissolveGoal casePair
                         Allow.allow SplitGoal casePair
                         Allow.allow AffirmGoal casePair
-                    ] prp tacticType
-                | NaturalNumber num ->
+                    ] bool tacticType
+                | NaturalNumber _ ->
                     None
 
         Html.div [
@@ -285,7 +289,7 @@ module View =
         dispatch =
 
             // child HTML elements
-        let children = renderType term.Type
+        let children = renderType term.Value
 
             // drag/drop properties
         let dragDrop =
@@ -302,7 +306,7 @@ module View =
             model.IsHighlighted(term, caseKey)
 
             // term is primitive?
-        let isPrimitive = Type.isPrimitive term.Type
+        let isPrimitive = Value.isPrimitive term.Value
 
         Html.div [
             match isHighlighted, isPrimitive with

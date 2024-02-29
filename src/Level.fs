@@ -41,7 +41,7 @@ module TacticType =
 type Level =
     {
         /// Proposition to be proved.
-        Goal : Type
+        Goal : Value
 
         /// Hypotheses.
         Terms : Set<Term>
@@ -68,22 +68,22 @@ module Level =
     let private affirmGoal   = TacticType.emoji TacticType.AffirmGoal
     let private affirmTerm   = TacticType.emoji TacticType.AffirmTerm
 
-    let private p = Primitive "P"
-    let private q = Primitive "Q"
-    let private r = Primitive "R"
+    let private p = Variable "P"
+    let private q = Variable "Q"
+    let private r = Variable "R"
 
-    let private pq = Impliction (p, q)
-    let private qr = Impliction (q, r)
-    let private pr = Impliction (p, r)
-    let private pqr = Impliction (p, Impliction (q, r))
+    let private pq = Implication (p, q)
+    let private qr = Implication (q, r)
+    let private pr = Implication (p, r)
+    let private pqr = Implication (p, Implication (q, r))
 
-    let private p_and_q = Conjunction [p; q]
-    let private p_or_q = Disjunction [p; q]
+    let private p_and_q = And [p; q]
+    let private p_or_q = Or [p; q]
 
-    /// Builds terms from propositions.
-    let private terms props =
-        props
-            |> Seq.map (Proposition >> Term.create)
+    /// Builds terms from Booleans.
+    let private terms bools =
+        bools
+            |> Seq.map (Boolean >> Term.create)
             |> set
 
     module private Exact =
@@ -94,7 +94,7 @@ module Level =
         /// Introduces the "exact" tactic.
         let level1 =
             {
-                Goal = Proposition p
+                Goal = Boolean p
                 Terms = terms [p; q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -105,17 +105,17 @@ module Level =
         /// More practice with "exact".
         let level2 =
             {
-                Goal = Proposition r
+                Goal = Boolean r
                 Terms = terms [p; q; r]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = ""
             }
 
-        /// Introduces function types.
+        /// Introduces implications.
         let level3 =
             {
-                Goal = Proposition pq
+                Goal = Boolean pq
                 Terms = terms [p; q; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -131,7 +131,7 @@ module Level =
         /// Introduces the "intro" tactic with Q ⊢ P → Q.
         let level1 =
             {
-                Goal = Proposition pq
+                Goal = Boolean pq
                 Terms = terms [q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -141,7 +141,7 @@ module Level =
         /// P → P.
         let level2 =
             {
-                Goal = Proposition (Impliction (p, p))
+                Goal = Boolean (Implication (p, p))
                 Terms = terms []
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -151,7 +151,7 @@ module Level =
         /// More practice with intro.
         let level3 =
             {
-                Goal = Proposition pqr
+                Goal = Boolean pqr
                 Terms = terms [r]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -168,7 +168,7 @@ module Level =
         /// Introduces the dissolve goal tactic.
         let level1 =
             {
-                Goal = Proposition (Disjunction [p; q])
+                Goal = Boolean (Or [p; q])
                 Terms = terms [p]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -178,7 +178,7 @@ module Level =
         /// Introduces the dissolve term tactic.
         let level2 =
             {
-                Goal = Proposition p
+                Goal = Boolean p
                 Terms = terms [ p_and_q ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -194,7 +194,7 @@ module Level =
         /// Modus ponens.
         let level1 =
             {
-                Goal = Proposition q
+                Goal = Boolean q
                 Terms = terms [p; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -204,11 +204,11 @@ module Level =
         /// Implication is transitive.
         let level2 =
             {
-                Goal = Proposition (Impliction (p, r))
+                Goal = Boolean (Implication (p, r))
                 Terms =
                     terms [
-                        Impliction (p, q)
-                        Impliction (q, r)
+                        Implication (p, q)
+                        Implication (q, r)
                     ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -218,7 +218,7 @@ module Level =
         /// Currying.
         let level3 =
             {
-                Goal = Proposition (Impliction (p_and_q, r))
+                Goal = Boolean (Implication (p_and_q, r))
                 Terms = terms [pqr]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -235,7 +235,7 @@ module Level =
         /// Commutivity of ∧.
         let level1 =
             {
-                Goal = Proposition (Conjunction [q; p])
+                Goal = Boolean (And [q; p])
                 Terms = terms [p_and_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -245,7 +245,7 @@ module Level =
         /// Commutivity of ∨.
         let level2 =
             {
-                Goal = Proposition (Disjunction [q; p])
+                Goal = Boolean (Or [q; p])
                 Terms = terms [p_or_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -255,7 +255,7 @@ module Level =
         /// More practice with multiple cases.
         let level3 =
             {
-                Goal = Proposition r
+                Goal = Boolean r
                 Terms =
                     terms [
                         p_or_q
@@ -270,8 +270,8 @@ module Level =
         /// Exportation.
         let level4 =
             {
-                Goal = Proposition pqr
-                Terms = terms [ Impliction (p_and_q, r) ]
+                Goal = Boolean pqr
+                Terms = terms [ Implication (p_and_q, r) ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = ""
@@ -281,13 +281,13 @@ module Level =
         let level5 =
             {
                 Goal =
-                    Proposition (Disjunction [
-                        Conjunction [p; r]
-                        Conjunction [q; r]
+                    Boolean (Or [
+                        And [p; r]
+                        And [q; r]
                     ])
                 Terms =
                     terms [
-                        Conjunction [Disjunction [p; q]; r]
+                        And [Or [p; q]; r]
                     ]
                 GoalTactics =
                     set [
@@ -315,7 +315,7 @@ module Level =
         /// Double negative (but not the law of excluded middle).
         let level1 =
             {
-                Goal = Proposition (Not (Not p))
+                Goal = Boolean (Not (Not p))
                 Terms = terms [p]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -325,7 +325,7 @@ module Level =
         /// Modus tollens.
         let level2 =
             {
-                Goal = Proposition (Impliction (Not q, Not p))
+                Goal = Boolean (Implication (Not q, Not p))
                 Terms = terms [ pq ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -335,10 +335,10 @@ module Level =
         /// de Morgan's laws.
         let level3 =
             {
-                Goal = Proposition (Not p_and_q)
+                Goal = Boolean (Not p_and_q)
                 Terms =
                     terms [
-                        Disjunction [
+                        Or [
                             Not p
                             Not q
                         ]
@@ -352,17 +352,31 @@ module Level =
         let level4 =
             {
                 Goal =
-                    Proposition (Conjunction [
+                    Boolean (And [
                         Not p
                         Not q
                     ])
                 Terms =
                     terms [
-                        Not (Disjunction [p; q])
+                        Not (Or [p; q])
                     ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = ""
+            }
+
+    module private Addition =
+
+        let goalTactics = set []
+        let termTactics = set []
+
+        let level1 =
+            {
+                Goal = NaturalNumber (Successor (Successor Zero))
+                Terms = terms [p]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
+                Instructions = $""
             }
 
     let levels =
@@ -392,6 +406,8 @@ module Level =
             Negation.level2
             Negation.level3
             Negation.level4
+
+            Addition.level1
         |]
 
     /// Starts a proof for the given level.

@@ -1,43 +1,44 @@
 ﻿namespace Tactix
 
-/// A term is an instance of a type and proves the corresponding
-/// proposition. E.g. HP : P.
+/// A term is evidence of a value and proves the corresponding
+/// proposition. Can also be interpreted as an instance of a
+/// type. E.g. HP : P.
 type Term =
     {
-        /// Type of this term.
-        Type : Type
+        /// Value for which this term is evidence.
+        Value : Value
     }
 
     /// Display string.
     override term.ToString() =
-        $"H{term.Type}"
+        $"H{term.Value}"
 
 module Term =
 
-    /// Creates a term of the given type.
-    let create typ =
-        { Type = typ }
+    /// Creates a term.
+    let create value =
+        { Value = value }
 
     /// Matches a function term.
     let (|Function|_|) term =
-        match term.Type with
-            | Proposition (Impliction (p, q)) -> Some (p, q)
+        match term.Value with
+            | Boolean (Implication (p, q)) -> Some (p, q)
             | _ -> None
 
     /// Matches a product term.
     let (|Product|_|) term =
-        match term.Type with
-            | Proposition (Conjunction types) -> Some types
+        match term.Value with
+            | Boolean (And bools) -> Some bools
             | _ -> None
 
     /// Matches a sum term.
     let (|Sum|_|) term =
-        match term.Type with
-            | Proposition (Disjunction types) -> Some types
+        match term.Value with
+            | Boolean (Or bools) -> Some bools
             | _ -> None
 
     /// Matches a not term.
     let (|Not|_|) term =
-        match term.Type with
-            | Proposition (Not typ) -> Some typ
+        match term.Value with
+            | Boolean (Not bool) -> Some bool
             | _ -> None

@@ -7,7 +7,7 @@ open Elmish
 type Highlight =
     | None
     | Term of Term * ProofCaseKey
-    | Goal of Type * ProofCaseKey
+    | Goal of Value * ProofCaseKey
 
 /// Current state of the game.
 type Model =
@@ -33,7 +33,7 @@ type Model =
 /// Message to change the current state of the game.
 type Message =
 
-    /// Highlights the given term, type, or nothing.
+    /// Highlights the given term, goal, or nothing.
     | Highlight of Highlight
 
     /// Adds the given tactic to the proof case.

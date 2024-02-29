@@ -23,9 +23,9 @@ type Tactic =
     /// Term (HP : P) completes goal P.
     | Exact of Term
 
-    /// Introduces a term (HP : P) for goal P -> Q, changing the
-    /// goal to just Q.
-    | Intro of goal : Proposition
+    /// Introduces a Boolean term (HP : P) for goal P -> Q, changing
+    /// the goal to just Q.
+    | Intro of goal : Boolean
 
     /// Applies term (P1 -> P2 -> ... -> PN -> Q), where the
     /// goal is Q, replacing the goal with (P1 ∧ P2 ... ∧ PN).
@@ -34,20 +34,20 @@ type Tactic =
     | Apply of Term
 
     /// Dissolves goal (P ∨ Q) into separate goals P and Q.
-    | DissolveGoal of goal : Proposition
+    | DissolveGoal of goal : Boolean
 
     /// Dissolves term (HPQ : P ∧ Q) into (HP : P) and (HQ : Q).
     | DissolveTerm of Term
 
     /// Splits goal (P ∧ Q) into separate cases for P and Q.
-    | SplitGoal of goal : Proposition
+    | SplitGoal of goal : Boolean
 
     /// Splits term (HPQ : P ∨ Q) into separate cases for
     /// (HP : P) and (HQ : Q).
     | SplitTerm of Term
 
     /// Converts goal ¬P to term (HP : P).
-    | AffirmGoal of goal : Proposition
+    | AffirmGoal of goal : Boolean
 
     /// Converts term (HNP : ¬P) to goal P.
     | AffirmTerm of Term
