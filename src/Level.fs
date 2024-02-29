@@ -21,6 +21,8 @@ module TacticType =
         | TacticType.SplitTerm    -> "💥"
         | TacticType.AffirmGoal   -> "🌈"
         | TacticType.AffirmTerm   -> "🌈"
+        | TacticType.AddZero      -> "+0"
+        | TacticType.AddSucc      -> "+S"
 
     let instructions = function
         | TacticType.Intro        -> $"Drag onto a {Text.implies} goal to simplify it"
@@ -32,6 +34,8 @@ module TacticType =
         | TacticType.SplitTerm    -> $"Drag onto a {Text.orSymbol} symbol to create separate cases"
         | TacticType.AffirmGoal   -> $"Drag onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
         | TacticType.AffirmTerm   -> $"Drag onto a {Text.notSymbol} symbol to remove {Text.notSymbol}"
+        | TacticType.AddZero      -> "Add zero"
+        | TacticType.AddSucc      -> "Add succ"
 
 /// A puzzle to be solved.
 type Level =

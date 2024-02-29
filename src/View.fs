@@ -131,9 +131,28 @@ module View =
 
         loop prp
 
+    /// Renders the given natural number.
+    let private renderNum num =
+
+        let rec loop num =
+            Html.div [
+                match num with
+                    | Zero ->
+                        prop.classes [
+                            "primitive-prop"
+                            "p"
+                        ]
+                    | Successor n ->
+                        prop.className "compound-prop"
+                        prop.children [ loop n ]
+            ]
+
+        loop num
+
     /// Renders the given type.
     let private renderType = function
         | Proposition prop -> renderProp prop
+        | NaturalNumber num -> renderNum num
 
     /// Renders drag/drop properties.
     let private renderDragDrop
@@ -200,21 +219,18 @@ module View =
         let isHighlighted =
             model.IsHighlighted(goal, caseKey)
 
-        match goal with
-            | Proposition prp ->
+            // goal is primitive?
+        let isPrimitive = Type.isPrimitive goal
 
-                    // goal is primitive?
-                let isPrimitive = Proposition.isPrimitive prp
-
-                Html.div [
-                    match isHighlighted, isPrimitive with
-                        | true, true -> "primitive-prop-highlight"
-                        | true, false -> "compound-prop-highlight"
-                        | false, _ -> "prop"
-                        |> prop.className
-                    prop.children children
-                    yield! dragDrop
-                ]
+        Html.div [
+            match isHighlighted, isPrimitive with
+                | true, true -> "primitive-prop-highlight"
+                | true, false -> "compound-prop-highlight"
+                | false, _ -> "prop"
+                |> prop.className
+            prop.children children
+            yield! dragDrop
+        ]
 
     /// Renders goals for the given proof case.
     let private renderGoals
@@ -234,6 +250,8 @@ module View =
                         Allow.allow SplitGoal casePair
                         Allow.allow AffirmGoal casePair
                     ] prp tacticType
+                | NaturalNumber num ->
+                    None
 
         Html.div [
             prop.className "goals"
@@ -283,21 +301,18 @@ module View =
         let isHighlighted =
             model.IsHighlighted(term, caseKey)
 
-        match term.Type with
-            | Proposition prp ->
+            // term is primitive?
+        let isPrimitive = Type.isPrimitive term.Type
 
-                    // term is primitive?
-                let isPrimitive = Proposition.isPrimitive prp
-
-                Html.div [
-                    match isHighlighted, isPrimitive with
-                        | true, true -> "primitive-term-highlight"
-                        | true, false -> "compound-term-highlight"
-                        | false, _ -> "term"
-                        |> prop.className
-                    prop.children children
-                    yield! dragDrop
-                ]
+        Html.div [
+            match isHighlighted, isPrimitive with
+                | true, true -> "primitive-term-highlight"
+                | true, false -> "compound-term-highlight"
+                | false, _ -> "term"
+                |> prop.className
+            prop.children children
+            yield! dragDrop
+        ]
 
     /// Renders terms for the given proof case.
     let private renderTerms
