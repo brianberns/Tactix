@@ -1,41 +1,55 @@
 ﻿namespace Tactix
 
+type NaturalNumber =
+    | Zero
+    | Successor of NaturalNumber
+
+    /// Display string.
+    override nat.ToString() =
+        match nat with
+            | Zero -> "0"
+            | Successor n -> $"S({n})"
+
 /// A type corresponds to a proposition that might be provable.
-type Type =
+type Proposition =
 
     /// Atomic proposition, such as P.
     | Primitive of name : string
 
     /// Implication, such as P → Q.
-    | Function of Type * Type
+    | Impliction of Proposition * Proposition
 
     /// Conjunction (and), such as P ∧ Q.
-    | Product of List<Type>
+    | Conjunction of List<Proposition>
 
     /// Disjuction (or), such as P ∨ Q.
-    | Sum of List<Type>
+    | Disjunction of List<Proposition>
 
     /// Negation, such as ¬P.
-    | Not of Type
+    | Not of Proposition
 
     /// Display string.
-    override typ.ToString() =
+    override prop.ToString() =
 
         let toString sep types =
             types
                 |> Seq.map string
                 |> String.concat (string sep)
 
-        match typ with
+        match prop with
             | Primitive name -> name
-            | Function (P, Q) -> $"({P}→{Q})"
-            | Product types -> $"({toString '∧' types})"
-            | Sum types -> $"({toString '∨' types})"
+            | Impliction (P, Q) -> $"({P}→{Q})"
+            | Conjunction types -> $"({toString '∧' types})"
+            | Disjunction types -> $"({toString '∨' types})"
             | Not P -> $"¬{P}"
 
-module Type =
+module Proposition =
 
-    /// Is the given type primitiv?
+    /// Is the given proposition primitiv?
     let isPrimitive = function
         | Primitive _ -> true
         | _ -> false
+
+type Type =
+    | NaturalNumber of NaturalNumber
+    | Proposition of Proposition

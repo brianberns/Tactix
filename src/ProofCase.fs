@@ -19,10 +19,10 @@ module ProofCase =
     let private apply p q (goals : Set<Type>) =
 
         let rec loop p q =
-            if goals.Contains(q) then Some ([p], q)
+            if goals.Contains(Proposition q) then Some ([p], q)
             else
                 match q with
-                    | Function (qIn, qOut) ->
+                    | Impliction (qIn, qOut) ->
                         option {
                             let! newGoals, oldGoal = loop qIn qOut
                             return p :: newGoals, oldGoal
@@ -49,17 +49,17 @@ module ProofCase =
                     }
                 ]
 
-            | Intro (Function (p, q) as goal)
-                when case.Goals.Contains(goal) ->
+            | Intro (Impliction (p, q) as goal)
+                when case.Goals.Contains(Proposition goal) ->
                 [
                     {
                         case with
                             Goals =
                                 case.Goals
-                                    .Remove(goal)
-                                    .Add(q)
+                                    .Remove(Proposition goal)
+                                    .Add(Proposition q)
                             Terms =
-                                { Type = p }
+                                { Type = Proposition p }
                                     |> case.Terms.Add
                     }
                 ]
@@ -71,74 +71,77 @@ module ProofCase =
                     | Some ([newGoal], oldGoal) ->
                         Some (newGoal, oldGoal)
                     | Some (newGoals, oldGoal) ->
-                        Some (Product newGoals, oldGoal)
+                        Some (Conjunction newGoals, oldGoal)
                     |> Option.map (fun (newGoal, oldGoal) ->
                         { case with
                             Goals =
                                 case.Goals
-                                    .Remove(oldGoal)
-                                    .Add(newGoal) })
+                                    .Remove(Proposition oldGoal)
+                                    .Add(Proposition newGoal) })
                     |> Option.toList
 
-            | DissolveGoal (Sum types as oldGoal)
-                when case.Goals.Contains(oldGoal) ->
-                let newGoals = set types
+            | DissolveGoal (Disjunction props as oldGoal)
+                when case.Goals.Contains(Proposition oldGoal) ->
+                let newGoals =
+                    props
+                        |> Seq.map Proposition
+                        |> set
                 [
                     {
                         case with
                             Goals =
                                 case.Goals
-                                    |> Set.remove oldGoal
+                                    |> Set.remove (Proposition oldGoal)
                                     |> Set.union newGoals
                     }
                 ]
 
-            | DissolveTerm (Term.Product types as oldTerm)
+            | DissolveTerm (Term.Product props as oldTerm)
                 when case.Terms.Contains(oldTerm) ->
                 let terms =
                     let newTerms =
-                        types
-                            |> Seq.map Term.create
+                        props
+                            |> Seq.map (Proposition >> Term.create)
                             |> set
                     case.Terms
                         |> Set.remove oldTerm
                         |> Set.union newTerms
                 [ { case with Terms = terms } ]
 
-            | SplitTerm (Term.Sum types as oldTerm)
+            | SplitTerm (Term.Sum props as oldTerm)
                 when case.Terms.Contains(oldTerm) ->
                 let terms = Set.remove oldTerm case.Terms
-                types
-                    |> List.map (fun typ ->
+                props
+                    |> List.map (fun prop ->
+                        let term = Term.create (Proposition prop)
                         { case with
-                            Terms =
-                                Set.add (Term.create typ) terms })
+                            Terms = Set.add term terms })
 
-            | SplitGoal ((Product types) as oldGoal)
-                when case.Goals.Contains(oldGoal) ->
-                let goals = case.Goals.Remove(oldGoal)
-                types
-                    |> List.map (fun typ ->
+            | SplitGoal ((Conjunction props) as oldGoal)
+                when case.Goals.Contains(Proposition oldGoal) ->
+                let goals = case.Goals.Remove(Proposition oldGoal)
+                props
+                    |> List.map (fun prop ->
                         { case with
-                            Goals = goals.Add(typ) })
+                            Goals = goals.Add(Proposition prop) })
 
-            | AffirmGoal ((Not typ) as oldGoal)
-                when case.Goals.Contains(oldGoal) ->
-                let newTerm = { Type = typ }
+            | AffirmGoal ((Not prop) as oldGoal)
+                when case.Goals.Contains(Proposition oldGoal) ->
+                let newTerm = { Type = Proposition prop }
                 [
                     {
                         case with
-                            Goals = case.Goals.Remove(oldGoal)
+                            Goals = case.Goals.Remove(Proposition oldGoal)
                             Terms = case.Terms.Add(newTerm)
                     }
                 ]
 
-            | AffirmTerm ((Term.Not typ) as oldTerm)
+            | AffirmTerm ((Term.Not prop) as oldTerm)
                 when case.Terms.Contains(oldTerm) ->
                 [
                     {
                         case with
-                            Goals = case.Goals.Add(typ)
+                            Goals = case.Goals.Add(Proposition prop)
                             Terms = case.Terms.Remove(oldTerm)
                     }
                 ]

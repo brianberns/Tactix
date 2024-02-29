@@ -21,23 +21,23 @@ module Term =
     /// Matches a function term.
     let (|Function|_|) term =
         match term.Type with
-            | Function (p, q) -> Some (p, q)
+            | Proposition (Impliction (p, q)) -> Some (p, q)
             | _ -> None
 
     /// Matches a product term.
     let (|Product|_|) term =
         match term.Type with
-            | Product types -> Some types
+            | Proposition (Conjunction types) -> Some types
             | _ -> None
 
     /// Matches a sum term.
     let (|Sum|_|) term =
         match term.Type with
-            | Sum types -> Some types
+            | Proposition (Disjunction types) -> Some types
             | _ -> None
 
     /// Matches a not term.
     let (|Not|_|) term =
         match term.Type with
-            | Not typ -> Some typ
+            | Proposition (Not typ) -> Some typ
             | _ -> None

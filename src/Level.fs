@@ -68,18 +68,18 @@ module Level =
     let private q = Primitive "Q"
     let private r = Primitive "R"
 
-    let private pq = Function (p, q)
-    let private qr = Function (q, r)
-    let private pr = Function (p, r)
-    let private pqr = Function (p, Function (q, r))
+    let private pq = Impliction (p, q)
+    let private qr = Impliction (q, r)
+    let private pr = Impliction (p, r)
+    let private pqr = Impliction (p, Impliction (q, r))
 
-    let private p_and_q = Product [p; q]
-    let private p_or_q = Sum [p; q]
+    let private p_and_q = Conjunction [p; q]
+    let private p_or_q = Disjunction [p; q]
 
-    /// Builds terms from types.
-    let private terms types =
-        types
-            |> Seq.map Term.create
+    /// Builds terms from propositions.
+    let private terms props =
+        props
+            |> Seq.map (Proposition >> Term.create)
             |> set
 
     module private Exact =
@@ -90,7 +90,7 @@ module Level =
         /// Introduces the "exact" tactic.
         let level1 =
             {
-                Goal = p
+                Goal = Proposition p
                 Terms = terms [p; q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -101,7 +101,7 @@ module Level =
         /// More practice with "exact".
         let level2 =
             {
-                Goal = r
+                Goal = Proposition r
                 Terms = terms [p; q; r]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -111,7 +111,7 @@ module Level =
         /// Introduces function types.
         let level3 =
             {
-                Goal = pq
+                Goal = Proposition pq
                 Terms = terms [p; q; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -127,7 +127,7 @@ module Level =
         /// Introduces the "intro" tactic with Q ⊢ P → Q.
         let level1 =
             {
-                Goal = pq
+                Goal = Proposition pq
                 Terms = terms [q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -137,7 +137,7 @@ module Level =
         /// P → P.
         let level2 =
             {
-                Goal = Function (p, p)
+                Goal = Proposition (Impliction (p, p))
                 Terms = terms []
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -147,7 +147,7 @@ module Level =
         /// More practice with intro.
         let level3 =
             {
-                Goal = pqr
+                Goal = Proposition pqr
                 Terms = terms [r]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -164,7 +164,7 @@ module Level =
         /// Introduces the dissolve goal tactic.
         let level1 =
             {
-                Goal = Sum [p; q]
+                Goal = Proposition (Disjunction [p; q])
                 Terms = terms [p]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -174,7 +174,7 @@ module Level =
         /// Introduces the dissolve term tactic.
         let level2 =
             {
-                Goal = p
+                Goal = Proposition p
                 Terms = terms [ p_and_q ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -190,7 +190,7 @@ module Level =
         /// Modus ponens.
         let level1 =
             {
-                Goal = q
+                Goal = Proposition q
                 Terms = terms [p; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -200,11 +200,11 @@ module Level =
         /// Implication is transitive.
         let level2 =
             {
-                Goal = Function (p, r)
+                Goal = Proposition (Impliction (p, r))
                 Terms =
                     terms [
-                        Function (p, q)
-                        Function (q, r)
+                        Impliction (p, q)
+                        Impliction (q, r)
                     ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -214,7 +214,7 @@ module Level =
         /// Currying.
         let level3 =
             {
-                Goal = Function (p_and_q, r)
+                Goal = Proposition (Impliction (p_and_q, r))
                 Terms = terms [pqr]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -231,7 +231,7 @@ module Level =
         /// Commutivity of ∧.
         let level1 =
             {
-                Goal = Product [q; p]
+                Goal = Proposition (Conjunction [q; p])
                 Terms = terms [p_and_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -241,7 +241,7 @@ module Level =
         /// Commutivity of ∨.
         let level2 =
             {
-                Goal = Sum [q; p]
+                Goal = Proposition (Disjunction [q; p])
                 Terms = terms [p_or_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -251,7 +251,7 @@ module Level =
         /// More practice with multiple cases.
         let level3 =
             {
-                Goal = r
+                Goal = Proposition r
                 Terms =
                     terms [
                         p_or_q
@@ -266,8 +266,8 @@ module Level =
         /// Exportation.
         let level4 =
             {
-                Goal = pqr
-                Terms = terms [ Function (p_and_q, r) ]
+                Goal = Proposition pqr
+                Terms = terms [ Impliction (p_and_q, r) ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = ""
@@ -277,13 +277,13 @@ module Level =
         let level5 =
             {
                 Goal =
-                    Sum [
-                        Product [p; r]
-                        Product [q; r]
-                    ]
+                    Proposition (Disjunction [
+                        Conjunction [p; r]
+                        Conjunction [q; r]
+                    ])
                 Terms =
                     terms [
-                        Product [Sum [p; q]; r]
+                        Conjunction [Disjunction [p; q]; r]
                     ]
                 GoalTactics =
                     set [
@@ -311,7 +311,7 @@ module Level =
         /// Double negative (but not the law of excluded middle).
         let level1 =
             {
-                Goal = Not (Not p)
+                Goal = Proposition (Not (Not p))
                 Terms = terms [p]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -321,7 +321,7 @@ module Level =
         /// Modus tollens.
         let level2 =
             {
-                Goal = Function (Not q, Not p)
+                Goal = Proposition (Impliction (Not q, Not p))
                 Terms = terms [ pq ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
@@ -331,10 +331,10 @@ module Level =
         /// de Morgan's laws.
         let level3 =
             {
-                Goal = Not p_and_q
+                Goal = Proposition (Not p_and_q)
                 Terms =
                     terms [
-                        Sum [
+                        Disjunction [
                             Not p
                             Not q
                         ]
@@ -348,13 +348,13 @@ module Level =
         let level4 =
             {
                 Goal =
-                    Product [
+                    Proposition (Conjunction [
                         Not p
                         Not q
-                    ]
+                    ])
                 Terms =
                     terms [
-                        Not (Sum [p; q])
+                        Not (Disjunction [p; q])
                     ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics

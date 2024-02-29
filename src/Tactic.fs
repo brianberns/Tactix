@@ -12,6 +12,8 @@ type TacticType =
     | SplitTerm
     | AffirmGoal
     | AffirmTerm
+    | AddZero
+    | AddSucc
 
 /// A tactic used in a proof. Some of these are from the Lean
 /// language.
@@ -23,7 +25,7 @@ type Tactic =
 
     /// Introduces a term (HP : P) for goal P -> Q, changing the
     /// goal to just Q.
-    | Intro of goal : Type
+    | Intro of goal : Proposition
 
     /// Applies term (P1 -> P2 -> ... -> PN -> Q), where the
     /// goal is Q, replacing the goal with (P1 ∧ P2 ... ∧ PN).
@@ -32,23 +34,26 @@ type Tactic =
     | Apply of Term
 
     /// Dissolves goal (P ∨ Q) into separate goals P and Q.
-    | DissolveGoal of goal : Type
+    | DissolveGoal of goal : Proposition
 
     /// Dissolves term (HPQ : P ∧ Q) into (HP : P) and (HQ : Q).
     | DissolveTerm of Term
 
     /// Splits goal (P ∧ Q) into separate cases for P and Q.
-    | SplitGoal of goal : Type
+    | SplitGoal of goal : Proposition
 
     /// Splits term (HPQ : P ∨ Q) into separate cases for
     /// (HP : P) and (HQ : Q).
     | SplitTerm of Term
 
     /// Converts goal ¬P to term (HP : P).
-    | AffirmGoal of goal : Type
+    | AffirmGoal of goal : Proposition
 
     /// Converts term (HNP : ¬P) to goal P.
     | AffirmTerm of Term
+
+    | AddZero of Term
+    | AddSucc of Term
 
     /// Type of this tactic.
     member tactic.Type =
@@ -62,3 +67,5 @@ type Tactic =
             | SplitGoal _    -> TacticType.SplitGoal
             | AffirmGoal _   -> TacticType.AffirmGoal
             | AffirmTerm _   -> TacticType.AffirmTerm
+            | AddZero _      -> TacticType.AddZero
+            | AddSucc _      -> TacticType.AddSucc

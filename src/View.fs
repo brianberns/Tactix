@@ -86,42 +86,42 @@ module View =
             ]
         ]
 
-    /// Renders the given type.
-    let private renderType typ =
+    /// Renders the given proposition.
+    let private renderProp prp =
 
-        /// Renders the given types with the given separator
+        /// Renders the given propositions with the given separator
         /// between them.
-        let between content f types =
+        let between content f props =
             [
-                for (i, typ) in Seq.indexed types do
+                for (i, prp) in Seq.indexed props do
                     if i > 0 then
                         yield Html.span [
                             prop.innerHtml content ]
-                    yield f typ
+                    yield f prp
             ]
 
-        let rec loop typ =
+        let rec loop prp =
             Html.div [
-                match typ with
+                match prp with
                     | Primitive name ->
                         prop.classes [
-                            "primitive-type"
+                            "primitive-prop"
                             name.ToLower()
                         ]
-                    | Function (p, q) ->
-                        prop.className "compound-type"
+                    | Impliction (p, q) ->
+                        prop.className "compound-prop"
                         between Text.implies loop [p; q]
                             |> prop.children
-                    | Product types ->
-                        prop.className "compound-type"
-                        between Text.andSymbol loop types
+                    | Conjunction props ->
+                        prop.className "compound-prop"
+                        between Text.andSymbol loop props
                             |> prop.children
-                    | Sum types ->
-                        prop.className "compound-type"
-                        between Text.orSymbol loop types
+                    | Disjunction props ->
+                        prop.className "compound-prop"
+                        between Text.orSymbol loop props
                             |> prop.children
                     | Not inner ->
-                        prop.className "compound-type"
+                        prop.className "compound-prop"
                         prop.children [
                             Html.span [
                                 prop.innerHtml Text.notSymbol ]
@@ -129,7 +129,11 @@ module View =
                         ]
             ]
 
-        loop typ
+        loop prp
+
+    /// Renders the given type.
+    let private renderType = function
+        | Proposition prop -> renderProp prop
 
     /// Renders drag/drop properties.
     let private renderDragDrop
@@ -196,18 +200,21 @@ module View =
         let isHighlighted =
             model.IsHighlighted(goal, caseKey)
 
-            // goal is primitive?
-        let isPrimitive = Type.isPrimitive goal
+        match goal with
+            | Proposition prp ->
 
-        Html.div [
-            match isHighlighted, isPrimitive with
-                | true, true -> "primitive-type-highlight"
-                | true, false -> "compound-type-highlight"
-                | false, _ -> "type"
-                |> prop.className
-            prop.children children
-            yield! dragDrop
-        ]
+                    // goal is primitive?
+                let isPrimitive = Proposition.isPrimitive prp
+
+                Html.div [
+                    match isHighlighted, isPrimitive with
+                        | true, true -> "primitive-prop-highlight"
+                        | true, false -> "compound-prop-highlight"
+                        | false, _ -> "prop"
+                        |> prop.className
+                    prop.children children
+                    yield! dragDrop
+                ]
 
     /// Renders goals for the given proof case.
     let private renderGoals
@@ -217,14 +224,16 @@ module View =
         assert(model.Proof.CaseMap[caseKey] = case)
 
             // enable goal-level tactics
-        let allowMulti goal evt =
+        let allowMulti (goal : Type) evt =
             let tacticType = DragData.getTacticType evt
-            Allow.any [
-                Allow.allow Intro casePair
-                Allow.allow DissolveGoal casePair
-                Allow.allow SplitGoal casePair
-                Allow.allow AffirmGoal casePair
-            ] goal tacticType
+            match goal with
+                | Proposition prp ->
+                    Allow.any [
+                        Allow.allow Intro casePair
+                        Allow.allow DissolveGoal casePair
+                        Allow.allow SplitGoal casePair
+                        Allow.allow AffirmGoal casePair
+                    ] prp tacticType
 
         Html.div [
             prop.className "goals"
@@ -274,18 +283,21 @@ module View =
         let isHighlighted =
             model.IsHighlighted(term, caseKey)
 
-            // term is primitive?
-        let isPrimitive = Type.isPrimitive term.Type
+        match term.Type with
+            | Proposition prp ->
 
-        Html.div [
-            match isHighlighted, isPrimitive with
-                | true, true -> "primitive-term-highlight"
-                | true, false -> "compound-term-highlight"
-                | false, _ -> "term"
-                |> prop.className
-            prop.children children
-            yield! dragDrop
-        ]
+                    // term is primitive?
+                let isPrimitive = Proposition.isPrimitive prp
+
+                Html.div [
+                    match isHighlighted, isPrimitive with
+                        | true, true -> "primitive-term-highlight"
+                        | true, false -> "compound-term-highlight"
+                        | false, _ -> "term"
+                        |> prop.className
+                    prop.children children
+                    yield! dragDrop
+                ]
 
     /// Renders terms for the given proof case.
     let private renderTerms
