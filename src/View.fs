@@ -229,6 +229,7 @@ module View =
                 Allow.allow DissolveGoal casePair
                 Allow.allow SplitGoal casePair
                 Allow.allow AffirmGoal casePair
+                Allow.allow Reflexivity casePair
             ] goal tacticType
 
         Html.div [

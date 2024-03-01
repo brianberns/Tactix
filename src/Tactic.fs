@@ -12,6 +12,7 @@ type TacticType =
     | SplitTerm
     | AffirmGoal
     | AffirmTerm
+    | Reflexivity
     | Rewrite
 
 /// A tactic used in a proof. Some of these are from the Lean
@@ -51,6 +52,7 @@ type Tactic =
     /// Converts term (HNP : ¬P) to goal P.
     | AffirmTerm of Term
 
+    | Reflexivity of goal : Type
     | Rewrite of Term
 
     /// Type of this tactic.
@@ -65,4 +67,5 @@ type Tactic =
             | SplitGoal _    -> TacticType.SplitGoal
             | AffirmGoal _   -> TacticType.AffirmGoal
             | AffirmTerm _   -> TacticType.AffirmTerm
+            | Reflexivity _  -> TacticType.Reflexivity
             | Rewrite _      -> TacticType.Rewrite

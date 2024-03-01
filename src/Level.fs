@@ -21,6 +21,7 @@ module TacticType =
         | TacticType.SplitTerm    -> "💥"
         | TacticType.AffirmGoal   -> "🌈"
         | TacticType.AffirmTerm   -> "🌈"
+        | TacticType.Reflexivity  -> "refl"
         | TacticType.Rewrite      -> "rw"
 
     let instructions = function
@@ -33,6 +34,7 @@ module TacticType =
         | TacticType.SplitTerm    -> $"Drag onto a {Text.orSymbol} symbol to create separate cases"
         | TacticType.AffirmGoal   -> $"Drag onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
         | TacticType.AffirmTerm   -> $"Drag onto a {Text.notSymbol} symbol to remove {Text.notSymbol}"
+        | TacticType.Reflexivity  -> $"Reflexivity"
         | TacticType.Rewrite      -> $"Rewrite"
 
 /// A puzzle to be solved.
@@ -365,7 +367,7 @@ module Level =
 
     module private Addition =
 
-        let goalTactics = set []
+        let goalTactics = set [ TacticType.Reflexivity ]
         let termTactics = set [ TacticType.Rewrite ]
 
         let private a = NaturalNumber.Variable "a"

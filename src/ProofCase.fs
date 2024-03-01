@@ -156,6 +156,18 @@ module ProofCase =
                     }
                 ]
 
+            | Reflexivity ((Equal (lhs, rhs)) as goal)
+                when case.Goals.Contains(goal)
+                    && lhs = rhs ->
+                let newGoals = case.Goals.Remove(goal)
+                [
+                    {
+                        case with
+                            Goals = newGoals
+                            IsComplete = newGoals.IsEmpty
+                    }
+                ]
+
             | Rewrite (Term.Equal (lhs, rhs) as term)
                 when case.Terms.Contains(term) ->
                 [
