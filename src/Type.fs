@@ -4,13 +4,15 @@ type NaturalNumber =
     | Variable of name : string
     | Zero
     | Successor of NaturalNumber
+    | Addition of NaturalNumber * NaturalNumber
 
     /// Display string.
     override nat.ToString() =
         match nat with
             | Variable name -> name
             | Zero -> "0"
-            | Successor n -> $"S({n})"
+            | Successor a -> $"S({a})"
+            | Addition (a, b) -> $"{a}+{b}"
 
 /// A type corresponds to a proposition that might be provable.
 type Type =

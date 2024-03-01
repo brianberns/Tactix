@@ -170,14 +170,11 @@ module ProofCase =
 
             | Rewrite (Term.Equal (lhs, rhs) as term)
                 when case.Terms.Contains(term) ->
-                [
-                    {
-                        case with
-                            Goals =
-                                case.Goals
-                                    |> Set.map (rewrite lhs rhs)
-                    }
-                ]
+                let newGoals = 
+                    case.Goals
+                        |> Set.map (rewrite lhs rhs)
+                if newGoals = case.Goals then []
+                else [ { case with Goals = newGoals } ]
 
             | _ -> []
 

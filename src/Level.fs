@@ -372,14 +372,33 @@ module Level =
 
         let private a = NaturalNumber.Variable "a"
         let private b = NaturalNumber.Variable "b"
+        let private x = NaturalNumber.Variable "x"
+        let private y = NaturalNumber.Variable "y"
 
-        let private (.=.) a b =
-            Equal (a, b)
+        let private (.=.) a b = Equal (a, b)
+        let private S = Successor
+        let private (.+.) a b = Addition (a, b)
+
+        let private add_zero = x .+. Zero .=. x
+        let private add_succ = x .+. S(y) .=. S(x .+. y)
 
         let level1 =
             {
-                Goal = Successor (Successor a) .=. Successor b
-                Terms = terms [ Successor a .=. b ]
+                Goal = S(S(a)) .=. S(b)
+                Terms = terms [ S(a) .=. b ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
+                Instructions = $""
+            }
+
+        let level2 =
+            {
+                Goal = a .+. S(Zero) .=. S(a)
+                Terms =
+                    terms [
+                        add_zero
+                        add_succ
+                    ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions = $""
@@ -414,6 +433,7 @@ module Level =
             Negation.level4
 
             Addition.level1
+            Addition.level2
         |]
 
     /// Starts a proof for the given level.

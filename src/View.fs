@@ -127,10 +127,10 @@ module View =
                                 prop.innerHtml Text.notSymbol ]
                             loop inner
                         ]
-                    | Equal (a, b) ->
+                    | Equal _ ->
                         prop.className "compound-type"
                         prop.children [
-                            Html.div $"{string a} = {string b}"
+                            Html.div (string typ)
                         ]
             ]
 
