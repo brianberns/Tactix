@@ -21,6 +21,7 @@ module TacticType =
         | TacticType.SplitTerm    -> "💥"
         | TacticType.AffirmGoal   -> "🌈"
         | TacticType.AffirmTerm   -> "🌈"
+        | TacticType.Rewrite      -> "rw"
 
     let instructions = function
         | TacticType.Intro        -> $"Drag onto a {Text.implies} goal to simplify it"
@@ -32,6 +33,7 @@ module TacticType =
         | TacticType.SplitTerm    -> $"Drag onto a {Text.orSymbol} symbol to create separate cases"
         | TacticType.AffirmGoal   -> $"Drag onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
         | TacticType.AffirmTerm   -> $"Drag onto a {Text.notSymbol} symbol to remove {Text.notSymbol}"
+        | TacticType.Rewrite      -> $"Rewrite"
 
 /// A puzzle to be solved.
 type Level =
@@ -64,9 +66,9 @@ module Level =
     let private affirmGoal   = TacticType.emoji TacticType.AffirmGoal
     let private affirmTerm   = TacticType.emoji TacticType.AffirmTerm
 
-    let private p = Primitive "P"
-    let private q = Primitive "Q"
-    let private r = Primitive "R"
+    let private p = Variable "P"
+    let private q = Variable "Q"
+    let private r = Variable "R"
 
     let private pq = Function (p, q)
     let private qr = Function (q, r)
@@ -361,6 +363,26 @@ module Level =
                 Instructions = ""
             }
 
+    module private Addition =
+
+        let goalTactics = set []
+        let termTactics = set [ TacticType.Rewrite ]
+
+        let private a = NaturalNumber.Variable "a"
+        let private b = NaturalNumber.Variable "b"
+
+        let private (.=.) a b =
+            Equal (a, b)
+
+        let level1 =
+            {
+                Goal = Successor (Successor a) .=. Successor b
+                Terms = terms [ Successor a .=. b ]
+                GoalTactics = goalTactics
+                TermTactics = termTactics
+                Instructions = $""
+            }
+
     let levels =
         [|
             Exact.level1
@@ -388,6 +410,8 @@ module Level =
             Negation.level2
             Negation.level3
             Negation.level4
+
+            Addition.level1
         |]
 
     /// Starts a proof for the given level.

@@ -12,6 +12,7 @@ type TacticType =
     | SplitTerm
     | AffirmGoal
     | AffirmTerm
+    | Rewrite
 
 /// A tactic used in a proof. Some of these are from the Lean
 /// language.
@@ -50,6 +51,8 @@ type Tactic =
     /// Converts term (HNP : ¬P) to goal P.
     | AffirmTerm of Term
 
+    | Rewrite of Term
+
     /// Type of this tactic.
     member tactic.Type =
         match tactic with
@@ -62,3 +65,4 @@ type Tactic =
             | SplitGoal _    -> TacticType.SplitGoal
             | AffirmGoal _   -> TacticType.AffirmGoal
             | AffirmTerm _   -> TacticType.AffirmTerm
+            | Rewrite _      -> TacticType.Rewrite

@@ -103,7 +103,7 @@ module View =
         let rec loop typ =
             Html.div [
                 match typ with
-                    | Primitive name ->
+                    | Variable name ->
                         prop.classes [
                             "primitive-type"
                             name.ToLower()
@@ -126,6 +126,11 @@ module View =
                             Html.span [
                                 prop.innerHtml Text.notSymbol ]
                             loop inner
+                        ]
+                    | Equal (a, b) ->
+                        prop.className "compound-type"
+                        prop.children [
+                            Html.div $"{string a} = {string b}"
                         ]
             ]
 
@@ -303,6 +308,7 @@ module View =
                 Allow.allow SplitTerm casePair
                 Allow.allow DissolveTerm casePair
                 Allow.allow AffirmTerm casePair
+                Allow.allow Rewrite casePair
             ] term tacticType
 
             // render each term

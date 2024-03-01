@@ -1,10 +1,22 @@
 ﻿namespace Tactix
 
+type NaturalNumber =
+    | Variable of name : string
+    | Zero
+    | Successor of NaturalNumber
+
+    /// Display string.
+    override nat.ToString() =
+        match nat with
+            | Variable name -> name
+            | Zero -> "0"
+            | Successor n -> $"S({n})"
+
 /// A type corresponds to a proposition that might be provable.
 type Type =
 
     /// Atomic proposition, such as P.
-    | Primitive of name : string
+    | Variable of name : string
 
     /// Implication, such as P → Q.
     | Function of Type * Type
@@ -18,6 +30,9 @@ type Type =
     /// Negation, such as ¬P.
     | Not of Type
 
+    /// Equality.
+    | Equal of NaturalNumber * NaturalNumber
+
     /// Display string.
     override typ.ToString() =
 
@@ -27,15 +42,16 @@ type Type =
                 |> String.concat (string sep)
 
         match typ with
-            | Primitive name -> name
-            | Function (P, Q) -> $"({P}→{Q})"
+            | Variable name -> name
+            | Function (p, q) -> $"({p}→{q})"
             | Product types -> $"({toString '∧' types})"
             | Sum types -> $"({toString '∨' types})"
-            | Not P -> $"¬{P}"
+            | Not p -> $"¬{p}"
+            | Equal (a, b) -> $"{a}={b}"
 
 module Type =
 
     /// Is the given type primitiv?
     let isPrimitive = function
-        | Primitive _ -> true
+        | Variable _ -> true
         | _ -> false

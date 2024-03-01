@@ -31,6 +31,19 @@ module ProofCase =
 
         loop p q
 
+    let private rewrite lhs rhs typ =
+
+        let rec loop nat =
+            if nat = lhs then rhs
+            else
+                match nat with
+                    | Successor n -> Successor (loop n)
+                    | _ -> nat
+
+        match typ with
+            | Equal (a, b) -> Equal (loop a, loop b)
+            | _ -> typ
+
     /// Adds the given tactic to the given proof case. If
     /// successful, one or more resulting cases are answered.
     let add tactic case =
@@ -140,6 +153,17 @@ module ProofCase =
                         case with
                             Goals = case.Goals.Add(typ)
                             Terms = case.Terms.Remove(oldTerm)
+                    }
+                ]
+
+            | Rewrite (Term.Equal (lhs, rhs) as term)
+                when case.Terms.Contains(term) ->
+                [
+                    {
+                        case with
+                            Goals =
+                                case.Goals
+                                    |> Set.map (rewrite lhs rhs)
                     }
                 ]
 

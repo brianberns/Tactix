@@ -41,3 +41,9 @@ module Term =
         match term.Type with
             | Not typ -> Some typ
             | _ -> None
+
+    /// Matches an equal term.
+    let (|Equal|_|) term =
+        match term.Type with
+            | Equal (a, b) -> Some (a, b)
+            | _ -> None
