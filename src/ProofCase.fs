@@ -31,18 +31,34 @@ module ProofCase =
 
         loop p q
 
-    let private rewrite lhs rhs typ =
+    (*
+    /// Example:
+    /// * Rewrite goal a+S(0) = S(a) using term x+S(y) = S(x+y), aka add_succ.
+    /// * Term is bound with (x = a, y = 0), giving a+S(0) = S(a+0).
+    /// * RHS replaces LHS in goal, giving S(a+0) = S(a).
+    let private rewrite lhs rhs goal =
 
-        let rec loop nat =
+        /// target:  a+S(0), S(a)
+        /// pattern: x+S(y)
+        let bind bindings goal lhs =
+            match nat with
+                | Primitive name ->
+                    match Map.tryFind name bindings with
+                        | Some name' -> Primitive name', bindings
+                        | None -> 
+
+        let rec loop (bindings : Map<string, string>) (nat : NaturalNumber) =
+            let lhs' = bind bindings lhs
             if nat = lhs then rhs
             else
                 match nat with
                     | Successor n -> Successor (loop n)
                     | _ -> nat
 
-        match typ with
+        match goal with
             | Equal (a, b) -> Equal (loop a, loop b)
             | _ -> typ
+    *)
 
     /// Adds the given tactic to the given proof case. If
     /// successful, one or more resulting cases are answered.
@@ -168,6 +184,7 @@ module ProofCase =
                     }
                 ]
 
+            (*
             | Rewrite (Term.Equal (lhs, rhs) as term)
                 when case.Terms.Contains(term) ->
                 let newGoals = 
@@ -175,6 +192,7 @@ module ProofCase =
                         |> Set.map (rewrite lhs rhs)
                 if newGoals = case.Goals then []
                 else [ { case with Goals = newGoals } ]
+            *)
 
             | _ -> []
 

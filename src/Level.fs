@@ -68,9 +68,9 @@ module Level =
     let private affirmGoal   = TacticType.emoji TacticType.AffirmGoal
     let private affirmTerm   = TacticType.emoji TacticType.AffirmTerm
 
-    let private p = Variable "P"
-    let private q = Variable "Q"
-    let private r = Variable "R"
+    let private p = Primitive "P"
+    let private q = Primitive "Q"
+    let private r = Primitive "R"
 
     let private pq = Function (p, q)
     let private qr = Function (q, r)
@@ -370,10 +370,10 @@ module Level =
         let goalTactics = set [ TacticType.Reflexivity ]
         let termTactics = set [ TacticType.Rewrite ]
 
-        let private a = NaturalNumber.Variable "a"
-        let private b = NaturalNumber.Variable "b"
-        let private x = NaturalNumber.Variable "x"
-        let private y = NaturalNumber.Variable "y"
+        let private a = NaturalNumber.Primitive "a"
+        let private b = NaturalNumber.Primitive "b"
+        let private x = Variable "x"
+        let private y = Variable "y"
 
         let private (.=.) a b = Equal (a, b)
         let private S = Successor

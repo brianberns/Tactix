@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Prelude.fs" />
+    <Compile Include="NaturalNumber.fs" />
     <Compile Include="Type.fs" />
     <Compile Include="Term.fs" />
     <Compile Include="Tactic.fs" />

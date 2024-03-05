@@ -103,7 +103,7 @@ module View =
         let rec loop typ =
             Html.div [
                 match typ with
-                    | Variable name ->
+                    | Primitive name ->
                         prop.classes [
                             "primitive-type"
                             name.ToLower()
