@@ -2,7 +2,7 @@
 
 module Text =
 
-    let andSymbol = "🐛"
+    let andSymbol = "🌳"
     let orSymbol  = "🎀"
     let notSymbol = "☂️"
     let implies   = "👉🏾"
@@ -15,9 +15,9 @@ module TacticType =
         | TacticType.Intro        -> "🚀"
         | TacticType.Exact        -> "❤️"
         | TacticType.Apply        -> "👣"
-        | TacticType.DissolveGoal -> "🎈"
-        | TacticType.DissolveTerm -> "🦋"
-        | TacticType.SplitGoal    -> "🐉"
+        | TacticType.DissolveGoal -> "✂️"
+        | TacticType.DissolveTerm -> "🪚"
+        | TacticType.SplitGoal    -> "🍂"
         | TacticType.SplitTerm    -> "💥"
         | TacticType.AffirmGoal   -> "🌈"
         | TacticType.AffirmTerm   -> "🌈"
