@@ -15,6 +15,10 @@
     <Compile Include="Model\Model.fs" />
     <Compile Include="View\Allow.fs" />
     <Compile Include="View\DragData.fs" />
+    <Compile Include="View\Header.fs" />
+    <Compile Include="View\TacticView.fs" />
+    <Compile Include="View\ProofView.fs" />
+    <Compile Include="View\Footer.fs" />
     <Compile Include="View\View.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
