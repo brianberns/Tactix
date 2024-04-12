@@ -17,12 +17,9 @@ module TacticView =
         ]
 
     /// Renders tactics that apply to goals.
-    let private renderTacticTypes
-        (id : string)
-        draggable
-        tacticTypes =
+    let private renderTacticTypes id draggable tacticTypes =
         Html.div [
-            prop.id id
+            prop.id (id : string)
             prop.children [
                 for tacticType in tacticTypes do
                     renderTacticType draggable tacticType
