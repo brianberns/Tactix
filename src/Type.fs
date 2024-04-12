@@ -35,7 +35,7 @@ type Type =
 
 module Type =
 
-    /// Is the given type primitiv?
+    /// Is the given type primitive?
     let isPrimitive = function
         | Primitive _ -> true
         | _ -> false
