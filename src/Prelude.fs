@@ -1,7 +1,5 @@
 ﻿namespace Tactix
 
-open System
-
 /// Option computation expression builder.
 type OptionBuilder() =
     member _.Bind(opt, f) = Option.bind f opt
