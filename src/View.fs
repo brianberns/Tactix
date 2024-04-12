@@ -2,10 +2,10 @@
 
 open Feliz
 
-module View =
+module Header =
 
     /// Renders header information.
-    let private renderHeader proof levelIdx =
+    let render proof levelIdx =
         Html.div [
             prop.id "header"
             prop.children [
@@ -28,6 +28,8 @@ module View =
                 ]
         ]
 
+module TacticView =
+
     /// Renders the given tactic type as an emoji.
     let private renderTacticType tacticType draggable =
         Html.div [
@@ -41,7 +43,7 @@ module View =
         ]
 
     /// Renders tactics that apply to goals.
-    let private renderGoalTactics levelIdx draggable =
+    let renderGoalTactics levelIdx draggable =
         let tacticTypes =
             Level.levels[levelIdx].GoalTactics
         Html.div [
@@ -51,6 +53,20 @@ module View =
                     renderTacticType tacticType draggable
             ]
         ]
+
+    /// Renders tactics that apply to terms.
+    let renderTermTactics levelIdx draggable =
+        let tacticTypes =
+            Level.levels[levelIdx].TermTactics
+        Html.div [
+            prop.id "term-tactics"
+            prop.children [
+                for tacticType in tacticTypes do
+                    renderTacticType tacticType draggable
+            ]
+        ]
+
+module ProofView =
 
     /// Renders the given type.
     let private renderType typ =
@@ -296,7 +312,7 @@ module View =
         ]
 
     /// Renders the given proof.
-    let private renderProof model dispatch =
+    let render model dispatch =
         Html.div [
             prop.id "proof"
             prop.children [
@@ -305,20 +321,10 @@ module View =
             ]
         ]
 
-    /// Renders tactics that apply to terms.
-    let private renderTermTactics levelIdx draggable =
-        let tacticTypes =
-            Level.levels[levelIdx].TermTactics
-        Html.div [
-            prop.id "term-tactics"
-            prop.children [
-                for tacticType in tacticTypes do
-                    renderTacticType tacticType draggable
-            ]
-        ]
+module Footer =
 
     /// Renders footer information.
-    let private renderFooter settings dispatch =
+    let render settings dispatch =
         Html.div [
             prop.id "footer"
             prop.children [
@@ -343,6 +349,8 @@ module View =
             ]
         ]
 
+module View =
+
     /// Renders the given model.
     let render model dispatch =
         Html.div [
@@ -352,11 +360,11 @@ module View =
             let isActive =
                 not <| Proof.isComplete model.Proof
             prop.children [
-                renderHeader model.Proof levelIdx
-                renderGoalTactics levelIdx isActive
-                renderProof model dispatch
-                renderTermTactics levelIdx isActive
-                renderFooter
+                Header.render model.Proof levelIdx
+                TacticView.renderGoalTactics levelIdx isActive
+                ProofView.render model dispatch
+                TacticView.renderTermTactics levelIdx isActive
+                Footer.render
                     model.Settings
                     dispatch
             ]
