@@ -5,7 +5,7 @@ open Feliz
 module TacticView =
 
     /// Renders the given tactic type as an emoji.
-    let private renderTacticType tacticType draggable =
+    let private renderTacticType draggable tacticType =
         Html.div [
             prop.className "tactic"
             prop.text (TacticType.emoji tacticType)
@@ -17,25 +17,24 @@ module TacticView =
         ]
 
     /// Renders tactics that apply to goals.
-    let renderGoalTactics levelIdx draggable =
-        let tacticTypes =
-            Level.levels[levelIdx].GoalTactics
+    let private renderTacticTypes
+        (id : string)
+        draggable
+        tacticTypes =
         Html.div [
-            prop.id "goal-tactics"
+            prop.id id
             prop.children [
                 for tacticType in tacticTypes do
-                    renderTacticType tacticType draggable
+                    renderTacticType draggable tacticType
             ]
         ]
 
+    /// Renders tactics that apply to goals.
+    let renderGoalTactics levelIdx draggable =
+        Level.levels[levelIdx].GoalTactics
+            |> renderTacticTypes "goal-tactics" draggable
+
     /// Renders tactics that apply to terms.
     let renderTermTactics levelIdx draggable =
-        let tacticTypes =
-            Level.levels[levelIdx].TermTactics
-        Html.div [
-            prop.id "term-tactics"
-            prop.children [
-                for tacticType in tacticTypes do
-                    renderTacticType tacticType draggable
-            ]
-        ]
+        Level.levels[levelIdx].TermTactics
+            |> renderTacticTypes "term-tactics" draggable
