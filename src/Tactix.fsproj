@@ -3,19 +3,19 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Prelude.fs" />
-    <Compile Include="Type.fs" />
-    <Compile Include="Term.fs" />
-    <Compile Include="Tactic.fs" />
-    <Compile Include="ProofCase.fs" />
-    <Compile Include="Proof.fs" />
-    <Compile Include="Settings.fs" />
-    <Compile Include="Audio.fs" />
-    <Compile Include="Level.fs" />
-    <Compile Include="Model.fs" />
-    <Compile Include="Allow.fs" />
-    <Compile Include="DragData.fs" />
-    <Compile Include="View.fs" />
+    <Compile Include="Proof\Prelude.fs" />
+    <Compile Include="Proof\Type.fs" />
+    <Compile Include="Proof\Term.fs" />
+    <Compile Include="Proof\Tactic.fs" />
+    <Compile Include="Proof\ProofCase.fs" />
+    <Compile Include="Proof\Proof.fs" />
+    <Compile Include="Model\Settings.fs" />
+    <Compile Include="Model\Audio.fs" />
+    <Compile Include="Model\Level.fs" />
+    <Compile Include="Model\Model.fs" />
+    <Compile Include="View\Allow.fs" />
+    <Compile Include="View\DragData.fs" />
+    <Compile Include="View\View.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
