@@ -19,15 +19,16 @@ module ProofCase =
     let private apply p q (goals : Set<Type>) =
 
         let rec loop p q =
-            if goals.Contains(q) then Some ([p], q)
-            else
-                match q with
-                    | Function (qIn, qOut) ->
-                        option {
+            option {
+                if goals.Contains(q) then
+                    return [p], q
+                else
+                    match q with
+                        | Function (qIn, qOut) ->
                             let! newGoals, oldGoal = loop qIn qOut
                             return p :: newGoals, oldGoal
-                        }
-                    | _ -> None
+                        | _ -> ()
+            }
 
         loop p q
 
