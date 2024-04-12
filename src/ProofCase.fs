@@ -15,7 +15,7 @@ type ProofCase =
 
 module ProofCase =
 
-    /// Applies p -> q with the given goals, if possible.
+    /// Applies p → q with the given goals, if possible.
     let private apply p q (goals : Set<Type>) =
 
         let rec loop p q =
