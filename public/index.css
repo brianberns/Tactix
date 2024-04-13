@@ -1,10 +1,10 @@
 :root {
-    --eggshell: #f4f1deff;
-    --burnt-sienna: #e07a5fff;
-    --delft-blue: #3d405bff;
-    --cambridge-blue: #81b29aff;
-    --sunset: #f2cc8fff;
-    --highlight: #70a452ff;
+    --eggshell: #f4f1de;
+    --burnt-sienna: #e07a5f;
+    --delft-blue: #3d405b;
+    --cambridge-blue: #81b29a;
+    --sunset: #f2cc8f;
+    --highlight: #70a452;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -190,11 +190,11 @@
     top: 35%;
     width: 40%;
     height: fit-content;
-    background-color: var(--burnt-sienna);
-    color: black;
+    background-color: color-mix(in srgb, var(--sunset), transparent 15%);
+    backdrop-filter: blur(2px);
     font-size: x-large;
     text-align: center;
-    border: solid 5px var(--delft-blue);
+    border: solid 5px black;
     border-radius: 16px;
     padding: 30px;
     box-sizing: border-box; /* https://stackoverflow.com/questions/779434/how-do-i-prevent-the-padding-property-from-changing-width-or-height-in-css */
