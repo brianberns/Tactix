@@ -168,6 +168,7 @@
 .settings-button {
     width: 24px;
     margin: 2px;
+    cursor: pointer;
 }
 
 #header {
@@ -191,11 +192,13 @@
     height: fit-content;
     background-color: var(--burnt-sienna);
     color: black;
+    font-size: x-large;
     text-align: center;
     border: solid 5px var(--delft-blue);
     border-radius: 16px;
     padding: 30px;
     box-sizing: border-box; /* https://stackoverflow.com/questions/779434/how-do-i-prevent-the-padding-property-from-changing-width-or-height-in-css */
+    cursor: pointer;
 }
 
 #footer {
