@@ -74,9 +74,9 @@ module Model =
             Instructions = level.Instructions
         }
 
-    /// Initializes a model at the user's current level.
+    /// Initializes a model with the user's current settings.
     let init () =
-        create (Settings.get()), Cmd.none
+        create (Settings.get()), Cmd.none   // side-effect
 
     /// Sets the current highlighted object.
     let private setHighlight highlight model =
@@ -104,12 +104,11 @@ module Model =
 
     /// Starts a level.
     let private startLevel levelIdx model =
-        let model =
-            create {
-                model.Settings with
-                    LevelIndex = levelIdx }
-        Settings.save model.Settings   // side-effect
-        model
+        let settings =
+            { model.Settings with
+                LevelIndex = levelIdx }
+        Settings.save settings   // side-effect
+        create settings
 
     /// Clears current instructions.
     let private clearInstructions (model : Model) =
