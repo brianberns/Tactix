@@ -53,31 +53,30 @@ type Message =
 
 module Model =
 
+    /// Creates a model from the given settings.
+    let private create settings =
+
+            // ensure valid level
+        let levelIdx =
+            max
+                (min
+                    settings.LevelIndex
+                    (Level.levels.Length - 1))
+                0
+        let settings' =
+            { settings with LevelIndex = levelIdx }
+        let level = Level.levels[levelIdx]
+
+        {
+            Settings = settings'
+            Proof = Level.initializeProof level
+            Highlight = Highlight.None
+            Instructions = level.Instructions
+        }
+
     /// Initializes a model at the user's current level.
     let init () =
-
-            // get user's current setting
-        let settings =
-            let settings = Settings.get ()
-            let levelIdx =
-                min
-                    settings.LevelIndex
-                    (Level.levels.Length - 1)
-            { settings with LevelIndex = levelIdx }
-
-            // create proof at current level
-        let proof =
-            Level.levels[settings.LevelIndex]
-                |> Level.initializeProof
-
-        let model =
-            {
-                Settings = settings
-                Proof = proof
-                Highlight = Highlight.None
-                Instructions = ""
-            }
-        model, Cmd.none
+        create (Settings.get()), Cmd.none
 
     /// Sets the current highlighted object.
     let private setHighlight highlight model =
@@ -105,23 +104,12 @@ module Model =
 
     /// Starts a level.
     let private startLevel levelIdx model =
-
-            // get current level
-        let levelIdx = levelIdx % Level.levels.Length   // ensure we have a valid level index
-        let level = Level.levels[levelIdx]
-
-            // persist level index (side-effect)
-        let settings =
-            { model.Settings with LevelIndex = levelIdx }
-        Settings.save settings
-
-            // start proof for this level
-        {
-            Settings = settings
-            Proof = Level.initializeProof level
-            Highlight = Highlight.None
-            Instructions = level.Instructions
-        }
+        let model =
+            create {
+                model.Settings with
+                    LevelIndex = levelIdx }
+        Settings.save model.Settings   // side-effect
+        model
 
     /// Clears current instructions.
     let private clearInstructions (model : Model) =
