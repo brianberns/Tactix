@@ -20,7 +20,7 @@ module View =
             let isActive =
                 not <| Proof.isComplete model.Proof
             prop.children [
-                Header.render model.Proof levelIdx
+                Header.render levelIdx
                 TacticView.renderGoalTactics levelIdx isActive
                 ProofView.render model dispatch
                 TacticView.renderTermTactics levelIdx isActive

@@ -11,7 +11,7 @@
 #goal-tactics {
     position: fixed;
     left: 0%;
-    top: 00%;
+    top: 0%;
     width: 100%;
     height: 10%;
     background-color: var(--eggshell);
@@ -184,6 +184,18 @@
 }
 
 #instructions {
+    position: fixed;
+    left: 30%;
+    top: 35%;
+    width: 40%;
+    height: fit-content;
+    background-color: var(--burnt-sienna);
+    color: black;
+    text-align: center;
+    border: solid 5px var(--delft-blue);
+    border-radius: 16px;
+    padding: 30px;
+    box-sizing: border-box; /* https://stackoverflow.com/questions/779434/how-do-i-prevent-the-padding-property-from-changing-width-or-height-in-css */
 }
 
 #footer {
