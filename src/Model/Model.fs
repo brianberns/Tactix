@@ -20,6 +20,9 @@ type Model =
 
         /// Currently highlighted object.
         Highlight : Highlight
+
+        /// Current instructions, or empty string.
+        Instructions : string
     }
 
     /// Is the given term highlighted?
@@ -45,6 +48,9 @@ type Message =
     /// Starts the given 0-based level.
     | StartLevel of int
 
+    /// Clears current instructions.
+    | ClearInstructions
+
 module Model =
 
     /// Initializes a model at the user's current level.
@@ -69,6 +75,7 @@ module Model =
                 Settings = settings
                 Proof = proof
                 Highlight = Highlight.None
+                Instructions = ""
             }
         model, Cmd.none
 
@@ -99,20 +106,26 @@ module Model =
     /// Starts a level.
     let private startLevel levelIdx model =
 
-            // ensure we have a valid level index
-        let levelIdx = levelIdx % Level.levels.Length
+            // get current level
+        let levelIdx = levelIdx % Level.levels.Length   // ensure we have a valid level index
+        let level = Level.levels[levelIdx]
+
+            // persist level index (side-effect)
         let settings =
             { model.Settings with LevelIndex = levelIdx }
-        Settings.save settings   // side-effect
+        Settings.save settings
 
             // start proof for this level
-        let proof =
-            Level.initializeProof Level.levels[levelIdx]
         {
             Settings = settings
-            Proof = proof
+            Proof = Level.initializeProof level
             Highlight = Highlight.None
+            Instructions = level.Instructions
         }
+
+    /// Clears current instructions.
+    let private clearInstructions (model : Model) =
+        { model with Instructions = "" }
 
     /// Updates the model based on the given message.
     let update msg model =
@@ -126,6 +139,8 @@ module Model =
                     enableAudio enable model
                 | StartLevel levelIdx ->
                     startLevel levelIdx model
+                | ClearInstructions ->
+                    clearInstructions model
         let cmd =
             if Proof.isComplete model'.Proof then
                 Cmd.OfAsync.perform

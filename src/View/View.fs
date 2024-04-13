@@ -1,8 +1,15 @@
 ﻿namespace Tactix
 
+open System
 open Feliz
 
 module View =
+
+    let private renderInstructions instructions =
+        Html.div [
+            prop.id "instructions"
+            prop.innerHtml instructions
+        ]
 
     /// Renders the given model.
     let render model dispatch =
@@ -20,6 +27,8 @@ module View =
                 Footer.render
                     model.Settings
                     dispatch
+                if not (String.IsNullOrWhiteSpace(model.Instructions)) then
+                    renderInstructions model.Instructions
             ]
                 // easter egg for revisiting levels
             prop.onCut (fun _ ->
