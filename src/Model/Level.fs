@@ -22,13 +22,13 @@ module TacticType =
         | TacticType.AffirmGoal   -> "🌈"
         | TacticType.AffirmTerm   -> "🌈"
 
-    let exact        = emoji TacticType.Exact
     let intro        = emoji TacticType.Intro
+    let exact        = emoji TacticType.Exact
     let apply        = emoji TacticType.Apply
-    let splitGoal    = emoji TacticType.SplitGoal
-    let splitTerm    = emoji TacticType.SplitTerm
     let dissolveGoal = emoji TacticType.DissolveGoal
     let dissolveTerm = emoji TacticType.DissolveTerm
+    let splitGoal    = emoji TacticType.SplitGoal
+    let splitTerm    = emoji TacticType.SplitTerm
     let affirmGoal   = emoji TacticType.AffirmGoal
     let affirmTerm   = emoji TacticType.AffirmTerm
 
