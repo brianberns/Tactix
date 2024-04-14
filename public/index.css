@@ -186,9 +186,9 @@
 
 #instructions {
     position: fixed;
-    left: 30%;
+    left: 20%;
     top: 35%;
-    width: 40%;
+    width: 60%;
     height: fit-content;
     background-color: color-mix(in srgb, var(--sunset), transparent 15%);
     backdrop-filter: blur(2px);
