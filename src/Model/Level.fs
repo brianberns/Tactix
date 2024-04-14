@@ -32,7 +32,7 @@ module TacticType =
     let affirmGoal   = emoji TacticType.AffirmGoal
     let affirmTerm   = emoji TacticType.AffirmTerm
 
-    let instructions = function
+    let instruction = function
         | TacticType.Intro        -> $"Drag {intro} onto a {Text.implies} goal to simplify it"
         | TacticType.Exact        -> $"Drag {exact }onto a symbol that matches the goal"
         | TacticType.Apply        -> $"Drag {apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
@@ -59,7 +59,7 @@ type Level =
         TermTactics : Set<TacticType>
 
         /// Hint for the user.
-        Instructions : string
+        Instruction : string
     }
 
 module Level =
@@ -94,7 +94,7 @@ module Level =
                 Terms = terms [p; q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions =
+                Instruction =
                     $"Drag {TacticType.exact} onto the symbol that matches the top goal"
             }
 
@@ -105,7 +105,7 @@ module Level =
                 Terms = terms [p; q; r]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = ""
+                Instruction = ""
             }
 
         /// Introduces function types.
@@ -115,7 +115,7 @@ module Level =
                 Terms = terms [p; q; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"You can also use {TacticType.exact} on more complex symbols"
+                Instruction = $"You can also use {TacticType.exact} on more complex symbols"
             }
 
     module private Intro =
@@ -131,7 +131,7 @@ module Level =
                 Terms = terms [q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {TacticType.intro} onto a {Text.implies} goal to simplify it"
+                Instruction = $"Drag {TacticType.intro} onto a {Text.implies} goal to simplify it"
             }
 
         /// P → P.
@@ -141,7 +141,7 @@ module Level =
                 Terms = terms []
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = ""
+                Instruction = ""
             }
 
         /// More practice with intro.
@@ -151,7 +151,7 @@ module Level =
                 Terms = terms [r]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = ""
+                Instruction = ""
             }
 
     module private Dissolve =
@@ -168,7 +168,7 @@ module Level =
                 Terms = terms [p]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {TacticType.dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
+                Instruction = $"Drag {TacticType.dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
             }
 
         /// Introduces the dissolve term tactic.
@@ -178,7 +178,7 @@ module Level =
                 Terms = terms [ p_and_q ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {TacticType.dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
+                Instruction = $"Drag {TacticType.dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
             }
 
     module private Apply =
@@ -194,7 +194,7 @@ module Level =
                 Terms = terms [p; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {TacticType.apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
+                Instruction = $"Drag {TacticType.apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
             }
 
         /// Implication is transitive.
@@ -208,7 +208,7 @@ module Level =
                     ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = ""
+                Instruction = ""
             }
 
         /// Currying.
@@ -218,7 +218,7 @@ module Level =
                 Terms = terms [pqr]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"You can also use {TacticType.apply} on nested ▢{Text.implies}■ symbols when the goal is ■"
+                Instruction = $"You can also use {TacticType.apply} on nested ▢{Text.implies}■ symbols when the goal is ■"
             }
 
     module private Split =
@@ -235,7 +235,7 @@ module Level =
                 Terms = terms [p_and_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {TacticType.splitGoal} onto a {Text.andSymbol} goal to create separate cases"
+                Instruction = $"Drag {TacticType.splitGoal} onto a {Text.andSymbol} goal to create separate cases"
             }
 
         /// Commutivity of ∨.
@@ -245,7 +245,7 @@ module Level =
                 Terms = terms [p_or_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {TacticType.splitTerm} onto a {Text.orSymbol} symbol to create separate cases"
+                Instruction = $"Drag {TacticType.splitTerm} onto a {Text.orSymbol} symbol to create separate cases"
             }
 
         /// More practice with multiple cases.
@@ -260,7 +260,7 @@ module Level =
                     ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = ""
+                Instruction = ""
             }
 
         /// Exportation.
@@ -270,7 +270,7 @@ module Level =
                 Terms = terms [ Function (p_and_q, r) ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = ""
+                Instruction = ""
             }
 
         /// Distributive property.
@@ -298,7 +298,7 @@ module Level =
                         TacticType.DissolveTerm
                         TacticType.SplitTerm
                     ]
-                Instructions = ""
+                Instruction = ""
             }
 
     module private Negation =
@@ -315,7 +315,7 @@ module Level =
                 Terms = terms [p]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {TacticType.affirmGoal} onto a {Text.notSymbol} to remove it"
+                Instruction = $"Drag {TacticType.affirmGoal} onto a {Text.notSymbol} to remove it"
             }
 
         /// Modus tollens.
@@ -325,7 +325,7 @@ module Level =
                 Terms = terms [ pq ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = ""
+                Instruction = ""
             }
 
         /// de Morgan's laws.
@@ -341,7 +341,7 @@ module Level =
                     ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = ""
+                Instruction = ""
             }
 
         /// de Morgan's laws.
@@ -358,7 +358,7 @@ module Level =
                     ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = ""
+                Instruction = ""
             }
 
     let levels =

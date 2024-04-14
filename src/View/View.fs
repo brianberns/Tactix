@@ -5,13 +5,17 @@ open Feliz
 
 module View =
 
-    /// Renders the given instructions.
-    let private renderInstructions instructions dispatch =
+    /// Renders the given instruction.
+    let private renderInstruction instruction dispatch =
         Html.div [
-            prop.id "instructions"
-            prop.text (instructions : string)
+            prop.id "instruction"
+            match instruction with
+                | LevelInstruction level ->
+                    prop.text level.Instruction
+                | TacticInstruction tacticType ->
+                    prop.text (TacticType.instruction tacticType)
             prop.onClick (fun _ ->
-                dispatch (SetInstructions ""))
+                dispatch (SetInstruction None))
         ]
 
     /// Renders the given model.
@@ -39,10 +43,12 @@ module View =
                 Footer.render
                     model.Settings
                     dispatch
-                if not (String.IsNullOrWhiteSpace(model.Instructions)) then
-                    renderInstructions
-                        model.Instructions
-                        dispatch
+                match model.InstructionOpt with
+                    | Some instruction ->
+                        renderInstruction
+                            instruction
+                            dispatch
+                    | None -> ()
             ]
                 // easter egg for revisiting levels
             prop.onCut (fun _ ->

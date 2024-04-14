@@ -9,6 +9,11 @@ type Highlight =
     | Term of Term * ProofCaseKey
     | Goal of Type * ProofCaseKey
 
+/// User instruction.
+type Instruction =
+    | LevelInstruction of Level
+    | TacticInstruction of TacticType
+
 /// Current state of the game.
 type Model =
     {
@@ -21,8 +26,8 @@ type Model =
         /// Currently highlighted object.
         Highlight : Highlight
 
-        /// Current instructions, or empty string.
-        Instructions : string
+        /// Current instruction, if any.
+        InstructionOpt : Option<Instruction>
     }
 
     /// Is the given term highlighted?
@@ -48,8 +53,8 @@ type Message =
     /// Starts the given 0-based level.
     | StartLevel of int
 
-    /// Sets the current instructions.
-    | SetInstructions of string
+    /// Sets the current instruction.
+    | SetInstruction of Option<Instruction>
 
 module Model =
 
@@ -71,7 +76,8 @@ module Model =
             Settings = settings'
             Proof = Level.initializeProof level
             Highlight = Highlight.None
-            Instructions = level.Instructions
+            InstructionOpt =
+                Some (LevelInstruction level)
         }
 
     /// Initializes a model with the user's current settings.
@@ -110,9 +116,9 @@ module Model =
         Settings.save settings   // side-effect
         create settings
 
-    /// Sets the current instructions.
-    let private setInstructions instructions (model : Model) =
-        { model with Instructions = instructions }
+    /// Sets the current instruction.
+    let private setInstruction instructionOpt (model : Model) =
+        { model with InstructionOpt = instructionOpt }
 
     /// Updates the model based on the given message.
     let update msg model =
@@ -126,8 +132,8 @@ module Model =
                     enableAudio enable model
                 | StartLevel levelIdx ->
                     startLevel levelIdx model
-                | SetInstructions instructions ->
-                    setInstructions instructions model
+                | SetInstruction instructionOpt ->
+                    setInstruction instructionOpt model
         let cmd =
             if Proof.isComplete model'.Proof then
                 Cmd.OfAsync.perform
