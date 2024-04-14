@@ -22,16 +22,26 @@ module TacticType =
         | TacticType.AffirmGoal   -> "🌈"
         | TacticType.AffirmTerm   -> "🌈"
 
+    let exact        = emoji TacticType.Exact
+    let intro        = emoji TacticType.Intro
+    let apply        = emoji TacticType.Apply
+    let splitGoal    = emoji TacticType.SplitGoal
+    let splitTerm    = emoji TacticType.SplitTerm
+    let dissolveGoal = emoji TacticType.DissolveGoal
+    let dissolveTerm = emoji TacticType.DissolveTerm
+    let affirmGoal   = emoji TacticType.AffirmGoal
+    let affirmTerm   = emoji TacticType.AffirmTerm
+
     let instructions = function
-        | TacticType.Intro        -> $"Drag onto a {Text.implies} goal to simplify it"
-        | TacticType.Exact        -> "Drag onto a symbol that matches the goal"
-        | TacticType.Apply        -> $"Drag onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
-        | TacticType.DissolveGoal -> $"Drag onto a {Text.orSymbol} goal to simplify it"
-        | TacticType.DissolveTerm -> $"Drag onto a {Text.andSymbol} symbol to simplify it"
-        | TacticType.SplitGoal    -> $"Drag onto a {Text.andSymbol} goal to create separate cases"
-        | TacticType.SplitTerm    -> $"Drag onto a {Text.orSymbol} symbol to create separate cases"
-        | TacticType.AffirmGoal   -> $"Drag onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
-        | TacticType.AffirmTerm   -> $"Drag onto a {Text.notSymbol} symbol to remove {Text.notSymbol}"
+        | TacticType.Intro        -> $"Drag {intro} onto a {Text.implies} goal to simplify it"
+        | TacticType.Exact        -> $"Drag {exact }onto a symbol that matches the goal"
+        | TacticType.Apply        -> $"Drag {apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
+        | TacticType.DissolveGoal -> $"Drag {dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
+        | TacticType.DissolveTerm -> $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
+        | TacticType.SplitGoal    -> $"Drag {splitGoal} onto a {Text.andSymbol} goal to create separate cases"
+        | TacticType.SplitTerm    -> $"Drag {splitTerm} onto a {Text.orSymbol} symbol to create separate cases"
+        | TacticType.AffirmGoal   -> $"Drag {affirmGoal} onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
+        | TacticType.AffirmTerm   -> $"Drag {affirmTerm} onto a {Text.notSymbol} symbol to remove {Text.notSymbol}"
 
 /// A puzzle to be solved.
 type Level =
@@ -53,16 +63,6 @@ type Level =
     }
 
 module Level =
-
-    let private exact        = TacticType.emoji TacticType.Exact
-    let private intro        = TacticType.emoji TacticType.Intro
-    let private apply        = TacticType.emoji TacticType.Apply
-    let private splitGoal    = TacticType.emoji TacticType.SplitGoal
-    let private splitTerm    = TacticType.emoji TacticType.SplitTerm
-    let private dissolveGoal = TacticType.emoji TacticType.DissolveGoal
-    let private dissolveTerm = TacticType.emoji TacticType.DissolveTerm
-    let private affirmGoal   = TacticType.emoji TacticType.AffirmGoal
-    let private affirmTerm   = TacticType.emoji TacticType.AffirmTerm
 
     let private p = Primitive "P"
     let private q = Primitive "Q"
@@ -95,7 +95,7 @@ module Level =
                 GoalTactics = goalTactics
                 TermTactics = termTactics
                 Instructions =
-                    $"Drag {exact} onto the symbol that matches the top goal"
+                    $"Drag {TacticType.exact} onto the symbol that matches the top goal"
             }
 
         /// More practice with "exact".
@@ -115,7 +115,7 @@ module Level =
                 Terms = terms [p; q; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"You can also use {exact} on more complex symbols"
+                Instructions = $"You can also use {TacticType.exact} on more complex symbols"
             }
 
     module private Intro =
@@ -131,7 +131,7 @@ module Level =
                 Terms = terms [q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {intro} onto a {Text.implies} goal to simplify it"
+                Instructions = $"Drag {TacticType.intro} onto a {Text.implies} goal to simplify it"
             }
 
         /// P → P.
@@ -168,7 +168,7 @@ module Level =
                 Terms = terms [p]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
+                Instructions = $"Drag {TacticType.dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
             }
 
         /// Introduces the dissolve term tactic.
@@ -178,7 +178,7 @@ module Level =
                 Terms = terms [ p_and_q ]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
+                Instructions = $"Drag {TacticType.dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
             }
 
     module private Apply =
@@ -194,7 +194,7 @@ module Level =
                 Terms = terms [p; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
+                Instructions = $"Drag {TacticType.apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
             }
 
         /// Implication is transitive.
@@ -218,7 +218,7 @@ module Level =
                 Terms = terms [pqr]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"You can also use {apply} on nested ▢{Text.implies}■ symbols when the goal is ■"
+                Instructions = $"You can also use {TacticType.apply} on nested ▢{Text.implies}■ symbols when the goal is ■"
             }
 
     module private Split =
@@ -235,7 +235,7 @@ module Level =
                 Terms = terms [p_and_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {splitGoal} onto a {Text.andSymbol} goal to create separate cases"
+                Instructions = $"Drag {TacticType.splitGoal} onto a {Text.andSymbol} goal to create separate cases"
             }
 
         /// Commutivity of ∨.
@@ -245,7 +245,7 @@ module Level =
                 Terms = terms [p_or_q]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {splitTerm} onto a {Text.orSymbol} symbol to create separate cases"
+                Instructions = $"Drag {TacticType.splitTerm} onto a {Text.orSymbol} symbol to create separate cases"
             }
 
         /// More practice with multiple cases.
@@ -315,7 +315,7 @@ module Level =
                 Terms = terms [p]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instructions = $"Drag {affirmGoal} onto a {Text.notSymbol} to remove it"
+                Instructions = $"Drag {TacticType.affirmGoal} onto a {Text.notSymbol} to remove it"
             }
 
         /// Modus tollens.
