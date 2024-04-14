@@ -23,15 +23,26 @@ module View =
             let isActive =
                 not <| Proof.isComplete model.Proof
             prop.children [
-                Header.render levelIdx
-                TacticView.renderGoalTactics levelIdx isActive
-                ProofView.render model dispatch
-                TacticView.renderTermTactics levelIdx isActive
+                Header.render
+                    levelIdx
+                TacticView.renderGoalTactics
+                    levelIdx
+                    isActive
+                    dispatch
+                ProofView.render
+                    model
+                    dispatch
+                TacticView.renderTermTactics
+                    levelIdx
+                    isActive
+                    dispatch
                 Footer.render
                     model.Settings
                     dispatch
                 if not (String.IsNullOrWhiteSpace(model.Instructions)) then
-                    renderInstructions model.Instructions dispatch
+                    renderInstructions
+                        model.Instructions
+                        dispatch
             ]
                 // easter egg for revisiting levels
             prop.onCut (fun _ ->

@@ -149,7 +149,7 @@
     width: 8vh;
     height: 8vh;
     font-size: 6vh;
-    cursor: grab;
+    cursor: pointer;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
