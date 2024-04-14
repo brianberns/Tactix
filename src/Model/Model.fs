@@ -48,8 +48,8 @@ type Message =
     /// Starts the given 0-based level.
     | StartLevel of int
 
-    /// Clears current instructions.
-    | ClearInstructions
+    /// Sets the current instructions.
+    | SetInstructions of string
 
 module Model =
 
@@ -110,9 +110,9 @@ module Model =
         Settings.save settings   // side-effect
         create settings
 
-    /// Clears current instructions.
-    let private clearInstructions (model : Model) =
-        { model with Instructions = "" }
+    /// Sets the current instructions.
+    let private setInstructions instructions (model : Model) =
+        { model with Instructions = instructions }
 
     /// Updates the model based on the given message.
     let update msg model =
@@ -126,8 +126,8 @@ module Model =
                     enableAudio enable model
                 | StartLevel levelIdx ->
                     startLevel levelIdx model
-                | ClearInstructions ->
-                    clearInstructions model
+                | SetInstructions instructions ->
+                    setInstructions instructions model
         let cmd =
             if Proof.isComplete model'.Proof then
                 Cmd.OfAsync.perform

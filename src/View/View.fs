@@ -11,7 +11,7 @@ module View =
             prop.id "instructions"
             prop.text (instructions : string)
             prop.onClick (fun _ ->
-                dispatch ClearInstructions)
+                dispatch (SetInstructions ""))
         ]
 
     /// Renders the given model.
