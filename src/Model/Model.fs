@@ -9,6 +9,11 @@ type Highlight =
     | Term of Term * ProofCaseKey
     | Goal of Type * ProofCaseKey
 
+/// User instruction.
+type Instruction =
+    | LevelInstruction of Level
+    | TacticInstruction of TacticType
+
 /// Current state of the game.
 type Model =
     {
@@ -20,6 +25,9 @@ type Model =
 
         /// Currently highlighted object.
         Highlight : Highlight
+
+        /// Current instruction, if any.
+        InstructionOpt : Option<Instruction>
     }
 
     /// Is the given term highlighted?
@@ -45,32 +53,36 @@ type Message =
     /// Starts the given 0-based level.
     | StartLevel of int
 
+    /// Sets the current instruction.
+    | SetInstruction of Option<Instruction>
+
 module Model =
 
-    /// Initializes a model at the user's current level.
-    let init () =
+    /// Creates a model from the given settings.
+    let private create settings =
 
-            // get user's current setting
-        let settings =
-            let settings = Settings.get ()
-            let levelIdx =
-                min
+            // ensure valid level
+        let levelIdx =
+            max
+                (min
                     settings.LevelIndex
-                    (Level.levels.Length - 1)
+                    (Level.levels.Length - 1))
+                0
+        let settings' =
             { settings with LevelIndex = levelIdx }
+        let level = Level.levels[levelIdx]
 
-            // create proof at current level
-        let proof =
-            Level.levels[settings.LevelIndex]
-                |> Level.initializeProof
+        {
+            Settings = settings'
+            Proof = Level.initializeProof level
+            Highlight = Highlight.None
+            InstructionOpt =
+                Some (LevelInstruction level)
+        }
 
-        let model =
-            {
-                Settings = settings
-                Proof = proof
-                Highlight = Highlight.None
-            }
-        model, Cmd.none
+    /// Initializes a model with the user's current settings.
+    let init () =
+        create (Settings.get()), Cmd.none   // side-effect
 
     /// Sets the current highlighted object.
     let private setHighlight highlight model =
@@ -98,21 +110,15 @@ module Model =
 
     /// Starts a level.
     let private startLevel levelIdx model =
-
-            // ensure we have a valid level index
-        let levelIdx = levelIdx % Level.levels.Length
         let settings =
-            { model.Settings with LevelIndex = levelIdx }
+            { model.Settings with
+                LevelIndex = levelIdx }
         Settings.save settings   // side-effect
+        create settings
 
-            // start proof for this level
-        let proof =
-            Level.initializeProof Level.levels[levelIdx]
-        {
-            Settings = settings
-            Proof = proof
-            Highlight = Highlight.None
-        }
+    /// Sets the current instruction.
+    let private setInstruction instructionOpt (model : Model) =
+        { model with InstructionOpt = instructionOpt }
 
     /// Updates the model based on the given message.
     let update msg model =
@@ -126,6 +132,8 @@ module Model =
                     enableAudio enable model
                 | StartLevel levelIdx ->
                     startLevel levelIdx model
+                | SetInstruction instructionOpt ->
+                    setInstruction instructionOpt model
         let cmd =
             if Proof.isComplete model'.Proof then
                 Cmd.OfAsync.perform
