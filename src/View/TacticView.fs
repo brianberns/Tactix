@@ -19,8 +19,9 @@ module TacticView =
                     |> dispatch)
             if draggable then
                 prop.draggable true
-                prop.onDragStart (
-                    DragData.setTacticType tacticType)
+                prop.onDragStart (fun evt ->
+                    Audio.enable ()
+                    DragData.setTacticType tacticType evt)
         ]
 
     /// Renders tactics that apply to goals.

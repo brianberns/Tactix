@@ -9,21 +9,35 @@ module Audio =
     [<Global("Audio")>] 
     let private factory : HTMLAudioElementType = jsNative
 
-    /// Plays the given file.
-    let private play src =
+    /// Creates an audio element for the given file.
+    let private create src =
         let audio = factory.Create()
         audio.src <- src
-        audio.volume <- 0.1
-        audio.play()
+        audio
+
+    let private reward = lazy create "reward.mp3"
+    let private error = lazy create "error.mp3"
+    let private discovery = lazy create "discovery.mp3"
+
+    /// Enables audio. This must be done during a user interaction
+    /// for mobile devices.
+    let enable () =
+        reward.Value |> ignore
+        error.Value |> ignore
+        discovery.Value |> ignore
+
+    /// Plays a lazy audio element.
+    let private play (audio : Lazy<HTMLAudioElement>) =
+        audio.Value.play()
 
     /// Plays the reward sound.
     let playReward () =
-        play "reward.mp3"
+        play reward
 
     /// Plays the error sound.
     let playError () =
-        play "error.mp3"
+        play error
 
     /// Plays the discovery sound.
     let playDiscovery () =
-        play "discovery.mp3"
+        play discovery
