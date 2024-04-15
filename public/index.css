@@ -28,6 +28,10 @@ body {
 #settings {
 }
 
+#settings img {
+    filter: invert(1);
+}
+
 .settings-button {
     width: 24px;
     margin: 2px;
