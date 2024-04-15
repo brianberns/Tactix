@@ -17,12 +17,12 @@ module DragData =
 
     /// Sets drag data for the given event.
     let private setData dragData (evt : DragEvent) =
-        // evt.dataTransfer.setData
+        evt.dataTransfer.setData("text/plain", "dummy")   // must call for iOS?
+            |> ignore
         shared <- Some dragData
 
     /// Gets drag data for the given event.
     let private getData (evt : DragEvent) =
-        // evt.dataTransfer.getData
         shared
 
     /// Sets the tactic type being dragged.
