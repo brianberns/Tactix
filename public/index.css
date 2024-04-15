@@ -6,14 +6,28 @@
     --sunset: #f2cc8f;
     --highlight: #70a452;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-#goal-tactics {
     position: fixed;
     left: 0%;
     top: 0%;
     width: 100%;
-    height: 10%;
+    background-color: var(--eggshell);
+}
+
+body {
+    margin: 0px;
+}
+
+#header {
+    height: 5dvh;
+    background-color: gray;
+}
+
+#level-num {
+    font-weight: bold;
+}
+
+#goal-tactics {
+    height: 10dvh;
     background-color: var(--eggshell);
     display: flex;
     flex-wrap: wrap;
@@ -22,11 +36,7 @@
 }
 
 #proof {
-    position: fixed;
-    left: 0%;
-    top: 10%;
-    width: 100%;
-    height: 80%;
+    height: 70dvh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -39,7 +49,7 @@
 }
 
 .goals {
-    height: 20vh;
+    height: 20dvh;
     background-color: var(--sunset);
     display: flex;
     flex-wrap: wrap;
@@ -48,8 +58,8 @@
 }
 
 .primitive-type {
-    width: 7vh;
-    height: 7vh;
+    width: 7dvh;
+    height: 7dvh;
     border-radius: 8px;
     pointer-events: none;
 }
@@ -97,7 +107,7 @@
 }
 
 .terms {
-    height: 60vh;
+    height: 50dvh;
     background-color: var(--eggshell);
     display: flex;
     flex-wrap: wrap;
@@ -127,11 +137,7 @@
 }
 
 #term-tactics {
-    position: fixed;
-    left: 0%;
-    top: 90%;
-    width: 100%;
-    height: 10%;
+    height: 10dvh;
     background-color: var(--sunset);
     display: flex;
     flex-wrap: wrap;
@@ -142,9 +148,9 @@
 .tactic {
     margin: 9px;
     padding: 0px;
-    width: 8vh;
-    height: 8vh;
-    font-size: 6vh;
+    width: 8dvh;
+    height: 8dvh;
+    font-size: 6dvh;
     cursor: pointer;
     display: flex;
     flex-wrap: wrap;
@@ -153,31 +159,23 @@
     user-select: none;
 }
 
-.tactic:active {
-    cursor: grabbing;
-}
+    .tactic:active {
+        cursor: grabbing;
+    }
 
 .complete {
-    font-size: 8vh;
+    font-size: 8dvh;
+}
+
+#footer {
+    height: 5dvh;
+    background-color: gray;
 }
 
 .settings-button {
     width: 24px;
     margin: 2px;
     cursor: pointer;
-}
-
-#header {
-    position: fixed;
-    z-index: 10;
-    width: 30%;
-}
-
-#level-num {
-    font-size: x-large;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
 }
 
 #instruction {
@@ -195,12 +193,6 @@
     padding: 30px;
     box-sizing: border-box; /* https://stackoverflow.com/questions/779434/how-do-i-prevent-the-padding-property-from-changing-width-or-height-in-css */
     cursor: pointer;
-}
-
-#footer {
-    position: fixed;
-    top: 100%;
-    transform: translateY(-100%);
 }
 
 /* https://stackoverflow.com/a/61812377/344223 */
