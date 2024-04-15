@@ -18,12 +18,12 @@ module Audio =
 
     /// Plays the reward sound.
     let playReward () =
-        play "https://neal.fun/infinite-craft/reward.mp3"
+        play "reward.mp3"
 
     /// Plays the error sound.
     let playError () =
-        play "https://neal.fun/infinite-craft/error.mp3"
+        play "error.mp3"
 
     /// Plays the discovery sound.
     let playDiscovery () =
-        play "https://neal.fun/infinite-craft/discovery.mp3"
+        play "discovery.mp3"
