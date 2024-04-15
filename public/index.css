@@ -18,11 +18,24 @@ body {
 }
 
 #header {
-    height: 5dvh;
-    background-color: gray;
+    height: 10dvh;
+    display: flex;
+    background-color: var(--delft-blue);
+    color: white;
+    justify-content: space-between;
+}
+
+#settings {
+}
+
+.settings-button {
+    width: 24px;
+    margin: 2px;
+    cursor: pointer;
 }
 
 #level-num {
+    font-size: xx-large;
     font-weight: bold;
 }
 
@@ -165,17 +178,6 @@ body {
 
 .complete {
     font-size: 8dvh;
-}
-
-#footer {
-    height: 5dvh;
-    background-color: gray;
-}
-
-.settings-button {
-    width: 24px;
-    margin: 2px;
-    cursor: pointer;
 }
 
 #instruction {

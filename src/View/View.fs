@@ -36,6 +36,8 @@ module View =
             prop.children [
                 Header.render
                     levelIdx
+                    model.Settings
+                    dispatch
                 TacticView.renderGoalTactics
                     levelIdx
                     isActive
@@ -46,9 +48,6 @@ module View =
                 TacticView.renderTermTactics
                     levelIdx
                     isActive
-                    dispatch
-                Footer.render
-                    model.Settings
                     dispatch
                 yield! renderInstruction
                     model.InstructionOpt
