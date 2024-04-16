@@ -13,8 +13,7 @@ module TacticView =
             prop.className "tactic"
             prop.text (TacticType.emoji tacticType)
             prop.onClick (fun _ ->
-                TacticInstruction tacticType
-                    |> Some
+                TacticType.instruction tacticType
                     |> SetInstruction
                     |> dispatch)
             if draggable then

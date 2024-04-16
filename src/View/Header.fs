@@ -12,18 +12,11 @@ module Header =
         ]
 
     /// Renders the given instruction.
-    let private renderInstruction instructionOpt =
-        let text =
-            match instructionOpt with
-                | Some (LevelInstruction level) ->
-                    level.Instruction
-                | Some (TacticInstruction tacticType) ->
-                    TacticType.instruction tacticType
-                | None -> ""
+    let private renderInstruction instruction =
         Html.span [
-            if not (String.IsNullOrWhiteSpace(text)) then
+            if not (String.IsNullOrWhiteSpace(instruction)) then
                 prop.id "instruction"
-                prop.text text
+                prop.text instruction
         ]
 
     /// Renders footer information.
@@ -58,7 +51,7 @@ module Header =
             prop.id "header"
             prop.children [
                 renderLevelNum model.Settings.LevelIndex
-                renderInstruction model.InstructionOpt
+                renderInstruction model.Instruction
                 renderSettings model.Settings dispatch
             ]
         ]
