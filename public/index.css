@@ -28,18 +28,23 @@ body {
 #level-num {
     font-size: large;
     font-weight: bold;
+    width: 20%;
 }
 
 #instruction {
     font-size: large;
     text-align: center;
+    width: 50%;
 }
 
 #settings {
+    width: 20%;
+    text-align: right;
 }
 
 #settings img {
     filter: invert(1);
+    margin-left: auto;
 }
 
 .settings-button {
