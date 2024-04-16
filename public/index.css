@@ -23,18 +23,27 @@ body {
     background-color: var(--delft-blue);
     color: white;
     justify-content: space-between;
+    display: flex;
+    align-items: center;
 }
 
 #level-num {
-    font-size: large;
+    font-size: x-large;
     font-weight: bold;
     width: 20%;
 }
 
 #instruction {
     font-size: large;
-    text-align: center;
     width: 50%;
+    height: 80%;
+    background-color: var(--sunset);
+    color: black;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 #settings {
@@ -42,10 +51,10 @@ body {
     text-align: right;
 }
 
-#settings img {
-    filter: invert(1);
-    margin-left: auto;
-}
+    #settings img {
+        filter: invert(1);
+        margin-left: auto;
+    }
 
 .settings-button {
     width: 24px;
