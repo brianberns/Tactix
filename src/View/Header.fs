@@ -21,8 +21,8 @@ module Header =
                     TacticType.instruction tacticType
                 | None -> ""
         Html.span [
-            prop.id "instruction"
             if not (String.IsNullOrWhiteSpace(text)) then
+                prop.id "instruction"
                 prop.text text
         ]
 
