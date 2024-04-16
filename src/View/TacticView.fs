@@ -43,7 +43,7 @@ module TacticView =
         levelIdx
         draggable
         dispatch =
-        Level.levels[levelIdx].GoalTactics
+        Levels.levels[levelIdx].GoalTactics
             |> renderTacticTypes
                 "goal-tactics" draggable dispatch
 
@@ -52,6 +52,6 @@ module TacticView =
         levelIdx
         draggable
         dispatch =
-        Level.levels[levelIdx].TermTactics
+        Levels.levels[levelIdx].TermTactics
             |> renderTacticTypes
                 "term-tactics" draggable dispatch

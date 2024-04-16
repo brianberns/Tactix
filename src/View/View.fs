@@ -32,6 +32,6 @@ module View =
             prop.onCut (fun _ ->
                 let levelIdx =
                     if levelIdx > 0 then levelIdx - 1
-                    else Level.levels.Length - 1
+                    else Levels.levels.Length - 1
                 dispatch (StartLevel levelIdx))
         ]

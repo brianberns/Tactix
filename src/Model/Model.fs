@@ -61,11 +61,11 @@ module Model =
             max
                 (min
                     settings.LevelIndex
-                    (Level.levels.Length - 1))
+                    (Levels.levels.Length - 1))
                 0
         let settings' =
             { settings with LevelIndex = levelIdx }
-        let level = Level.levels[levelIdx]
+        let level = Levels.levels[levelIdx]
 
         {
             Settings = settings'
