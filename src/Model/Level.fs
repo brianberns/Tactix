@@ -167,7 +167,7 @@ module Level =
                 Goal = Sum [p; q]
                 Terms = terms [p]
                 GoalTactics = goalTactics
-                TermTactics = termTactics
+                TermTactics = Intro.termTactics
                 Instruction = $"Drag {TacticType.dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
             }
 
