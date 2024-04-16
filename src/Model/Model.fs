@@ -99,7 +99,8 @@ module Model =
                 |> Proof.addMany (Some caseKey) cases
         { model with
             Proof = proof
-            Highlight = Highlight.None }
+            Highlight = Highlight.None
+            InstructionOpt = None }
 
     /// Enables/disables audio.
     let private enableAudio enable model =

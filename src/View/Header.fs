@@ -12,7 +12,7 @@ module Header =
         ]
 
     /// Renders the given instruction.
-    let private renderInstruction instructionOpt dispatch =
+    let private renderInstruction instructionOpt =
         let text =
             match instructionOpt with
                 | Some (LevelInstruction level) ->
@@ -24,8 +24,6 @@ module Header =
             prop.id "instruction"
             if not (String.IsNullOrWhiteSpace(text)) then
                 prop.text text
-                prop.onClick (fun _ ->
-                    dispatch (SetInstruction None))
         ]
 
     /// Renders footer information.
@@ -60,7 +58,7 @@ module Header =
             prop.id "header"
             prop.children [
                 renderLevelNum model.Settings.LevelIndex
-                renderInstruction model.InstructionOpt dispatch
+                renderInstruction model.InstructionOpt
                 renderSettings model.Settings dispatch
             ]
         ]

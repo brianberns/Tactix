@@ -26,14 +26,13 @@ body {
 }
 
 #level-num {
-    font-size: xx-large;
+    font-size: large;
     font-weight: bold;
 }
 
 #instruction {
-    font-size: x-large;
+    font-size: large;
     text-align: center;
-    cursor: pointer;
 }
 
 #settings {

@@ -34,7 +34,7 @@ module TacticType =
 
     let instruction = function
         | TacticType.Intro        -> $"Drag {intro} onto a {Text.implies} goal to simplify it"
-        | TacticType.Exact        -> $"Drag {exact }onto a symbol that matches the goal"
+        | TacticType.Exact        -> $"Drag {exact} onto a symbol that matches the goal"
         | TacticType.Apply        -> $"Drag {apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
         | TacticType.DissolveGoal -> $"Drag {dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
         | TacticType.DissolveTerm -> $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
