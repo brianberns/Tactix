@@ -152,7 +152,7 @@ module ProofView =
                 if case.IsComplete then
                     Html.div [
                         prop.className "complete"
-                        prop.text (TacticType.emoji TacticType.Exact)
+                        prop.text TacticType.exact
                     ]
 
                     // render each goal
