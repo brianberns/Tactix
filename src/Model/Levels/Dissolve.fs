@@ -19,8 +19,18 @@ module Dissolve =
             Instruction = $"Drag {TacticType.dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
         }
 
-    /// Introduces the dissolve term tactic.
+    /// (P -> Q) or (Q -> P).
     let level2 =
+        {
+            Goal = Sum [pq; qp]
+            Terms = terms []
+            GoalTactics = goalTactics
+            TermTactics = Intro.termTactics
+            Instruction = ""
+        }
+
+    /// Introduces the dissolve term tactic.
+    let level3 =
         {
             Goal = p
             Terms = terms [ p_and_q ]

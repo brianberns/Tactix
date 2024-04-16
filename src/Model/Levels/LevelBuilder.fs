@@ -7,6 +7,7 @@ module LevelBuilder =
     let r = Primitive "R"
 
     let pq = Function (p, q)
+    let qp = Function (q, p)
     let qr = Function (q, r)
     let pr = Function (p, r)
     let pqr = Function (p, Function (q, r))

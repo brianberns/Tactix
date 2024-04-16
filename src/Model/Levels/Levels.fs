@@ -14,6 +14,7 @@ module Levels =
 
             Dissolve.level1
             Dissolve.level2
+            Dissolve.level3
 
             Apply.level1
             Apply.level2
