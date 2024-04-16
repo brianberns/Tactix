@@ -115,7 +115,7 @@ module Level =
                 Terms = terms [p; q; pq]
                 GoalTactics = goalTactics
                 TermTactics = termTactics
-                Instruction = $"You can also use {TacticType.exact} on more complex symbols"
+                Instruction = $"You can also use {TacticType.exact} on a more complex symbol, as long as it matches the top goal"
             }
 
     module private Intro =
