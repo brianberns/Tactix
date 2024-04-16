@@ -16,7 +16,7 @@ module Header =
         Html.span [
             if not (String.IsNullOrWhiteSpace(instruction)) then
                 prop.id "instruction"
-                prop.text instruction
+                prop.innerHtml instruction
         ]
 
     /// Renders footer information.

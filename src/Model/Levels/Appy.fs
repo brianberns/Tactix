@@ -15,7 +15,7 @@ module Apply =
             Terms = terms [p; pq]
             GoalTactics = goalTactics
             TermTactics = termTactics
-            Instruction = $"Drag {TacticType.apply} onto ▢{Text.implies}■ when the goal is ■ to change the goal to ▢"
+            Instruction = $"Drag {TacticType.apply} onto ▨{Text.implies}■ when the goal is ■ to change the goal to ▨"
         }
 
     /// Implication is transitive.

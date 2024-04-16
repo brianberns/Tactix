@@ -15,7 +15,7 @@ module Intro =
             Terms = terms [q]
             GoalTactics = goalTactics
             TermTactics = termTactics
-            Instruction = $"Drag {TacticType.intro} onto a {Text.implies} goal to simplify it"
+            Instruction = $"Drag {TacticType.intro} onto a ▨{Text.implies}■ goal to simplify it.<br />The goal becomes ■ and you get a ▨ to work with."
         }
 
     /// P → P.
