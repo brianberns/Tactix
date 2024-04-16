@@ -1,5 +1,6 @@
 ﻿namespace Tactix
 
+open System
 open Feliz
 
 module Header =
@@ -8,6 +9,23 @@ module Header =
         Html.span [
             prop.id "level-num"
             prop.text $"Level {levelIdx + 1}"
+        ]
+
+    /// Renders the given instruction.
+    let private renderInstruction instructionOpt dispatch =
+        let text =
+            match instructionOpt with
+                | Some (LevelInstruction level) ->
+                    level.Instruction
+                | Some (TacticInstruction tacticType) ->
+                    TacticType.instruction tacticType
+                | None -> ""
+        Html.span [
+            prop.id "instruction"
+            if not (String.IsNullOrWhiteSpace(text)) then
+                prop.text text
+                prop.onClick (fun _ ->
+                    dispatch (SetInstruction None))
         ]
 
     /// Renders footer information.
@@ -37,11 +55,12 @@ module Header =
         ]
 
     /// Renders header information.
-    let render levelIdx settings dispatch =
+    let render model dispatch =
         Html.div [
             prop.id "header"
             prop.children [
-                renderLevelNum levelIdx
-                renderSettings settings dispatch
+                renderLevelNum model.Settings.LevelIndex
+                renderInstruction model.InstructionOpt dispatch
+                renderSettings model.Settings dispatch
             ]
         ]

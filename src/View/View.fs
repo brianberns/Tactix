@@ -1,29 +1,8 @@
 ﻿namespace Tactix
 
-open System
 open Feliz
 
 module View =
-
-    /// Renders the given instruction.
-    let private renderInstruction instructionOpt dispatch =
-        let text =
-            match instructionOpt with
-                | Some (LevelInstruction level) ->
-                    level.Instruction
-                | Some (TacticInstruction tacticType) ->
-                    TacticType.instruction tacticType
-                | None -> ""
-        if String.IsNullOrWhiteSpace(text) then []
-        else
-            [
-                Html.div [
-                    prop.id "instruction"
-                    prop.text text
-                    prop.onClick (fun _ ->
-                        dispatch (SetInstruction None))
-                ]
-            ]
 
     /// Renders the given model.
     let render model dispatch =
@@ -35,8 +14,7 @@ module View =
                 not <| Proof.isComplete model.Proof
             prop.children [
                 Header.render
-                    levelIdx
-                    model.Settings
+                    model
                     dispatch
                 TacticView.renderGoalTactics
                     levelIdx
@@ -48,9 +26,6 @@ module View =
                 TacticView.renderTermTactics
                     levelIdx
                     isActive
-                    dispatch
-                yield! renderInstruction
-                    model.InstructionOpt
                     dispatch
             ]
                 // easter egg for revisiting levels
