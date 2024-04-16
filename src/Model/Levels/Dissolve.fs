@@ -36,5 +36,5 @@ module Dissolve =
             Terms = terms [ p_and_q ]
             GoalTactics = goalTactics
             TermTactics = termTactics
-            Instruction = $"Drag {TacticType.dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
+            Instruction = TacticType.instruction TacticType.DissolveTerm
         }

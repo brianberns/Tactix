@@ -37,7 +37,7 @@ module TacticType =
         | TacticType.Exact        -> $"Drag {exact} onto a symbol that matches the goal"
         | TacticType.Apply        -> $"Drag {apply} onto ▨{Text.implies}■ when the goal is ■ to change the goal to ▨"
         | TacticType.DissolveGoal -> $"Drag {dissolveGoal} onto a ▨{Text.orSymbol}■ goal to simplify it into separate ▨ and ■ goals. You can then match either one."
-        | TacticType.DissolveTerm -> $"Drag {dissolveTerm} onto a {Text.andSymbol} symbol to simplify it"
+        | TacticType.DissolveTerm -> $"Drag {dissolveTerm} onto a ▨{Text.andSymbol}■ symbol to simplify it into separate ▨ and ■ symbols"
         | TacticType.SplitGoal    -> $"Drag {splitGoal} onto a {Text.andSymbol} goal to create separate cases"
         | TacticType.SplitTerm    -> $"Drag {splitTerm} onto a {Text.orSymbol} symbol to create separate cases"
         | TacticType.AffirmGoal   -> $"Drag {affirmGoal} onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
