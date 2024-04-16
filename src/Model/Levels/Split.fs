@@ -44,7 +44,7 @@ module Split =
             Instruction = ""
         }
 
-    /// Exportation.
+    /// Exportation or uncurrying.
     let level4 =
         {
             Goal = pqr
