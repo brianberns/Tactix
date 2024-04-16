@@ -16,7 +16,7 @@ module Dissolve =
             Terms = terms [p]
             GoalTactics = goalTactics
             TermTactics = Intro.termTactics
-            Instruction = $"Drag {TacticType.dissolveGoal} onto a {Text.orSymbol} goal to simplify it"
+            Instruction = TacticType.instruction TacticType.DissolveGoal
         }
 
     /// (P -> Q) or (Q -> P).
