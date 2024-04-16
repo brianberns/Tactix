@@ -18,13 +18,13 @@ module Levels =
 
             Apply.level1
             Apply.level2
-            Apply.level3
 
             Split.level1
             Split.level2
             Split.level3
             Split.level4
             Split.level5
+            Split.level6
 
             Negation.level1
             Negation.level2
