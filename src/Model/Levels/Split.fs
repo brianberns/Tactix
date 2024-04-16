@@ -15,8 +15,8 @@ module Split =
             Goal = Product [q; p]
             Terms = terms [p_and_q]
             GoalTactics = goalTactics
-            TermTactics = termTactics
-            Instruction = $"Drag {TacticType.splitGoal} onto a {Text.andSymbol} goal to create separate cases"
+            TermTactics = Apply.termTactics
+            Instruction = TacticType.instruction TacticType.SplitGoal
         }
 
     /// Commutivity of ∨.
