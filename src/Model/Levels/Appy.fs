@@ -39,5 +39,5 @@ module Apply =
             Terms = terms [pqr]
             GoalTactics = goalTactics
             TermTactics = termTactics
-            Instruction = $"You can also use {TacticType.apply} on nested ▨{Text.implies}■ symbols when the goal is ■"
+            Instruction = $"You can also use {TacticType.apply} on a nested ▤{Text.implies}[▨{Text.implies}■] symbol when the goal is ■ to create a ▤{Text.andSymbol}▨ goal"
         }
