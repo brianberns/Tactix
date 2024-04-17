@@ -1,6 +1,6 @@
 ﻿namespace Tactix
 
-module Tautology =
+module More =
 
     open LevelBuilder
 
@@ -17,6 +17,15 @@ module Tautology =
         }
 
     let level2 =
+        {
+            Goal = p
+            Terms = terms [ p_or_q; qr; Not r ]
+            GoalTactics = goalTactics
+            TermTactics = termTactics
+            Instruction = ""
+        }
+
+    let level3 =
         {
             Goal = Function (pq, Function (Function (Not p, q), q))
             Terms = terms [Sum [p; Not p]]   // should be possible without this

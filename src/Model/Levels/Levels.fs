@@ -31,8 +31,9 @@ module Levels =
             Negation.level3
             Negation.level4
 
-            Tautology.level1
-            Tautology.level2
+            More.level1
+            More.level2
+            More.level3
 
             {
                 Goal = LevelBuilder.p
