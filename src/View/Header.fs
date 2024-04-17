@@ -23,7 +23,7 @@ module Header =
                         prop.className "settings-button"
                         prop.src "back.svg"
                         prop.onClick (fun _ ->
-                            dispatch (StartLevel settings.LevelIndex))
+                            dispatch (StartLevel (settings.LevelIndex - 1)))
                     ]
                         // level restart
                     Html.img [
