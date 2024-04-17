@@ -29,6 +29,10 @@ body {
     width: 20%;
 }
 
+    #level-num img {
+        filter: invert(1);
+    }
+
 #instruction {
     width: 58%;
     height: 90%;

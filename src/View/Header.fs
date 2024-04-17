@@ -5,10 +5,35 @@ open Feliz
 
 module Header =
 
-    let private renderLevelNum levelIdx =
-        Html.span [
+    /// Renders level information.
+    let private renderLevelNum settings dispatch =
+        Html.div [
             prop.id "level-num"
-            prop.text $"Level {levelIdx + 1}"
+            prop.children [
+
+                    // level number
+                Html.div [
+                    prop.text $"Level {settings.LevelIndex + 1}"
+                ]
+
+                Html.div [
+
+                        // level back
+                    Html.img [
+                        prop.className "settings-button"
+                        prop.src "back.svg"
+                        prop.onClick (fun _ ->
+                            dispatch (StartLevel settings.LevelIndex))
+                    ]
+                        // level restart
+                    Html.img [
+                        prop.className "settings-button"
+                        prop.src "refresh.svg"
+                        prop.onClick (fun _ ->
+                            dispatch (StartLevel settings.LevelIndex))
+                    ]
+                ]
+            ]
         ]
 
     /// Renders the given instruction.
@@ -19,7 +44,7 @@ module Header =
                 prop.innerHtml instruction
         ]
 
-    /// Renders footer information.
+    /// Renders settings.
     let private renderSettings settings dispatch =
         Html.span [
             prop.id "settings"
@@ -35,13 +60,6 @@ module Header =
                         dispatch (
                             EnableAudio (not settings.AudioEnabled)))
                 ]
-                    // level restart
-                Html.img [
-                    prop.className "settings-button"
-                    prop.src "refresh.svg"
-                    prop.onClick (fun _ ->
-                        dispatch (StartLevel settings.LevelIndex))
-                ]
             ]
         ]
 
@@ -50,7 +68,7 @@ module Header =
         Html.div [
             prop.id "header"
             prop.children [
-                renderLevelNum model.Settings.LevelIndex
+                renderLevelNum model.Settings dispatch
                 renderInstruction model.Instruction
                 renderSettings model.Settings dispatch
             ]
