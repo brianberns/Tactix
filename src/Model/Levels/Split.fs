@@ -26,7 +26,7 @@ module Split =
             Terms = terms [p_or_q]
             GoalTactics = goalTactics
             TermTactics = termTactics
-            Instruction = $"Drag {TacticType.splitTerm} onto a {Text.orSymbol} symbol to create separate cases"
+            Instruction = TacticType.instruction TacticType.SplitTerm
         }
 
     /// More practice with multiple cases.
