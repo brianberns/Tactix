@@ -140,6 +140,14 @@ body {
     background-color: var(--cambridge-blue);
 }
 
+.s {
+    background-color: darkred;
+}
+
+.t {
+    background-color: darkgray;
+}
+
 .terms {
     height: 50dvh;
     background-color: var(--eggshell);

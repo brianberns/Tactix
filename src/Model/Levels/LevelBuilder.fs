@@ -5,6 +5,8 @@ module LevelBuilder =
     let p = Primitive "P"
     let q = Primitive "Q"
     let r = Primitive "R"
+    let s = Primitive "S"
+    let t = Primitive "T"
 
     let pq = Function (p, q)
     let qp = Function (q, p)

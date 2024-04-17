@@ -33,3 +33,12 @@ module More =
             TermTactics = termTactics
             Instruction = ""
         }
+
+    let level4 =
+        {
+            Goal = Sum [ Not p; Not q ]
+            Terms = terms [ Function (p_and_q, r); Function (Sum [r; s], t); Not t ]
+            GoalTactics = goalTactics
+            TermTactics = termTactics
+            Instruction = ""
+        }
