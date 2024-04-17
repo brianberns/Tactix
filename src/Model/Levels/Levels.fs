@@ -38,9 +38,9 @@ module Levels =
 
             {
                 Goal = LevelBuilder.p
-                Terms = Set []
+                Terms = LevelBuilder.terms [ LevelBuilder.q ]
                 GoalTactics = Set []
                 TermTactics = Set []
-                Instruction = "The end!"
+                Instruction = $"{TacticType.exact} The End! {TacticType.exact}"
             }
         |]
