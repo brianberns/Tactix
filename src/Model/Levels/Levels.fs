@@ -30,4 +30,12 @@ module Levels =
             Negation.level2
             Negation.level3
             Negation.level4
+
+            {
+                Goal = LevelBuilder.p
+                Terms = Set []
+                GoalTactics = Set []
+                TermTactics = Set []
+                Instruction = "The end!"
+            }
         |]
