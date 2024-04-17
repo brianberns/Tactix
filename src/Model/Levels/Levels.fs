@@ -38,6 +38,7 @@ module Levels =
             More.level5
             More.level6
             More.level7
+            More.level8
 
             {
                 Goal = LevelBuilder.p

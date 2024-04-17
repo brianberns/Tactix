@@ -29,6 +29,20 @@ module More =
         {
             Goal =
                 Function (
+                    Product [
+                        p_or_q
+                        Sum [Not p; r] ],
+                    Sum [q; r])
+            Terms = terms []
+            GoalTactics = goalTactics
+            TermTactics = termTactics
+            Instruction = ""
+        }
+
+    let level4 =
+        {
+            Goal =
+                Function (
                     pq,
                     Function (
                         Function (Not p, q), q))
@@ -38,7 +52,7 @@ module More =
             Instruction = ""
         }
 
-    let level4 =
+    let level5 =
         {
             Goal = q
             Terms =
@@ -52,7 +66,7 @@ module More =
             Instruction = ""
         }
 
-    let level5 =
+    let level6 =
         {
             Goal = Sum [ Not p; Not q ]
             Terms =
@@ -66,7 +80,7 @@ module More =
             Instruction = ""
         }
 
-    let level6 =
+    let level7 =
         {
             Goal =
                 Function (
@@ -80,7 +94,7 @@ module More =
             Instruction = ""
         }
 
-    let level7 =
+    let level8 =
         {
             Goal =
                 Function (
