@@ -36,8 +36,27 @@ module More =
 
     let level4 =
         {
+            Goal = q
+            Terms =
+                terms [
+                    Product [ pq; Function (r, s) ]
+                    Sum [ p; r ]
+                    Not s
+                ]
+            GoalTactics = goalTactics
+            TermTactics = termTactics
+            Instruction = ""
+        }
+
+    let level5 =
+        {
             Goal = Sum [ Not p; Not q ]
-            Terms = terms [ Function (p_and_q, r); Function (Sum [r; s], t); Not t ]
+            Terms =
+                terms [
+                    Function (p_and_q, r)
+                    Function (Sum [r; s], t)
+                    Not t
+                ]
             GoalTactics = goalTactics
             TermTactics = termTactics
             Instruction = ""
