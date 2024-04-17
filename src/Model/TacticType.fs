@@ -40,5 +40,5 @@ module TacticType =
         | TacticType.DissolveTerm -> $"Drag {dissolveTerm} onto a ▨{Text.andSymbol}■ symbol to simplify it into separate ▨ and ■ symbols"
         | TacticType.SplitGoal    -> $"Drag {splitGoal} onto a ▨{Text.andSymbol}■ goal to create separate cases for ▨ and ■"
         | TacticType.SplitTerm    -> $"Drag {splitTerm} onto a ▨{Text.orSymbol}■ symbol to create separate cases for ▨ and ■"
-        | TacticType.AffirmGoal   -> $"Drag {affirmGoal} onto a {Text.notSymbol} goal to remove {Text.notSymbol}"
-        | TacticType.AffirmTerm   -> $"Drag {affirmTerm} onto a {Text.notSymbol} symbol to remove {Text.notSymbol}"
+        | TacticType.AffirmGoal   -> $"Drag {affirmGoal} onto a {Text.notSymbol}■ goal to change it into a ■ symbol"
+        | TacticType.AffirmTerm   -> $"Drag {affirmTerm} onto a {Text.notSymbol}■ symbol to change it into a ■ goal"
