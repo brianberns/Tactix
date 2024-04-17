@@ -33,7 +33,7 @@ module TacticType =
     let affirmTerm   = emoji TacticType.AffirmTerm
 
     let instruction = function
-        | TacticType.Intro        -> $"Drag {intro} onto a ▨{Text.implies}■ goal to simplify it. The goal becomes ■ and you get a ▨ to work with."
+        | TacticType.Intro        -> $"Drag {intro} onto a ▨{Text.implies}■ goal to change the goal to ■ and introduce a ▨ symbol"
         | TacticType.Exact        -> $"Drag {exact} onto a symbol that matches the goal"
         | TacticType.Apply        -> $"Drag {apply} onto ▨{Text.implies}■ when the goal is ■ to change the goal to ▨, or on nested ▨{Text.implies}■ symbols when the goal is ■ to create a {Text.andSymbol} goal.</p>"
         | TacticType.DissolveGoal -> $"Drag {dissolveGoal} onto a ▨{Text.orSymbol}■ goal to simplify it into ▨ and ■ goals, and then match either one"

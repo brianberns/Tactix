@@ -6,10 +6,6 @@
     --sunset: #f2cc8f;
     --highlight: #70a452;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    position: fixed;
-    left: 0%;
-    top: 0%;
-    width: 100%;
     background-color: var(--eggshell);
 }
 
