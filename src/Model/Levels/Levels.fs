@@ -2,6 +2,16 @@
 
 module Levels =
 
+    let private final =
+        let str = "🚀❤️👣✂️🪚🍂💥🌈"
+        {
+            Goals = set []
+            Terms = set []
+            GoalTactics = set []
+            TermTactics = set []
+            Instruction = $"<span>{str}</span>&nbsp;The End!&nbsp;<span style=\"transform: scale(-1, 1)\">{str}</span>"
+        }
+
     let levels =
         [|
             Exact.level1
@@ -40,11 +50,5 @@ module Levels =
             More.level7
             More.level8
 
-            {
-                Goals = set []
-                Terms = set []
-                GoalTactics = set []
-                TermTactics = set []
-                Instruction = $"{TacticType.exact} The End! {TacticType.exact}"
-            }
+            final
         |]
