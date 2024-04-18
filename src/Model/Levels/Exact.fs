@@ -27,13 +27,3 @@ module Exact =
             TermTactics = termTactics
             Instruction = ""
         }
-
-    /// Introduces function types.
-    let level3 =
-        {
-            Goals = set [pq]
-            Terms = terms [p; q; pq]
-            GoalTactics = goalTactics
-            TermTactics = termTactics
-            Instruction = $"You can also use {TacticType.exact} on a more complex symbol, as long as it matches the top goal"
-        }

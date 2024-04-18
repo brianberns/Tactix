@@ -16,7 +16,6 @@ module Levels =
         [|
             Exact.level1
             Exact.level2
-            Exact.level3
 
             Intro.level1
             Intro.level2
