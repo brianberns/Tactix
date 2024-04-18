@@ -1,19 +1,71 @@
 :root {
-    --eggshell: #f4f1deff;
-    --burnt-sienna: #e07a5fff;
-    --delft-blue: #3d405bff;
-    --cambridge-blue: #81b29aff;
-    --sunset: #f2cc8fff;
-    --highlight: #70a452ff;
+    --eggshell: #f4f1de;
+    --burnt-sienna: #e07a5f;
+    --delft-blue: #3d405b;
+    --cambridge-blue: #81b29a;
+    --sunset: #f2cc8f;
+    --highlight: #70a452;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--eggshell);
+}
+
+body {
+    margin: 0px;
+}
+
+#header {
+    height: 10dvh;
+    display: flex;
+    background-color: var(--delft-blue);
+    color: white;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+}
+
+#level-num {
+    font-size: 2vh;
+    font-weight: bold;
+    width: 20%;
+}
+
+    #level-num img {
+        filter: invert(1);
+    }
+
+#instruction {
+    width: 58%;
+    height: 90%;
+    font-size: 2vh;
+    background-color: var(--sunset);
+    color: black;
+    border-radius: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#settings {
+    width: 20%;
+    text-align: right;
+}
+
+    #settings img {
+        filter: invert(1);
+        margin-left: auto;
+    }
+
+.settings-button {
+    width: 24px;
+    margin: 2px;
+    cursor: pointer;
 }
 
 #goal-tactics {
-    position: fixed;
-    left: 0%;
-    top: 00%;
-    width: 100%;
-    height: 10%;
+    height: 10dvh;
     background-color: var(--eggshell);
     display: flex;
     flex-wrap: wrap;
@@ -22,11 +74,7 @@
 }
 
 #proof {
-    position: fixed;
-    left: 0%;
-    top: 10%;
-    width: 100%;
-    height: 80%;
+    height: 70dvh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -39,7 +87,7 @@
 }
 
 .goals {
-    height: 20vh;
+    height: 20dvh;
     background-color: var(--sunset);
     display: flex;
     flex-wrap: wrap;
@@ -48,8 +96,8 @@
 }
 
 .primitive-type {
-    width: 7vh;
-    height: 7vh;
+    width: 7dvh;
+    height: 7dvh;
     border-radius: 8px;
     pointer-events: none;
 }
@@ -96,12 +144,16 @@
     background-color: var(--cambridge-blue);
 }
 
-.bottom {
+.s {
+    background-color: darkred;
+}
+
+.t {
     background-color: darkgray;
 }
 
 .terms {
-    height: 60vh;
+    height: 50dvh;
     background-color: var(--eggshell);
     display: flex;
     flex-wrap: wrap;
@@ -131,11 +183,7 @@
 }
 
 #term-tactics {
-    position: fixed;
-    left: 0%;
-    top: 90%;
-    width: 100%;
-    height: 10%;
+    height: 10dvh;
     background-color: var(--sunset);
     display: flex;
     flex-wrap: wrap;
@@ -146,10 +194,10 @@
 .tactic {
     margin: 9px;
     padding: 0px;
-    width: 8vh;
-    height: 8vh;
-    font-size: 6vh;
-    cursor: grab;
+    width: 8dvh;
+    height: 8dvh;
+    font-size: 6dvh;
+    cursor: pointer;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -157,39 +205,12 @@
     user-select: none;
 }
 
-.tactic:active {
-    cursor: grabbing;
-}
+    .tactic:active {
+        cursor: grabbing;
+    }
 
 .complete {
-    font-size: 8vh;
-}
-
-.settings-button {
-    width: 24px;
-    margin: 2px;
-}
-
-#header {
-    position: fixed;
-    z-index: 10;
-    width: 30%;
-}
-
-#level-num {
-    font-size: x-large;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-}
-
-#instructions {
-}
-
-#footer {
-    position: fixed;
-    top: 100%;
-    transform: translateY(-100%);
+    font-size: 8dvh;
 }
 
 /* https://stackoverflow.com/a/61812377/344223 */
