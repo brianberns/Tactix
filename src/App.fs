@@ -8,7 +8,7 @@ module App =
 
     // window.alert($"Your screen is {window.innerWidth}x{window.innerHeight} pixels")
     if window.innerWidth < 600
-        || window.innerHeight < 900 then
+        || window.innerHeight < 600 then
         window.alert("This game works best on a larger screen, but we'll give it a try!")
 
     Program.mkProgram Model.init Model.update View.render
