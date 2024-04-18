@@ -12,7 +12,7 @@ module Negation =
     /// Double negative (but not the law of excluded middle).
     let level1 =
         {
-            Goal = Not (Not p)
+            Goals = set [ Not (Not p) ]
             Terms = terms [p]
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -22,7 +22,7 @@ module Negation =
     /// Modus tollens.
     let level2 =
         {
-            Goal = Function (Not q, Not p)
+            Goals = set [ Function (Not q, Not p) ]
             Terms = terms [ pq ]
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -32,7 +32,7 @@ module Negation =
     /// de Morgan's laws.
     let level3 =
         {
-            Goal = Not p_and_q
+            Goals = set [Not p_and_q]
             Terms =
                 terms [
                     Sum [
@@ -48,10 +48,12 @@ module Negation =
     /// de Morgan's laws.
     let level4 =
         {
-            Goal =
-                Product [
-                    Not p
-                    Not q
+            Goals =
+                set [
+                    Product [
+                        Not p
+                        Not q
+                    ]
                 ]
             Terms =
                 terms [

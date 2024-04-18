@@ -12,7 +12,7 @@ module Split =
     /// Commutivity of ∧.
     let level1 =
         {
-            Goal = Product [q; p]
+            Goals = set [ Product [q; p] ]
             Terms = terms [p_and_q]
             GoalTactics = goalTactics
             TermTactics = Apply.termTactics
@@ -22,7 +22,7 @@ module Split =
     /// Commutivity of ∨.
     let level2 =
         {
-            Goal = Sum [q; p]
+            Goals = set [ Sum [q; p] ]
             Terms = terms [p_or_q]
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -32,7 +32,7 @@ module Split =
     /// More practice with multiple cases.
     let level3 =
         {
-            Goal = r
+            Goals = set [r]
             Terms =
                 terms [
                     p_or_q
@@ -47,7 +47,7 @@ module Split =
     /// Exportation or uncurrying.
     let level4 =
         {
-            Goal = pqr
+            Goals = set [pqr]
             Terms = terms [ Function (p_and_q, r) ]
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -57,10 +57,12 @@ module Split =
     /// Distributive property.
     let level5 =
         {
-            Goal =
-                Sum [
-                    Product [p; r]
-                    Product [q; r]
+            Goals =
+                set [
+                    Sum [
+                        Product [p; r]
+                        Product [q; r]
+                    ]
                 ]
             Terms =
                 terms [
@@ -85,7 +87,7 @@ module Split =
     /// Currying.
     let level6 =
         {
-            Goal = Function (p_and_q, r)
+            Goals = set [ Function (p_and_q, r) ]
             Terms = terms [pqr]
             GoalTactics = goalTactics
             TermTactics = termTactics

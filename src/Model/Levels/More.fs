@@ -9,7 +9,7 @@ module More =
 
     let level1 =
         {
-            Goal = Sum [ pq; Function (p, Not q) ]
+            Goals = set [ Sum [ pq; Function (p, Not q) ] ]
             Terms = terms []
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -18,7 +18,7 @@ module More =
 
     let level2 =
         {
-            Goal = p
+            Goals = set [p]
             Terms = terms [ p_or_q; qr; Not r ]
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -27,12 +27,15 @@ module More =
 
     let level3 =
         {
-            Goal =
-                Function (
-                    Product [
-                        p_or_q
-                        Sum [Not p; r] ],
-                    Sum [q; r])
+            Goals =
+                set [
+                    Function (
+                        Product [
+                            p_or_q
+                            Sum [Not p; r]
+                        ],
+                        Sum [q; r])
+                ]
             Terms = terms []
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -41,11 +44,13 @@ module More =
 
     let level4 =
         {
-            Goal =
-                Function (
-                    pq,
+            Goals =
+                set [
                     Function (
-                        Function (Not p, q), q))
+                        pq,
+                        Function (
+                            Function (Not p, q), q))
+                ]
             Terms = terms [Sum [p; Not p]]   // should be possible without this
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -54,7 +59,7 @@ module More =
 
     let level5 =
         {
-            Goal = q
+            Goals = set [q]
             Terms =
                 terms [
                     Product [ pq; Function (r, s) ]
@@ -68,7 +73,7 @@ module More =
 
     let level6 =
         {
-            Goal = Sum [ Not p; Not q ]
+            Goals = set [ Sum [ Not p; Not q ] ]
             Terms =
                 terms [
                     Function (p_and_q, r)
@@ -82,12 +87,14 @@ module More =
 
     let level7 =
         {
-            Goal =
-                Function (
-                    Product [ pq; Function (r, s) ],
+            Goals =
+                set [
                     Function (
-                        Sum [p; r],
-                        Sum [q; s]))
+                        Product [ pq; Function (r, s) ],
+                        Function (
+                            Sum [p; r],
+                            Sum [q; s]))
+                ]
             Terms = terms []
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -96,11 +103,12 @@ module More =
 
     let level8 =
         {
-            Goal =
-                Function (
-                    Product [ p_or_q; Sum [Not p; r] ],
-                    Sum [ q; r ]
-                )
+            Goals =
+                set [
+                    Function (
+                        Product [ p_or_q; Sum [Not p; r] ],
+                        Sum [ q; r ])
+                ]
             Terms = terms []
             GoalTactics = goalTactics
             TermTactics = termTactics

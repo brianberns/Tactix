@@ -3,8 +3,8 @@
 /// A puzzle to be solved.
 type Level =
     {
-        /// Proposition to be proved.
-        Goal : Type
+        /// Propositions to be proved.
+        Goals : Set<Type>
 
         /// Hypotheses.
         Terms : Set<Term>
@@ -25,7 +25,7 @@ module Level =
     let initializeProof level =
         let case =
             {
-                Goals = Set.singleton level.Goal
+                Goals = level.Goals
                 Terms = level.Terms
                 IsComplete = false
             }

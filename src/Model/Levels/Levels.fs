@@ -41,10 +41,10 @@ module Levels =
             More.level8
 
             {
-                Goal = LevelBuilder.p
-                Terms = LevelBuilder.terms [ LevelBuilder.q ]
-                GoalTactics = Set []
-                TermTactics = Set []
+                Goals = set []
+                Terms = set []
+                GoalTactics = set []
+                TermTactics = set []
                 Instruction = $"{TacticType.exact} The End! {TacticType.exact}"
             }
         |]

@@ -10,7 +10,7 @@ module Exact =
     /// Introduces the "exact" tactic.
     let level1 =
         {
-            Goal = p
+            Goals = set [p]
             Terms = terms [p; q]
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -21,7 +21,7 @@ module Exact =
     /// More practice with "exact".
     let level2 =
         {
-            Goal = r
+            Goals = set [r]
             Terms = terms [p; q; r]
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -31,7 +31,7 @@ module Exact =
     /// Introduces function types.
     let level3 =
         {
-            Goal = pq
+            Goals = set [pq]
             Terms = terms [p; q; pq]
             GoalTactics = goalTactics
             TermTactics = termTactics

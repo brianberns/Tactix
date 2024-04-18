@@ -11,7 +11,7 @@ module Intro =
     /// Introduces the "intro" tactic with Q ⊢ P → Q.
     let level1 =
         {
-            Goal = pq
+            Goals = set [pq]
             Terms = terms [q]
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -21,7 +21,7 @@ module Intro =
     /// P → P.
     let level2 =
         {
-            Goal = Function (p, p)
+            Goals = set [Function (p, p)]
             Terms = terms []
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -31,7 +31,7 @@ module Intro =
     /// More practice with intro.
     let level3 =
         {
-            Goal = pqr
+            Goals = set [pqr]
             Terms = terms [r]
             GoalTactics = goalTactics
             TermTactics = termTactics

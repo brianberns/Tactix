@@ -11,7 +11,7 @@ module Apply =
     /// Modus ponens.
     let level1 =
         {
-            Goal = q
+            Goals = set [q]
             Terms = terms [p; pq]
             GoalTactics = goalTactics
             TermTactics = termTactics
@@ -21,7 +21,7 @@ module Apply =
     /// Implication is transitive.
     let level2 =
         {
-            Goal = Function (p, r)
+            Goals = set [ Function (p, r) ]
             Terms =
                 terms [
                     Function (p, q)
