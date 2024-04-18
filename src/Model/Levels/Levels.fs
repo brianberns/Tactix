@@ -48,6 +48,7 @@ module Levels =
             More.level6
             More.level7
             More.level8
+            More.level9
 
             final
         |]

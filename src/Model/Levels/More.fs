@@ -114,3 +114,21 @@ module More =
             TermTactics = termTactics
             Instruction = ""
         }
+
+    let level9 =
+        {
+            Goals =
+                set [
+                    Function (
+                        Not s,
+                        Not (Function (p, qr)))
+                ]
+            Terms =
+                terms [
+                    Not r
+                    Sum [p_and_q; s]
+                ]
+            GoalTactics = goalTactics
+            TermTactics = termTactics
+            Instruction = ""
+        }
